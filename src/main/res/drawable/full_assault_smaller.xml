@@ -1,0 +1,7 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:drawable="@drawable/full_assault"
+        android:width="50dp"
+        android:height="50dp">
+    </item>
+</layer-list>

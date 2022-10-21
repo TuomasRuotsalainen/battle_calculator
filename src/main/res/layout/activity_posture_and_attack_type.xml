@@ -32,12 +32,46 @@
         app:layout_constraintVertical_bias="0.5" />
 
     <RadioGroup
+        android:id="@+id/postureRadio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/attackTypeRadio"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.467"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView">
+
+        <!--style="@style/GreenText"-->
+        <RadioButton
+            android:id="@+id/radio_posture_full_assault"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/full_assault_smaller"
+            android:drawablePadding="10dp"
+            android:text="Full assault"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="12dp" />
+
+        <RadioButton
+            android:id="@+id/radio_posture_rigid_defence"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Rigid defence"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="60dp" />
+
+
+    </RadioGroup>
+
+    <RadioGroup
         android:id="@+id/attackTypeRadio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="72dp"
         app:layout_constraintBottom_toTopOf="@+id/groudcombatApply"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent">
 
         <RadioButton
