@@ -47,10 +47,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableRight="@drawable/full_assault_smaller"
-            android:drawablePadding="10dp"
+            android:drawablePadding="@dimen/posture_padding"
             android:text="Full assault"
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="12dp" />
+
+        <RadioButton
+            android:id="@+id/radio_posture_assault"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/assault_smaller"
+            android:text="Assault"
+            android:drawablePadding="@dimen/posture_padding"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="60dp" />
+
+        <RadioButton
+            android:id="@+id/radio_posture_march_assault"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/march_assault_smaller"
+            android:text="March assault"
+            android:drawablePadding="@dimen/posture_padding"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="60dp" />
 
         <RadioButton
             android:id="@+id/radio_posture_rigid_defence"
