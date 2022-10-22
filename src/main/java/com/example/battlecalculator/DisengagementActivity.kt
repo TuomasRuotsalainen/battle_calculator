@@ -9,28 +9,29 @@ import android.widget.RadioGroup
 import android.widget.SeekBar
 import android.widget.Toast
 
-class GroundCombatActivity : AppCompatActivity() {
+class DisengagementActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_groundcombat)
+        setContentView(R.layout.activity_disengagement_selection)
 
 
-        val groundCombatApplyButton = findViewById<Button>(R.id.groudcombatApply)
+        val disengagementApplyButton = findViewById<Button>(R.id.retreat_before_combat_apply)
 
-        val intent = Intent(this, PostureAndAttackTypeActivity::class.java)
-        groundCombatApplyButton.setOnClickListener{
+        val noRetreatsButton = findViewById<RadioButton>(R.id.retreat_before_combat_radio_zero)
+        noRetreatsButton.isChecked = true
+
+        //val intent = Intent(this, PostureAndAttackTypeActivity::class.java)
+        disengagementApplyButton.setOnClickListener{
             val radioButtonStr = checkRadioButton()
-            val strengths = checkSeekBars()
-            //Toast.makeText(this, "Unit type: $radioButtonStr, attack strength: ${strengths.first}, defense strength: ${strengths.second}", Toast.LENGTH_LONG*10).show()
-            startActivity(intent)
+            //startActivity(intent)
 
-            finish()
+            //finish()
         }
     }
 
     private fun checkRadioButton(): CharSequence {
-        val radioGroup: RadioGroup = findViewById<RadioGroup>(R.id.unitTypeRadio)
+        val radioGroup: RadioGroup = findViewById(R.id.retreat_before_combat_radio_group)
         val checkedId = radioGroup.checkedRadioButtonId
         val checkedRadioButton = findViewById<RadioButton>(checkedId)
 

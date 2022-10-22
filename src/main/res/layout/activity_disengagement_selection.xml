@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="367dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="20dp"
+        android:text="Defender: will any units attempt to retreat before combat?"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="345dp"
+        android:layout_height="193dp"
+        android:text="- The unit must be in Screen or Recon posture\n\n- It can't be Engaged, Half-Engaged or Delayed\n\n- Destination hex can't be adjacent to enemy blocking units, except if\n     1. It also contains friendly combat unit\n     2. There is an unbridged river between the hexes\n\nA blocking unit is any unit in Screen, Tactical or Recon posture"
+        app:layout_constraintBottom_toTopOf="@+id/retreat_before_combat_radio_group"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="334dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="160dp"
+        android:text="(Every hex can contain at most 2 combat units)"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/retreat_before_combat_radio_group" />
+
+    <RadioGroup
+        android:id="@+id/retreat_before_combat_radio_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintVertical_bias="0.433">
+
+        <RadioButton
+            android:id="@+id/retreat_before_combat_radio_zero"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="No retreating units"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="12dp" />
+
+        <RadioButton
+            android:id="@+id/retreat_before_combat_radio_one"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="One retreating unit"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="60dp" />
+
+
+        <RadioButton
+            android:id="@+id/retreat_before_combat_radio_two"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Two retreating units"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="60dp" />
+
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/retreat_before_combat_apply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Commit"
+        app:layout_constraintBottom_toTopOf="@+id/textView4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView11" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
