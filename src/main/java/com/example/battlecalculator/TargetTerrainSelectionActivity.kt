@@ -65,6 +65,7 @@ class TargetTerrainSelectionActivity : AppCompatActivity() {
             }
         }
 
+
         val applyButton = findViewById<Button>(R.id.terrain_apply)
 
         val intent = Intent(this, GroundCombatActivity::class.java)

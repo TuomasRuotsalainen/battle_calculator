@@ -21,21 +21,30 @@ class DisengagementActivity : AppCompatActivity() {
         val noRetreatsButton = findViewById<RadioButton>(R.id.retreat_before_combat_radio_zero)
         noRetreatsButton.isChecked = true
 
+
+
         //val intent = Intent(this, PostureAndAttackTypeActivity::class.java)
         disengagementApplyButton.setOnClickListener{
-            val radioButtonStr = checkRadioButton()
+            val radioButton = checkRadioButton()
+            if (radioButton == R.id.retreat_before_combat_radio_zero) {
+                // No retreats, go to combat
+            } else if (radioButton == R.id.retreat_before_combat_radio_one) {
+                // One retreat
+            } else {
+                // Two retreats
+            }
             //startActivity(intent)
 
             //finish()
         }
     }
 
-    private fun checkRadioButton(): CharSequence {
+    private fun checkRadioButton(): Int {
         val radioGroup: RadioGroup = findViewById(R.id.retreat_before_combat_radio_group)
         val checkedId = radioGroup.checkedRadioButtonId
         val checkedRadioButton = findViewById<RadioButton>(checkedId)
 
-        return checkedRadioButton.text
+        return checkedRadioButton.id
 
     }
 

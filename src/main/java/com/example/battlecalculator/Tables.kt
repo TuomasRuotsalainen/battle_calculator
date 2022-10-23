@@ -12,6 +12,10 @@ class Tables {
 
     private val disengagementTable = getDisengagementTable()
 
+    fun Test() {
+
+    }
+
     private fun getDisengagementTable(): HashMap<PostureEnum,HashMap<UnitTypeEnum,DisengagementResultRangeCell>> {
         // First ROW of cells
         val INF_ADEF_CELL = DisengagementResultRangeCell(4, 7)

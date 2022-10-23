@@ -12,7 +12,11 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d("TUOMAS TAG", "hello logging world")
+        Log.d("TUOMAS TAG", "Getting oob")
+
+        val oob = OrderOfBattle()
+        val oobElement = oob.getOOB()
+        Log.d("TUOMAS TAG",  "alliance name: " + oobElement[0].allianceName)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
