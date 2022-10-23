@@ -134,7 +134,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/terrainlayout"
+        android:id="@+id/terrainstructurelayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -167,7 +167,7 @@
             tools:layout_editor_absoluteY="226dp" />
 
         <CheckBox
-            android:id="@+id/bridgeExists"
+            android:id="@+id/checkBoxBridgeExists"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
