@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         val groundAttackButton = findViewById<Button>(R.id.groundAttackButton)
         val artillerBombardmentButton = findViewById<Button>(R.id.artillerBomabrdmentButton)
 
-        val intent = Intent(this, GroundCombatActivity::class.java)
+        val intent = Intent(this, TargetTerrainSelectionActivity::class.java)
         groundAttackButton.setOnClickListener{
             startActivity(intent)
             finish()

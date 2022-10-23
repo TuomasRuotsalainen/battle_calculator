@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="367dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="20dp"
+        android:text="Target hex terrain features"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="361dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="20dp"
+        android:text="- A hex might have multiple features. Select all of them"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <Button
+        android:id="@+id/terrain_apply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Done"
+        app:layout_constraintBottom_toTopOf="@+id/textView4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/terrainlayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/terrain_apply"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.078"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView5"
+        app:layout_constraintVertical_bias="0.408">
+
+        <CheckBox
+            android:id="@+id/checkBoxForest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:drawableStart="@drawable/forest_smaller"
+            android:text="Forest"
+            app:layout_constraintBottom_toTopOf="@+id/checkBox2"
+            app:layout_constraintTop_toBottomOf="@+id/textView5"
+            tools:layout_editor_absoluteX="19dp" />/>
+
+        <CheckBox
+            android:id="@+id/checkBoxTown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:drawableStart="@drawable/town_smaller"
+            android:text="Town"
+            tools:layout_editor_absoluteX="19dp"
+            tools:layout_editor_absoluteY="226dp" />
+
+        <CheckBox
+            android:id="@+id/checkBoxCity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:drawableStart="@drawable/city_smaller"
+            android:text="City"
+            tools:layout_editor_absoluteX="19dp"
+            tools:layout_editor_absoluteY="281dp" />/>
+
+        <CheckBox
+            android:id="@+id/checkBoxPlain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:drawableStart="@drawable/plain_smaller"
+            android:text="Plain"
+            tools:layout_editor_absoluteX="19dp"
+            tools:layout_editor_absoluteY="341dp" />/>
+
+        <CheckBox
+            android:id="@+id/checkBoxSwamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:drawableStart="@drawable/swamp_smaller"
+            android:text="Swamp"
+            tools:layout_editor_absoluteX="19dp"
+            tools:layout_editor_absoluteY="170dp" />/>
+
+        <CheckBox
+            android:id="@+id/checkBoxMinorRiver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:drawableStart="@drawable/minor_river_smaller"
+            android:text="Minor river crossing"
+            tools:layout_editor_absoluteX="181dp"
+            tools:layout_editor_absoluteY="112dp" />/>
+
+        <CheckBox
+            android:id="@+id/checkBoxMajorRiver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/major_river_smaller"
+            android:text="Major river crossing"
+            tools:layout_editor_absoluteX="181dp"
+            tools:layout_editor_absoluteY="178dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/terrainlayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/terrain_apply"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView5"
+        app:layout_constraintVertical_bias="0.297">
+
+        <CheckBox
+            android:id="@+id/checkBoxDefenseWorks1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:drawableStart="@drawable/defensive_works_smaller"
+            android:text="Defence works 1"
+            app:layout_constraintBottom_toTopOf="@+id/checkBox2"
+            app:layout_constraintTop_toBottomOf="@+id/textView5"
+            tools:layout_editor_absoluteX="19dp" />/>
+
+        <CheckBox
+            android:id="@+id/checkBoxDefenseWorks3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:drawableStart="@drawable/defensive_works_smaller"
+            android:text="Defence works 3"
+            tools:layout_editor_absoluteX="19dp"
+            tools:layout_editor_absoluteY="226dp" />
+
+        <CheckBox
+            android:id="@+id/bridgeExists"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:drawableStart="@drawable/bridge_smaller"
+            android:text="Intact bridge\navailable for\nriver crossing"
+            tools:layout_editor_absoluteX="19dp"
+            tools:layout_editor_absoluteY="226dp" />
+
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

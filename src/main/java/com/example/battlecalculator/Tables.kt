@@ -4,34 +4,35 @@ package com.example.battlecalculator
 
 class Tables {
 
-    fun disengage(posture: PostureEnum, unitType: UnitTypeEnum) {
+    private class DisengagementResultRangeCell(f1upperLimit: Int, s0lowerLimit: Int) {
+        var f1upperLimit: Int = f1upperLimit
+        var s0lowerLimit: Int = s0lowerLimit
 
-        class disengagementResultRangeCell(f1upperLimit: Int, s0lowerLimit: Int) {
-            var f1upperLimit: Int = f1upperLimit
-            var s0lowerLimit: Int = s0lowerLimit
+    }
 
-        }
+    private val disengagementTable = getDisengagementTable()
 
+    private fun getDisengagementTable(): HashMap<PostureEnum,HashMap<UnitTypeEnum,DisengagementResultRangeCell>> {
         // First ROW of cells
-        val INF_ADEF_CELL = disengagementResultRangeCell(4, 7)
-        val INF_MOV_CELL = disengagementResultRangeCell(4, 8)
-        val INF_DEF_CELL = disengagementResultRangeCell(5, 10)
-        val INF_OTHER_CELL = disengagementResultRangeCell(6, 11)
+        val INF_ADEF_CELL = DisengagementResultRangeCell(4, 7)
+        val INF_MOV_CELL = DisengagementResultRangeCell(4, 8)
+        val INF_DEF_CELL = DisengagementResultRangeCell(5, 10)
+        val INF_OTHER_CELL = DisengagementResultRangeCell(6, 11)
 
         // Second ROW of cells
-        val ARM_ADEF_CELL = disengagementResultRangeCell(2, 5)
-        val ARM_MOV_CELL = disengagementResultRangeCell(2, 6)
-        val ARM_DEF_CELL = disengagementResultRangeCell(3, 8)
-        val ARM_OTHER_CELL = disengagementResultRangeCell(4, 9)
+        val ARM_ADEF_CELL = DisengagementResultRangeCell(2, 5)
+        val ARM_MOV_CELL = DisengagementResultRangeCell(2, 6)
+        val ARM_DEF_CELL = DisengagementResultRangeCell(3, 8)
+        val ARM_OTHER_CELL = DisengagementResultRangeCell(4, 9)
 
         // Third ROW of cells
-        val RECON_ADEF_CELL = disengagementResultRangeCell(1, 4)
-        val RECON_MOV_CELL = disengagementResultRangeCell(1, 5)
-        val RECON_DEF_CELL = disengagementResultRangeCell(2, 7)
-        val RECON_OTHER_CELL = disengagementResultRangeCell(3, 8)
+        val RECON_ADEF_CELL = DisengagementResultRangeCell(1, 4)
+        val RECON_MOV_CELL = DisengagementResultRangeCell(1, 5)
+        val RECON_DEF_CELL = DisengagementResultRangeCell(2, 7)
+        val RECON_OTHER_CELL = DisengagementResultRangeCell(3, 8)
 
         // ADEF_REC_SCR column
-        val ADEF_REC_SCR_column : HashMap<UnitTypeEnum,disengagementResultRangeCell> = HashMap<UnitTypeEnum,disengagementResultRangeCell>()
+        val ADEF_REC_SCR_column : HashMap<UnitTypeEnum,DisengagementResultRangeCell> = HashMap<UnitTypeEnum,DisengagementResultRangeCell>()
 
         ADEF_REC_SCR_column[UnitTypeEnum.INFANTRY] = INF_ADEF_CELL
         ADEF_REC_SCR_column[UnitTypeEnum.MOTORIZED] = INF_ADEF_CELL
@@ -46,7 +47,7 @@ class Tables {
         ADEF_REC_SCR_column[UnitTypeEnum.RECON] = RECON_ADEF_CELL
 
         // MOV_TAC column
-        val MOV_TAC_column : HashMap<UnitTypeEnum,disengagementResultRangeCell> = HashMap<UnitTypeEnum,disengagementResultRangeCell>()
+        val MOV_TAC_column : HashMap<UnitTypeEnum,DisengagementResultRangeCell> = HashMap<UnitTypeEnum,DisengagementResultRangeCell>()
 
         MOV_TAC_column[UnitTypeEnum.INFANTRY] = INF_MOV_CELL
         MOV_TAC_column[UnitTypeEnum.MOTORIZED] = INF_MOV_CELL
@@ -61,7 +62,7 @@ class Tables {
         MOV_TAC_column[UnitTypeEnum.RECON] = RECON_MOV_CELL
 
         // DEF_MASL column
-        val DEF_MASL_column : HashMap<UnitTypeEnum,disengagementResultRangeCell> = HashMap<UnitTypeEnum,disengagementResultRangeCell>()
+        val DEF_MASL_column : HashMap<UnitTypeEnum,DisengagementResultRangeCell> = HashMap<UnitTypeEnum,DisengagementResultRangeCell>()
         DEF_MASL_column[UnitTypeEnum.INFANTRY] = INF_DEF_CELL
         DEF_MASL_column[UnitTypeEnum.MOTORIZED] = INF_DEF_CELL
         DEF_MASL_column[UnitTypeEnum.TOWED_ARTILLERY] = INF_DEF_CELL
@@ -75,7 +76,7 @@ class Tables {
         DEF_MASL_column[UnitTypeEnum.RECON] = RECON_DEF_CELL
 
         // OTHER column
-        val OTHER_column : HashMap<UnitTypeEnum,disengagementResultRangeCell> = HashMap<UnitTypeEnum,disengagementResultRangeCell>()
+        val OTHER_column : HashMap<UnitTypeEnum,DisengagementResultRangeCell> = HashMap<UnitTypeEnum,DisengagementResultRangeCell>()
         OTHER_column[UnitTypeEnum.INFANTRY] = INF_OTHER_CELL
         OTHER_column[UnitTypeEnum.MOTORIZED] = INF_OTHER_CELL
         OTHER_column[UnitTypeEnum.TOWED_ARTILLERY] = INF_OTHER_CELL
@@ -88,7 +89,7 @@ class Tables {
 
         OTHER_column[UnitTypeEnum.RECON] = RECON_OTHER_CELL
 
-        val disengagementTable:HashMap<PostureEnum,HashMap<UnitTypeEnum,disengagementResultRangeCell>> = HashMap<PostureEnum,HashMap<UnitTypeEnum,disengagementResultRangeCell>>()
+        val disengagementTable:HashMap<PostureEnum,HashMap<UnitTypeEnum,DisengagementResultRangeCell>> = HashMap<PostureEnum,HashMap<UnitTypeEnum,DisengagementResultRangeCell>>()
 
         disengagementTable[PostureEnum.ADEF] = ADEF_REC_SCR_column
         disengagementTable[PostureEnum.REC] = ADEF_REC_SCR_column
@@ -106,7 +107,8 @@ class Tables {
         disengagementTable[PostureEnum.REFT] = OTHER_column
         disengagementTable[PostureEnum.ROAD] = OTHER_column
 
-
+        return disengagementTable
     }
+
 
 }

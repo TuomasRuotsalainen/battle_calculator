@@ -5,6 +5,3 @@
         android:left="0dp" />
     <item android:drawable="@drawable/screen_smaller" android:left="50dp" />
 </layer-list>
-
-<!--
- ->
