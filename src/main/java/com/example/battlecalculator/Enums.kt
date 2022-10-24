@@ -7,3 +7,7 @@ enum class PostureEnum {
 enum class UnitTypeEnum {
     INFANTRY, MOTORIZED, TOWED_ARTILLERY, HELICOPTER, ARMOR, MECHANIZED, OTHER_ARTILLERY, RECON, HQ
 }
+
+enum class Alliances {
+    NATO, PACT
+}

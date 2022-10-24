@@ -11,7 +11,7 @@ class OrderOfBattle {
             "alliance_name" : "NATO",
             "level_1" : [
                 {
-                    "name" : "I Netherlands Corps",
+                    "name" : "NL I",
                     "level_2" : [
                         {
                             "name" : "1 PtsInf Division",
@@ -53,6 +53,50 @@ class OrderOfBattle {
                             ]
                         }
                     ]
+                },
+                {
+                    "name" : "WG I",
+                    "level_2" : [
+                        {
+                            "name" : "7 Panzer",
+                            "level_3" : [
+                                {
+                                    "name" : "19 PzGren",
+                                    "level_4" : [
+                                        {
+                                            "name" : "12 Battalion",
+                                            "type" : "ARMOR",
+                                            "strength" : "4-5",
+                                            "image" : "foobar"
+                                        },
+                                        {
+                                            "name" : "13 Battalion",
+                                            "type" : "ARMOR",
+                                            "strength" : "4-7",
+                                            "image" : "foobar2"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name" : "20 Panzer",
+                                    "level_4" : [
+                                        {
+                                            "name" : "2 Battalion",
+                                            "type" : "ARMOR",
+                                            "strength" : "4-5",
+                                            "image" : "foobar"
+                                        },
+                                        {
+                                            "name" : "3 Battalion",
+                                            "type" : "ARMOR",
+                                            "strength" : "4-7",
+                                            "image" : "foobar2"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         },
@@ -65,13 +109,33 @@ class OrderOfBattle {
 
         private val klaxon = Klaxon()
 
-        private val element = klaxon.parseArray<WelcomeElement>(oobJSON)!!
+        private val elements = klaxon.parseArray<OOBData>(oobJSON)!!
 
-    fun getOOB() : List<WelcomeElement> {
-        return element
+    fun getOOBs() : List<OOBData> {
+        return elements
     }
 
-    data class WelcomeElement (
+    fun getOOB(alliance: Alliances) : OOBData {
+        for (element in elements) {
+            if (element.allianceName == alliance.toString()) {
+                return element
+            }
+        }
+
+        throw Exception("No OOB found")
+    }
+
+    fun getLevel2(level1 : Level1, name : String): Level2 {
+        for (level2 in level1.level2) {
+            if (level2.name == name) {
+                return level2
+            }
+        }
+
+        throw Exception("Level 2 not found")
+    }
+
+    data class OOBData (
         @Json(name = "alliance_name")
         val allianceName: String,
 

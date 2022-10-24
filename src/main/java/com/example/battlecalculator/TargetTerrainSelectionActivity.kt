@@ -68,7 +68,7 @@ class TargetTerrainSelectionActivity : AppCompatActivity() {
 
         val applyButton = findViewById<Button>(R.id.terrain_apply)
 
-        val intent = Intent(this, GroundCombatActivity::class.java)
+        val intent = Intent(this, UnitSelectionActivity::class.java)
         applyButton.setOnClickListener{
             //Toast.makeText(this, "Unit type: $radioButtonStr, attack strength: ${strengths.first}, defense strength: ${strengths.second}", Toast.LENGTH_LONG*10).show()
             startActivity(intent)
