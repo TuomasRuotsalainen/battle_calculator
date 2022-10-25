@@ -17,11 +17,34 @@ class UnitSelectionActivity : AppCompatActivity() {
         setContentView(R.layout.activity_unit_selection)
 
         // TODO get this properly
-        val oob = OrderOfBattle().getOOB(Alliances.NATO)
+        val oob = OrderOfBattle()
+        val allianceOob = oob.getOOB(Alliances.NATO)
 
         val level1RadioGroup = findViewById<RadioGroup>(R.id.level_1_radio_group)
+        val level2RadioGroup = findViewById<RadioGroup>(R.id.level_2_radio_group)
+        val level3RadioGroup = findViewById<RadioGroup>(R.id.level_3_radio_group)
+        //val level4RadioGroup = findViewById<RadioGroup>(R.id.level_4_radio_group)
 
-        setLevel1RadioButtons(oob.level1!!, level1RadioGroup)
+        // Init level 1
+        setLevel1RadioButtons(allianceOob.level1!!, level1RadioGroup, level2RadioGroup, level3RadioGroup)
+
+        val checkedLevel1ButtonId = level1RadioGroup.checkedRadioButtonId
+        val checkedLevel1Button = findViewById<RadioButton>(checkedLevel1ButtonId)
+
+        val activeLevel1 = oob.getLevel1ByName(allianceOob, checkedLevel1Button.text.toString())
+
+        // Init level 2
+        //setLevel2RadioButtons(activeLevel1, level2RadioGroup, level3RadioGroup)
+
+        val checkedLevel2ButtonId = level2RadioGroup.checkedRadioButtonId
+        val checkedLevel2Button = findViewById<RadioButton>(checkedLevel2ButtonId)
+
+        val activeLevel2 = oob.getLevel2ByName(activeLevel1, checkedLevel2Button.text.toString())
+
+        // Init level 3
+        //setLevel3RadioButtons(activeLevel2, level3RadioGroup)
+        val checkedLevel3ButtonId = level3RadioGroup.checkedRadioButtonId
+        val checkedLevel3Button = findViewById<RadioButton>(checkedLevel2ButtonId)
 
 
         //setLevel2RadioButtons
@@ -53,7 +76,12 @@ class UnitSelectionActivity : AppCompatActivity() {
         }*/
     }
 
-    private fun setLevel1RadioButtons(level1List: List<OrderOfBattle.Level1>, level1RadioGroup: RadioGroup) {
+    private fun setLevel1RadioButtons(
+        level1List: List<OrderOfBattle.Level1>,
+        level1RadioGroup: RadioGroup,
+        level2RadioGroup: RadioGroup,
+        level3RadioGroup: RadioGroup) {
+
         level1RadioGroup.removeAllViews()
 
         var initialized = false
@@ -64,6 +92,56 @@ class UnitSelectionActivity : AppCompatActivity() {
             radioButton.text = level1.name
             level1RadioGroup.addView(radioButton)
 
+            radioButton.setOnClickListener {
+                setLevel2RadioButtons(level1, level2RadioGroup, level3RadioGroup)
+            }
+
+            if (!initialized) {
+                radioButton.isChecked = true
+                initialized = true
+                setLevel2RadioButtons(level1, level2RadioGroup, level3RadioGroup)
+            }
+        }
+    }
+
+    private fun setLevel2RadioButtons(
+        level1: OrderOfBattle.Level1,
+        level2RadioGroup: RadioGroup,
+        level3RadioGroup: RadioGroup) {
+
+        level2RadioGroup.removeAllViews()
+
+        var initialized = false
+
+        for (level2 in level1.level2) {
+            val radioButton = RadioButton(this)
+            radioButton.id = View.generateViewId()
+            radioButton.text = level2.name
+            level2RadioGroup.addView(radioButton)
+
+            radioButton.setOnClickListener {
+                setLevel3RadioButtons(level2, level3RadioGroup)
+            }
+
+            if (!initialized) {
+                radioButton.isChecked = true
+                initialized = true
+                setLevel3RadioButtons(level2, level3RadioGroup)
+            }
+        }
+    }
+
+    private fun setLevel3RadioButtons(level2: OrderOfBattle.Level2, level3RadioGroup: RadioGroup) {
+        level3RadioGroup.removeAllViews()
+
+        var initialized = false
+
+        for (level3 in level2.level3) {
+            val radioButton = RadioButton(this)
+            radioButton.id = View.generateViewId()
+            radioButton.text = level3.name
+            level3RadioGroup.addView(radioButton)
+
             if (!initialized) {
                 radioButton.isChecked = true
                 initialized = true
@@ -71,16 +149,16 @@ class UnitSelectionActivity : AppCompatActivity() {
         }
     }
 
-    private fun setLevel2RadioButtons(level2List: List<OrderOfBattle.Level2>, level1RadioGroup: RadioGroup) {
-        level1RadioGroup.removeAllViews()
+    private fun setLevel4RadioButtons(level3: OrderOfBattle.Level3, level4RadioGroup: RadioGroup) {
+        level4RadioGroup.removeAllViews()
 
         var initialized = false
 
-        for (level2 in level2List) {
+        for (level4 in level3.level4) {
             val radioButton = RadioButton(this)
             radioButton.id = View.generateViewId()
-            radioButton.text = level2.name
-            level1RadioGroup.addView(radioButton)
+            radioButton.text = level4.name
+            level4RadioGroup.addView(radioButton)
 
             if (!initialized) {
                 radioButton.isChecked = true

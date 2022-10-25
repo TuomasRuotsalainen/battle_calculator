@@ -14,7 +14,7 @@ class OrderOfBattle {
                     "name" : "NL I",
                     "level_2" : [
                         {
-                            "name" : "1 PtsInf Division",
+                            "name" : "1 PtsInf",
                             "level_3" : [
                                 {
                                     "name" : "11 PtsInf Brigade",
@@ -44,6 +44,45 @@ class OrderOfBattle {
                                         },
                                         {
                                             "name" : "3 Battalion",
+                                            "type" : "ARMOR",
+                                            "strength" : "4-7",
+                                            "image" : "foobar2"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "name" : "4 PtsInf",
+                            "level_3" : [
+                                {
+                                    "name" : "41 Pantser",
+                                    "level_4" : [
+                                        {
+                                            "name" : "14 Battalion",
+                                            "type" : "ARMOR",
+                                            "strength" : "4-5",
+                                            "image" : "foobar"
+                                        },
+                                        {
+                                            "name" : "12 Battalion",
+                                            "type" : "ARMOR",
+                                            "strength" : "4-7",
+                                            "image" : "foobar2"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name" : "42 PtsInf",
+                                    "level_4" : [
+                                        {
+                                            "name" : "22 Battalion",
+                                            "type" : "ARMOR",
+                                            "strength" : "4-5",
+                                            "image" : "foobar"
+                                        },
+                                        {
+                                            "name" : "32 Battalion",
                                             "type" : "ARMOR",
                                             "strength" : "4-7",
                                             "image" : "foobar2"
@@ -125,9 +164,19 @@ class OrderOfBattle {
         throw Exception("No OOB found")
     }
 
-    fun getLevel2(level1 : Level1, name : String): Level2 {
-        for (level2 in level1.level2) {
-            if (level2.name == name) {
+    fun getLevel1ByName(oobData: OOBData, name : String): Level1 {
+        for (level1 in oobData.level1!!) {
+            if (level1.name == name) {
+                return level1
+            }
+        }
+        throw Exception("Level 1 not found")
+
+    }
+
+    fun getLevel2ByName(level1 : Level1, level2Name : String): Level2 {
+        for (level2 in level1.level2!!) {
+            if (level2.name == level2Name) {
                 return level2
             }
         }
