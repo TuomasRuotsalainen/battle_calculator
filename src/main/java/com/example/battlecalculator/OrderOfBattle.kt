@@ -184,6 +184,16 @@ class OrderOfBattle {
         throw Exception("Level 2 not found")
     }
 
+    fun getLevel3ByName(level2 : Level2, level3Name : String): Level3 {
+        for (level3 in level2.level3!!) {
+            if (level3.name == level3Name) {
+                return level3
+            }
+        }
+
+        throw Exception("Level 3 not found")
+    }
+
     data class OOBData (
         @Json(name = "alliance_name")
         val allianceName: String,

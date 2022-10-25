@@ -84,7 +84,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/level_2_radio_group"
-        app:layout_constraintBottom_toTopOf="@+id/retreat_before_combat_apply"
+        app:layout_constraintBottom_toTopOf="@+id/level_4_radio_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         >
@@ -98,6 +98,29 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="8 Panzer" />
+
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/level_4_radio_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/level_3_radio_group"
+        app:layout_constraintBottom_toTopOf="@+id/retreat_before_combat_apply"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        >
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="7 Btl" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="8 Btl" />
 
     </RadioGroup>
 
