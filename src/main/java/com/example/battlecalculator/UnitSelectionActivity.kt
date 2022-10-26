@@ -29,6 +29,18 @@ class UnitSelectionActivity : AppCompatActivity() {
         setLevel1RadioButtons(allianceOob.level1!!,
             level1RadioGroup, level2RadioGroup, level3RadioGroup, level4RadioGroup)
 
+        val commitButton = findViewById<Button>(R.id.retreat_before_combat_apply)
+
+        commitButton.setOnClickListener {
+            val checkedLevel4ButtonId = level4RadioGroup.checkedRadioButtonId
+            val checkedButton = findViewById<Button>(checkedLevel4ButtonId)
+
+            val selectedUnitName = checkedButton.text.toString()
+
+        }
+
+
+        /*
         val checkedLevel1ButtonId = level1RadioGroup.checkedRadioButtonId
         val checkedLevel1Button = findViewById<RadioButton>(checkedLevel1ButtonId)
 
@@ -43,6 +55,7 @@ class UnitSelectionActivity : AppCompatActivity() {
         // Init level 3
         val checkedLevel3ButtonId = level3RadioGroup.checkedRadioButtonId
         val checkedLevel3Button = findViewById<RadioButton>(checkedLevel2ButtonId)
+        */
 
         //val activeLevel3 = oob.getLevel3ByName(activeLevel2, checkedLevel3Button.text.toString())
 

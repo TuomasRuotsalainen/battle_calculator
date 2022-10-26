@@ -3,6 +3,23 @@ package com.example.battlecalculator
 import org.json.JSONObject
 import com.beust.klaxon.*
 
+class Unit(typeStr: String, strengthStr : String, val name: String) {
+
+    private val ok = checker(strengthStr)
+
+    val type : UnitTypeEnum = UnitTypeEnum.valueOf(typeStr)
+    val attack : Int = strengthStr[0].digitToInt()
+    val defense : Int = strengthStr[2].digitToInt()
+
+    private fun checker(strengthStr : String): Boolean {
+        if (strengthStr.length != 3) {
+            throw Exception("strength value of unit $name is not of length 3")
+        }
+
+        return true
+    }
+}
+
 class OrderOfBattle {
 
     private val oobJSON = """
@@ -20,13 +37,13 @@ class OrderOfBattle {
                                     "name" : "11 PtsInf Brigade",
                                     "level_4" : [
                                         {
-                                            "name" : "12 Battalion",
+                                            "name" : "121",
                                             "type" : "ARMOR",
                                             "strength" : "4-5",
                                             "image" : "foobar"
                                         },
                                         {
-                                            "name" : "13 Battalion",
+                                            "name" : "122",
                                             "type" : "ARMOR",
                                             "strength" : "4-7",
                                             "image" : "foobar2"
@@ -37,13 +54,13 @@ class OrderOfBattle {
                                     "name" : "12 PtsInf Brigade",
                                     "level_4" : [
                                         {
-                                            "name" : "2 Battalion",
+                                            "name" : "123",
                                             "type" : "ARMOR",
                                             "strength" : "4-5",
                                             "image" : "foobar"
                                         },
                                         {
-                                            "name" : "3 Battalion",
+                                            "name" : "124",
                                             "type" : "ARMOR",
                                             "strength" : "4-7",
                                             "image" : "foobar2"
@@ -59,13 +76,13 @@ class OrderOfBattle {
                                     "name" : "41 Pantser",
                                     "level_4" : [
                                         {
-                                            "name" : "14 Battalion",
+                                            "name" : "145",
                                             "type" : "ARMOR",
                                             "strength" : "4-5",
                                             "image" : "foobar"
                                         },
                                         {
-                                            "name" : "12 Battalion",
+                                            "name" : "146",
                                             "type" : "ARMOR",
                                             "strength" : "4-7",
                                             "image" : "foobar2"
@@ -76,13 +93,13 @@ class OrderOfBattle {
                                     "name" : "42 PtsInf",
                                     "level_4" : [
                                         {
-                                            "name" : "22 Battalion",
+                                            "name" : "345",
                                             "type" : "ARMOR",
                                             "strength" : "4-5",
                                             "image" : "foobar"
                                         },
                                         {
-                                            "name" : "32 Battalion",
+                                            "name" : "346",
                                             "type" : "ARMOR",
                                             "strength" : "4-7",
                                             "image" : "foobar2"
@@ -103,13 +120,13 @@ class OrderOfBattle {
                                     "name" : "19 PzGren",
                                     "level_4" : [
                                         {
-                                            "name" : "12 Battalion",
+                                            "name" : "76",
                                             "type" : "ARMOR",
                                             "strength" : "4-5",
                                             "image" : "foobar"
                                         },
                                         {
-                                            "name" : "13 Battalion",
+                                            "name" : "66",
                                             "type" : "ARMOR",
                                             "strength" : "4-7",
                                             "image" : "foobar2"
@@ -120,13 +137,13 @@ class OrderOfBattle {
                                     "name" : "20 Panzer",
                                     "level_4" : [
                                         {
-                                            "name" : "2 Battalion",
+                                            "name" : "45",
                                             "type" : "ARMOR",
                                             "strength" : "4-5",
                                             "image" : "foobar"
                                         },
                                         {
-                                            "name" : "3 Battalion",
+                                            "name" : "46",
                                             "type" : "ARMOR",
                                             "strength" : "4-7",
                                             "image" : "foobar2"
@@ -140,7 +157,8 @@ class OrderOfBattle {
             ]
         },
         {
-            "alliance_name" : "PACT"
+            "alliance_name" : "PACT",
+            "level_1" : []
         }
     ]
     """
@@ -148,14 +166,12 @@ class OrderOfBattle {
 
         private val klaxon = Klaxon()
 
-        private val elements = klaxon.parseArray<OOBData>(oobJSON)!!
+        private val alliances = klaxon.parseArray<OOBData>(oobJSON)!!
 
-    fun getOOBs() : List<OOBData> {
-        return elements
-    }
+        val unitIndex = buildUnitIndex()
 
     fun getOOB(alliance: Alliances) : OOBData {
-        for (element in elements) {
+        for (element in alliances) {
             if (element.allianceName == alliance.toString()) {
                 return element
             }
@@ -164,6 +180,28 @@ class OrderOfBattle {
         throw Exception("No OOB found")
     }
 
+    private fun buildUnitIndex() : HashMap<String, Unit> {
+        val unitIndex = HashMap<String, Unit>()
+        for (alli in alliances) {
+            if (alli.level1 == null) {
+                throw Exception("Level 1 of alliance ${alli.allianceName} is null")
+            }
+            for (level1 in alli.level1) {
+                for (level2 in level1.level2) {
+                    for (level3 in level2.level3) {
+                        for (level4 in level3.level4) {
+                            val unit = Unit(level4.type, level4.strength, level4.name)
+                            unitIndex[unit.name] = unit
+                        }
+                    }
+                }
+            }
+        }
+
+        return unitIndex
+    }
+
+    /*
     fun getLevel1ByName(oobData: OOBData, name : String): Level1 {
         for (level1 in oobData.level1!!) {
             if (level1.name == name) {
@@ -192,7 +230,7 @@ class OrderOfBattle {
         }
 
         throw Exception("Level 3 not found")
-    }
+    }*/
 
     data class OOBData (
         @Json(name = "alliance_name")
@@ -230,5 +268,6 @@ class OrderOfBattle {
         val image: String
     )
 
-
 }
+
+
