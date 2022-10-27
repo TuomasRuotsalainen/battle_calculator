@@ -11,3 +11,11 @@ enum class UnitTypeEnum {
 enum class Alliances {
     NATO, PACT
 }
+
+enum class IntentExtraIDs {
+    GAMESTATE, UNITSELECTIONTYPE
+}
+
+enum class UnitSelectionTypes {
+    ATTACKER, DEFENDER
+}

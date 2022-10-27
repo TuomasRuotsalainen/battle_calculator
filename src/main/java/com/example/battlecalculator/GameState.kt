@@ -1,7 +1,7 @@
 package com.example.battlecalculator
 
-import org.json.JSONObject
-import com.beust.klaxon.*
+import android.util.Log
+import com.example.battlecalculator.BuildConfig.DEBUG
 
 
 /*
@@ -12,6 +12,10 @@ zulu time = 03:00, state = 1, attacking unit id = 12J, unit ids in target hex 13
 
 */
 
+fun GameState() : GameState {
+    val stateStr = "Z=0300;S=1;AU=null;DU=null"
+    return GameState(stateStr)
+}
 
 class GameState(stateString : String) {
 
@@ -19,43 +23,46 @@ class GameState(stateString : String) {
         AU, DU
     }
 
-    val dataMap = getDataMap(stateString)
+    private val dataMap = getDataMap(stateString)
     val oob = OrderOfBattle()
 
-    val attackingUnit : Unit? = if(dataMap[DataIDs.AU.toString()] != "null") oob.unitIndex[dataMap[DataIDs.AU.toString()]] else null
-    val defendingUnits = getDefUnits()
+    var attackingUnit : Unit? = if(dataMap[DataIDs.AU.toString()] != "null") oob.unitIndex[dataMap[DataIDs.AU.toString()]] else null
+    var defendingUnits = getDefUnits()
 
-    fun getStateString() : String {
+    fun getStateString(): String {
         val attackingUnitStr = attackingUnit?.name ?: ""
         val defendingUnitsStr = getDefUnitsStr()
-        val stateStr = "Z=0300;S=1;AU=$attackingUnitStr;DU=$defendingUnitsStr"
 
-        return stateStr
+        return "Z=0300;S=1;AU=$attackingUnitStr;DU=$defendingUnitsStr"
     }
 
-    private fun getDefUnitsStr() {
+
+    private fun getDefUnitsStr() :String {
         var defUnitStr = ""
-        for (i in 0..defendingUnits.size) {
+        for (i in defendingUnits.indices) {
             defUnitStr += defendingUnits[i].name
             if (i<defendingUnits.size) {
                 defUnitStr += ","
             }
         }
+
+        return defUnitStr
     }
 
     private fun getDefUnits(): List<Unit> {
         val unitList = mutableListOf<Unit>()
-        val duStr = dataMap[DataIDs.DU.toString()]
+        val duStr = dataMap[DataIDs.DU.toString()] ?: throw Exception("duStr is null")
         if (duStr == "null") {
             return unitList
         }
 
-        if (duStr == null) {
-            throw Exception("duStr is null")
-        }
+        Log.d("TUOMAS TAG duStr", duStr)
 
         val duUnitsIds = duStr.split(",")
         for (duUnitId in duUnitsIds) {
+            if (duUnitId == "") {
+                continue
+            }
             val unit = oob.unitIndex[duUnitId] ?: throw Exception("Can't find unit $duUnitId from oob")
             unitList.add(unit)
         }
@@ -68,7 +75,7 @@ class GameState(stateString : String) {
         val dataMap = HashMap<String, String>()
 
         for (dataCell in dataCells) {
-            val dataCellContents = dataCell.split("")
+            val dataCellContents = dataCell.split("=")
             if (dataCellContents.size != 2) {
                 throw Exception("Encountered dataCell with bad content length: $dataCell")
             }

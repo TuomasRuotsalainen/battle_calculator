@@ -14,6 +14,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d("TUOMAS TAG", "Getting oob")
 
+        val state = GameState()
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -21,6 +23,9 @@ class MainActivity : AppCompatActivity() {
         val artillerBombardmentButton = findViewById<Button>(R.id.artillerBomabrdmentButton)
 
         val intent = Intent(this, UnitSelectionActivity::class.java)
+        intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), state.getStateString())
+        intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.ATTACKER.toString())
+
         groundAttackButton.setOnClickListener{
             startActivity(intent)
             finish()

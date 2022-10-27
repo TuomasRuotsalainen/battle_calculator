@@ -7,14 +7,18 @@ import android.view.View
 import android.widget.Button
 import android.widget.RadioButton
 import android.widget.RadioGroup
-import android.widget.SeekBar
-import android.widget.Toast
+import com.example.battlecalculator.Utils.IntentTools.getStringFromIntent
 
 class UnitSelectionActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_unit_selection)
+
+        val gameStateString = getStringFromIntent(intent, IntentExtraIDs.GAMESTATE.toString())
+        val unitSelectionType = getStringFromIntent(intent, IntentExtraIDs.UNITSELECTIONTYPE.toString())
+
+        val gameState = GameState(gameStateString)
 
         // TODO get this properly
         val oob = OrderOfBattle()
@@ -31,63 +35,30 @@ class UnitSelectionActivity : AppCompatActivity() {
 
         val commitButton = findViewById<Button>(R.id.retreat_before_combat_apply)
 
+        val intent = Intent(this, UnitSelectionActivity::class.java)
+
         commitButton.setOnClickListener {
             val checkedLevel4ButtonId = level4RadioGroup.checkedRadioButtonId
             val checkedButton = findViewById<Button>(checkedLevel4ButtonId)
 
             val selectedUnitName = checkedButton.text.toString()
 
-        }
+            val selectedUnit = gameState.oob.unitIndex[selectedUnitName]
 
-
-        /*
-        val checkedLevel1ButtonId = level1RadioGroup.checkedRadioButtonId
-        val checkedLevel1Button = findViewById<RadioButton>(checkedLevel1ButtonId)
-
-        val activeLevel1 = oob.getLevel1ByName(allianceOob, checkedLevel1Button.text.toString())
-
-        // Init level 2
-        val checkedLevel2ButtonId = level2RadioGroup.checkedRadioButtonId
-        val checkedLevel2Button = findViewById<RadioButton>(checkedLevel2ButtonId)
-
-        val activeLevel2 = oob.getLevel2ByName(activeLevel1, checkedLevel2Button.text.toString())
-
-        // Init level 3
-        val checkedLevel3ButtonId = level3RadioGroup.checkedRadioButtonId
-        val checkedLevel3Button = findViewById<RadioButton>(checkedLevel2ButtonId)
-        */
-
-        //val activeLevel3 = oob.getLevel3ByName(activeLevel2, checkedLevel3Button.text.toString())
-
-        // Init level 4
-
-        //setLevel2RadioButtons
-
-        /*
-        for (level1 in oob.level1!!) {
-            val radioButton = RadioButton(this)
-            radioButton.id = View.generateViewId()
-            radioButton.text = level1.name
-            level1RadioGroup.addView(radioButton)
-        }*/
-
-
-
-        /*
-        //val intent = Intent(this, PostureAndAttackTypeActivity::class.java)
-        disengagementApplyButton.setOnClickListener{
-            val radioButton = checkRadioButton()
-            if (radioButton == R.id.retreat_before_combat_radio_zero) {
-                // No retreats, go to combat
-            } else if (radioButton == R.id.retreat_before_combat_radio_one) {
-                // One retreat
+            if (unitSelectionType == UnitSelectionTypes.ATTACKER.toString()) {
+                gameState.attackingUnit = selectedUnit
+                gameState.getStateString()
             } else {
-                // Two retreats
+                // Unit selection type defender
+                throw Exception("Not implemented")
             }
-            //startActivity(intent)
 
-            //finish()
-        }*/
+            intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+            intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.DEFENDER.toString())
+
+            startActivity(intent)
+            finish()
+        }
     }
 
     private fun setLevel1RadioButtons(
