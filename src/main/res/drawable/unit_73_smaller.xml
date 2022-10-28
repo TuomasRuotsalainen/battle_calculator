@@ -1,0 +1,8 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/unit_73"
+        android:drawable="@drawable/unit_73"
+        android:width="@dimen/posture_size"
+        android:height="@dimen/posture_size">
+    </item>
+</layer-list>

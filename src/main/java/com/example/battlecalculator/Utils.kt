@@ -9,4 +9,17 @@ class Utils {
                 ?: throw Exception("Gamestate intent string is null for id $id")
         }
     }
+
+}
+
+class Images {
+    companion object Tools {
+        fun getImageFileName(unitName : String): String {
+            if (unitName == "") {
+                throw Exception("Tried to convert empty unitName to image file name")
+            }
+
+            return "unit_" + unitName + "_smaller"
+        }
+    }
 }

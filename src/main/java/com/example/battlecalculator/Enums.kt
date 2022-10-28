@@ -17,5 +17,5 @@ enum class IntentExtraIDs {
 }
 
 enum class UnitSelectionTypes {
-    ATTACKER, DEFENDER
+    ATTACKER, DEFENDER, UNDEFINED
 }

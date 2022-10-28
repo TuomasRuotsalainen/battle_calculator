@@ -37,13 +37,13 @@ class OrderOfBattle {
                                     "name" : "11 PtsInf Brigade",
                                     "level_4" : [
                                         {
-                                            "name" : "121",
+                                            "name" : "74",
                                             "type" : "ARMOR",
                                             "strength" : "4-5",
                                             "image" : "foobar"
                                         },
                                         {
-                                            "name" : "122",
+                                            "name" : "73",
                                             "type" : "ARMOR",
                                             "strength" : "4-7",
                                             "image" : "foobar2"
