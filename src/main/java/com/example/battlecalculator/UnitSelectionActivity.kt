@@ -2,13 +2,11 @@ package com.example.battlecalculator
 
 import android.content.Intent
 import android.graphics.drawable.Drawable
-import android.opengl.Visibility
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import com.example.battlecalculator.Utils.IntentTools.getStringFromIntent
+import androidx.core.content.res.ResourcesCompat
 
 class UnitSelectionActivity : AppCompatActivity() {
 
@@ -18,18 +16,9 @@ class UnitSelectionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_unit_selection)
 
-        val gameStateString = getStringFromIntent(intent, IntentExtraIDs.GAMESTATE.toString())
-        val unitSelectionTypeStr = getStringFromIntent(intent, IntentExtraIDs.UNITSELECTIONTYPE.toString())
-        var unitSelectionType = UnitSelectionTypes.UNDEFINED
-        if (unitSelectionTypeStr == UnitSelectionTypes.ATTACKER.toString()) {
-            unitSelectionType = UnitSelectionTypes.ATTACKER
-        } else if (unitSelectionTypeStr == UnitSelectionTypes.DEFENDER.toString()) {
-            unitSelectionType = UnitSelectionTypes.DEFENDER
-        } else {
-            throw Exception("Unit selection type from intent is UNDEFINED")
-        }
+        val unitSelectionType = Communication.getUnitSelectionType(intent)
 
-        val gameState = GameState(gameStateString)
+        val gameState = getGameState(intent)
 
         // TODO get this properly
         val oob = OrderOfBattle()
@@ -72,12 +61,13 @@ class UnitSelectionActivity : AppCompatActivity() {
 
                 val selectedUnitName = selectedUnits[0]
                 val selectedUnit = gameState.oob.unitIndex[selectedUnitName]
+                val unitState = UnitState(selectedUnit, null)
 
-                gameState.attackingUnit = selectedUnit
+                gameState.attackingUnit = unitState
 
-                val intent = Intent(this, UnitSelectionActivity::class.java)
+                val intent = Intent(this, PostureAndAttackTypeActivity::class.java)
                 intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
-                intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.DEFENDER.toString())
+                intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.ATTACKER.toString())
                 startActivity(intent)
                 finish()
 
@@ -86,11 +76,12 @@ class UnitSelectionActivity : AppCompatActivity() {
                     for (selectedUnit in selectedUnits) {
                         val unit = gameState.oob.unitIndex[selectedUnit]
                             ?: throw Exception("Couldn't find unit with name $selectedUnit when adding defending units")
+                        val unitState = UnitState(unit, null)
 
-                        gameState.defendingUnits.add(unit)
+                        gameState.defendingUnits.add(unitState)
                     }
 
-                    val intent = Intent(this, DisengagementActivity::class.java)
+                    val intent = Intent(this, PostureAndAttackTypeActivity::class.java)
                     intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
                     startActivity(intent)
                     finish()
@@ -245,19 +236,24 @@ class UnitSelectionActivity : AppCompatActivity() {
         val unitImage = ImageView(this)
         unitImage.id = View.generateViewId()
 
-        val unitDrawable = getImage(imageFileName)
+        val unitDrawable = Images.getDrawable(imageFileName, this, applicationContext, applicationInfo)
         unitImage.setImageDrawable(unitDrawable)
 
         return unitImage
     }
 
-    private fun getImage(ImageName: String): Drawable? {
-        var identifier = this.resources.getIdentifier(ImageName, "drawable", applicationInfo.packageName)
-        if (identifier == 0) {
-            Log.d("TUOMAS", "Image $ImageName not found")
-            identifier = this.resources.getIdentifier("swamp_smaller", "drawable", applicationInfo.packageName)
-        }
 
-        return getDrawable(identifier)
-    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

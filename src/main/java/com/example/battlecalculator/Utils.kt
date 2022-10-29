@@ -1,6 +1,13 @@
 package com.example.battlecalculator
 
+import android.content.Context
 import android.content.Intent
+import android.content.pm.ApplicationInfo
+import android.graphics.drawable.Drawable
+import androidx.appcompat.app.AppCompatActivity
+import android.widget.*
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
+import androidx.core.content.res.ResourcesCompat
 
 class Utils {
     companion object IntentTools {
@@ -20,6 +27,33 @@ class Images {
             }
 
             return "unit_" + unitName + "_smaller"
+        }
+
+        fun getDrawable(ImageName: String, activity: AppCompatActivity, context: Context, applicationInfo: ApplicationInfo): Drawable? {
+            var identifier = activity.resources.getIdentifier(ImageName, "drawable", applicationInfo.packageName)
+            if (identifier == 0) {
+                identifier = activity.resources.getIdentifier("swamp_smaller", "drawable", applicationInfo.packageName)
+            }
+
+            return ResourcesCompat.getDrawable(context.resources, identifier, null)
+            //return getDrawable(identifier)
+        }
+
+    }
+}
+
+class Communication {
+    companion object IntentExtras {
+        fun getUnitSelectionType(intent: Intent) : UnitSelectionTypes {
+            val unitSelectionTypeStr =
+                Utils.getStringFromIntent(intent, IntentExtraIDs.UNITSELECTIONTYPE.toString())
+            return if (unitSelectionTypeStr == UnitSelectionTypes.ATTACKER.toString()) {
+                UnitSelectionTypes.ATTACKER
+            } else if (unitSelectionTypeStr == UnitSelectionTypes.DEFENDER.toString()) {
+                UnitSelectionTypes.DEFENDER
+            } else {
+                throw Exception("Unit selection type from intent is UNDEFINED")
+            }
         }
     }
 }
