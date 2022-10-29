@@ -27,7 +27,7 @@ class GameState(stateString : String) {
     val oob = OrderOfBattle()
 
     var attackingUnit : Unit? = if(dataMap[DataIDs.AU.toString()] != "null") oob.unitIndex[dataMap[DataIDs.AU.toString()]] else null
-    var defendingUnits = getDefUnits()
+    var defendingUnits : MutableList<Unit> = getDefUnits()
 
     fun getStateString(): String {
         val attackingUnitStr = attackingUnit?.name ?: ""
@@ -49,7 +49,7 @@ class GameState(stateString : String) {
         return defUnitStr
     }
 
-    private fun getDefUnits(): List<Unit> {
+    private fun getDefUnits(): MutableList<Unit> {
         val unitList = mutableListOf<Unit>()
         val duStr = dataMap[DataIDs.DU.toString()] ?: throw Exception("duStr is null")
         if (duStr == "null") {

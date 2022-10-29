@@ -2,6 +2,7 @@ package com.example.battlecalculator
 
 import android.content.Intent
 import android.graphics.drawable.Drawable
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -10,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.battlecalculator.Utils.IntentTools.getStringFromIntent
 
 class UnitSelectionActivity : AppCompatActivity() {
+
+    private var selectedUnits = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,35 +40,67 @@ class UnitSelectionActivity : AppCompatActivity() {
         val level3RadioGroup = findViewById<RadioGroup>(R.id.level_3_radio_group)
         val level4RadioGroup = findViewById<RadioGroup>(R.id.level_4_radio_group)
 
+        val unitAdditionBtn = findViewById<Button>(R.id.add_unit)
+        val selectedView = findViewById<LinearLayout>(R.id.selected_units)
+        selectedView.removeAllViews()
+
+        if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
+            unitAdditionBtn.visibility = View.GONE
+        } else {
+            unitAdditionBtn.setOnClickListener{
+                val checkedBtn = findViewById<RadioButton>(level4RadioGroup.checkedRadioButtonId)
+                val selectedUnit = checkedBtn.text.toString()
+                if (!selectedUnits.contains(selectedUnit)) {
+                    updateSelectedView(unitSelectionType, selectedUnit)
+                    selectedUnits.add(selectedUnit)
+                }
+            }
+        }
+
         // Init level 1
         setLevel1RadioButtons(allianceOob.level1!!,
             level1RadioGroup, level2RadioGroup, level3RadioGroup, level4RadioGroup, unitSelectionType)
 
         val commitButton = findViewById<Button>(R.id.retreat_before_combat_apply)
 
-        val intent = Intent(this, UnitSelectionActivity::class.java)
-
         commitButton.setOnClickListener {
-            val checkedLevel4ButtonId = level4RadioGroup.checkedRadioButtonId
-            val checkedButton = findViewById<Button>(checkedLevel4ButtonId)
-
-            val selectedUnitName = checkedButton.text.toString()
-
-            val selectedUnit = gameState.oob.unitIndex[selectedUnitName]
 
             if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
+                if (selectedUnits.size != 1) {
+                    throw Exception("Selected units size is not 1 when committing attacking units")
+                }
+
+                val selectedUnitName = selectedUnits[0]
+                val selectedUnit = gameState.oob.unitIndex[selectedUnitName]
+
                 gameState.attackingUnit = selectedUnit
-                gameState.getStateString()
+
+                val intent = Intent(this, UnitSelectionActivity::class.java)
+                intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+                intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.DEFENDER.toString())
+                startActivity(intent)
+                finish()
+
             } else {
-                // Unit selection type defender
-                throw Exception("Not implemented")
+                if (selectedUnits.size > 0) {
+                    for (selectedUnit in selectedUnits) {
+                        val unit = gameState.oob.unitIndex[selectedUnit]
+                            ?: throw Exception("Couldn't find unit with name $selectedUnit when adding defending units")
+
+                        gameState.defendingUnits.add(unit)
+                    }
+
+                    val intent = Intent(this, DisengagementActivity::class.java)
+                    intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+                    startActivity(intent)
+                    finish()
+
+                }
             }
 
-            intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
-            intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.DEFENDER.toString())
 
-            startActivity(intent)
-            finish()
+
+
         }
     }
 
@@ -170,15 +205,25 @@ class UnitSelectionActivity : AppCompatActivity() {
             level4RadioGroup.addView(radioButton)
 
             radioButton.setOnClickListener {
-                updateSelectedView(selectionType, radioButton.text.toString())
+                if (selectionType == UnitSelectionTypes.ATTACKER) {
+                    handleLevel4ClickForAttacker(radioButton, selectionType)
+                }
             }
 
             if (!initialized) {
                 radioButton.isChecked = true
                 initialized = true
-                updateSelectedView(selectionType, radioButton.text.toString())
+                if (selectionType == UnitSelectionTypes.ATTACKER) {
+                    handleLevel4ClickForAttacker(radioButton, selectionType)
+                }
             }
         }
+    }
+
+    private fun handleLevel4ClickForAttacker(radioButton: RadioButton, selectionType: UnitSelectionTypes) {
+        selectedUnits.clear()
+        selectedUnits.add(radioButton.text.toString())
+        updateSelectedView(selectionType, radioButton.text.toString())
     }
 
     private fun updateSelectedView(selectionType: UnitSelectionTypes, unitName : String) {
@@ -187,26 +232,23 @@ class UnitSelectionActivity : AppCompatActivity() {
 
         if (selectionType == UnitSelectionTypes.ATTACKER) {
             selectedView.removeAllViews()
-            val unitImage = ImageView(this)
-            unitImage.id = View.generateViewId()
-
-            val unitDrawable = getImage(imageFileName)
-            //val unitDrawable = getDrawable(R.drawable.wg_combat_test_smaller)
-            unitImage.setImageDrawable(unitDrawable)
-
+            val unitImage = getUnitImage(imageFileName)
+            selectedView.addView(unitImage)
+        } else if (selectionType == UnitSelectionTypes.DEFENDER) {
+            val unitImage = getUnitImage(imageFileName)
             selectedView.addView(unitImage)
         }
 
-/*
-      <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/wg_combat_test_smaller"
-            tools:layout_editor_absoluteX="146dp"
-            tools:layout_editor_absoluteY="597dp" />
- */
+    }
 
+    private fun getUnitImage(imageFileName : String) : ImageView {
+        val unitImage = ImageView(this)
+        unitImage.id = View.generateViewId()
+
+        val unitDrawable = getImage(imageFileName)
+        unitImage.setImageDrawable(unitDrawable)
+
+        return unitImage
     }
 
     private fun getImage(ImageName: String): Drawable? {
@@ -215,7 +257,7 @@ class UnitSelectionActivity : AppCompatActivity() {
             Log.d("TUOMAS", "Image $ImageName not found")
             identifier = this.resources.getIdentifier("swamp_smaller", "drawable", applicationInfo.packageName)
         }
-        Log.d("IDENTIFIER", identifier.toString())
+
         return getDrawable(identifier)
     }
 }
