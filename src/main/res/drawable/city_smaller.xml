@@ -1,6 +1,6 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:drawable="@drawable/city"
+        android:drawable="@drawable/city2"
         android:width="@dimen/posture_size"
         android:height="@dimen/posture_size">
     </item>
