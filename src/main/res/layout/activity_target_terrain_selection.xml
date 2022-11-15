@@ -70,7 +70,7 @@
             android:text="Forest"
             app:layout_constraintBottom_toTopOf="@+id/checkBox2"
             app:layout_constraintTop_toBottomOf="@+id/textView5"
-            tools:layout_editor_absoluteX="19dp" />/>
+            tools:layout_editor_absoluteX="19dp" />
 
         <CheckBox
             android:id="@+id/checkBoxTown"
@@ -90,7 +90,7 @@
             android:drawableStart="@drawable/city_smaller"
             android:text="City"
             tools:layout_editor_absoluteX="19dp"
-            tools:layout_editor_absoluteY="281dp" />/>
+            tools:layout_editor_absoluteY="281dp" />
 
         <CheckBox
             android:id="@+id/checkBoxPlain"
@@ -100,7 +100,7 @@
             android:drawableStart="@drawable/plain_smaller"
             android:text="Plain"
             tools:layout_editor_absoluteX="19dp"
-            tools:layout_editor_absoluteY="341dp" />/>
+            tools:layout_editor_absoluteY="341dp" />
 
         <CheckBox
             android:id="@+id/checkBoxSwamp"
@@ -110,7 +110,7 @@
             android:drawableStart="@drawable/swamp_smaller"
             android:text="Swamp"
             tools:layout_editor_absoluteX="19dp"
-            tools:layout_editor_absoluteY="170dp" />/>
+            tools:layout_editor_absoluteY="170dp" />
 
         <CheckBox
             android:id="@+id/checkBoxMinorRiver"
@@ -120,7 +120,7 @@
             android:drawableStart="@drawable/minor_river_smaller"
             android:text="Minor river crossing"
             tools:layout_editor_absoluteX="181dp"
-            tools:layout_editor_absoluteY="112dp" />/>
+            tools:layout_editor_absoluteY="112dp" />
 
         <CheckBox
             android:id="@+id/checkBoxMajorRiver"
@@ -154,7 +154,7 @@
             android:text="Defence works 1"
             app:layout_constraintBottom_toTopOf="@+id/checkBox2"
             app:layout_constraintTop_toBottomOf="@+id/textView5"
-            tools:layout_editor_absoluteX="19dp" />/>
+            tools:layout_editor_absoluteX="19dp" />
 
         <CheckBox
             android:id="@+id/checkBoxDefenseWorks3"

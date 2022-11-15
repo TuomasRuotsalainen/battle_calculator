@@ -5,12 +5,11 @@ import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.util.Log.DEBUG
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
-import java.util.logging.Logger
 
 class PostureAndAttackTypeActivity : AppCompatActivity() {
 
@@ -25,23 +24,38 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
 
         }
 
+        val headerText = findViewById<TextView>(R.id.postureSelHeader)
+        if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
+            headerText.text = "Attacking unit:"
+        } else {
+            headerText.text = "Defending unit:"
+        }
+
         if (gameState.attackingUnit!!.unit == null) {
             throw Exception("Attacking unit is null")
         }
 
 
-        val currentUnitState : UnitState
-        currentUnitState = if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
+        val currentUnitState : UnitState = if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
             gameState.attackingUnit!!
         } else {
-            gameState.getDefendingUnitStateWithoutPosture()
-                ?: // This means that we should not have started this activity any more
+            gameState.getDefendingUnitStateWithoutPosture() ?:
+                // This means that we should not have started this activity any more
                 throw Exception("Started a posture and attack type activity for defender when all defending units have a posture already")
         }
 
-        val currentUnitView = findViewById<TextView>(R.id.infotext)
+        val imageName = Images.getImageFileName(currentUnitState.unit!!.name)
+        val currentUnitDrawable =
+            Images.getDrawable(imageName, this, applicationContext, applicationInfo)
+                ?: throw Exception("Unable to get drawable for $imageName")
+
+        val currentUnitView = findViewById<ImageView>(R.id.currentUnitView)
+        currentUnitView.setImageDrawable(currentUnitDrawable)
 
         val postures = Postures()
+        val calculator = Calculator(postures)
+
+        val textView = findViewById<TextView>(R.id.combatDifferential)
 
         var selectedPosture : PostureEnum
 
@@ -68,6 +82,8 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
                 uncheckAllPostureRadios(postureRadios)
                 postureRadio.isChecked = true
                 selectedPosture = postures.getPostureEnumByStr(postureRadio.text.toString())
+                val textContent = getTextViewString(currentUnitState.unit, gameState.attackType!!, selectedPosture, calculator, unitSelectionType)
+                textView.text = textContent
 
             }
         }
@@ -82,11 +98,15 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
             hasty.setOnClickListener {
                 prepared.isChecked = false
                 gameState.attackType = AttackTypeEnum.HASTY
+                val textContent = getTextViewString(currentUnitState.unit, gameState.attackType!!, selectedPosture, calculator, unitSelectionType)
+                textView.text = textContent
             }
 
             prepared.setOnClickListener {
                 hasty.isChecked = false
                 gameState.attackType = AttackTypeEnum.PREPARED
+                val textContent = getTextViewString(currentUnitState.unit, gameState.attackType!!, selectedPosture, calculator, unitSelectionType)
+                textView.text = textContent
             }
 
         } else {
@@ -95,25 +115,73 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
             attackTypeGroup.removeAllViews()
         }
 
+        val textContent = getTextViewString(currentUnitState.unit, gameState.attackType!!, selectedPosture, calculator, unitSelectionType)
+        textView.text = textContent
+
         val applyButton = findViewById<Button>(R.id.groudcombatApply)
 
-        val nextIntent = Intent(this, DisengagementActivity::class.java)
         applyButton.setOnClickListener{
-
             if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
-                val attackingUnit = gameState.attackingUnit
-                attackingUnit!!.posture = selectedPosture
-                gameState.attackingUnit = attackingUnit
+                if (Postures().getPosture(selectedPosture).attack != null) {
+                    val attackingUnit = gameState.attackingUnit
+                    attackingUnit!!.posture = selectedPosture
+                    gameState.attackingUnit = attackingUnit
+
+                    val nextIntent = Intent(this, UnitSelectionActivity::class.java)
+                    nextIntent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+                    nextIntent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.DEFENDER.toString())
+
+                    startActivity(nextIntent)
+                    finish()
+                }
+
             } else {
-                throw Exception("Not implemented")
+
+                currentUnitState.posture = selectedPosture
+                gameState.setDefendingUnit(currentUnitState)
+
+                val nextDefender = gameState.getDefendingUnitStateWithoutPosture()
+                if (nextDefender != null) {
+                    val nextIntent = Intent(this, PostureAndAttackTypeActivity::class.java)
+                    nextIntent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+                    nextIntent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.DEFENDER.toString())
+                    startActivity(nextIntent)
+                    finish()
+                } else {
+                    val nextIntent = Intent(this, DisengagementActivity::class.java)
+                    nextIntent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+                    startActivity(nextIntent)
+                    finish()
+                }
             }
 
-            nextIntent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
 
-            startActivity(nextIntent)
-            finish()
         }
 
+
+    }
+
+    private fun getTextViewString(unit: Unit, attack: AttackTypeEnum, postureEnum: PostureEnum, calculator: Calculator, unitSelectionType: UnitSelectionTypes): String {
+        val posture = Postures().getPosture(postureEnum)
+
+        return if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
+            if (posture.attack == null) {
+                return "Unit with posture ${posture.enum} is not able to conduct attacks!"
+            }
+
+            val attackType = AttackType()
+
+            val initialDifferential = calculator.getInitialAttackDifferential(unit = unit, posture = posture.enum, attackTypeEnum = attack)
+
+            "Initial attack differential:\n${unit.attack} (unit) + ${posture.attack} (posture) + ${
+                attackType.getCombatModifier(
+                    attack
+                )
+            } (attack type)\n=$initialDifferential\n\nMP cost: ${attackType.getMPCost(posture.enum, attack)} (prepared assault)"
+        } else {
+            val initialDifferential = calculator.getInitialDefenseDifferential(unit, posture.enum)
+            "Initial defense differential:\n${unit.defense} (unit) + ${posture.defense} (posture) \n=$initialDifferential"
+        }
 
     }
 

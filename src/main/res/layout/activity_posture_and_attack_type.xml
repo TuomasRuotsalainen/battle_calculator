@@ -4,10 +4,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/postureSelHeader2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-
 
 
     <TextView
@@ -19,30 +19,27 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/infotext"
+    <ImageView
+        android:id="@+id/currentUnitView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Posture for unit "
-        android:drawableBottom="@drawable/unit_73_smaller"
-        android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/postureRadio"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.522"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.203" />
+        app:srcCompat="@drawable/swamp_smaller" />
+
 
     <RadioGroup
         android:id="@+id/postureRadio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/attackTypeRadio"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.467"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/infotext"
-        app:layout_constraintBottom_toTopOf="@+id/attackTypeRadio"
-        >
+        app:layout_constraintTop_toBottomOf="@+id/currentUnitView">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -50,30 +47,30 @@
 
             >
 
-        <!--style="@style/GreenText"-->
-        <RadioButton
-            android:id="@+id/radio_posture_full_assault"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/full_assault_smaller"
-            android:drawablePadding="@dimen/posture_padding"
-            android:text="Full assault     "
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="12dp" />
+            <!--style="@style/GreenText"-->
+            <RadioButton
+                android:id="@+id/radio_posture_full_assault"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/full_assault_smaller"
+                android:drawablePadding="@dimen/posture_padding"
+                android:text="Full assault     "
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="12dp" />
 
-        <RadioButton
-            android:id="@+id/radio_posture_assault"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/assault_smaller"
-            android:text="Assault"
-            android:drawablePadding="@dimen/posture_padding"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="60dp" />
-
+            <RadioButton
+                android:id="@+id/radio_posture_assault"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/assault_smaller"
+                android:drawablePadding="@dimen/posture_padding"
+                android:text="Assault"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="60dp" />
 
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -96,11 +93,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/recon_smaller"
-                android:text="Recon"
                 android:drawablePadding="@dimen/posture_padding"
+                android:text="Recon"
                 tools:layout_editor_absoluteX="16dp"
                 tools:layout_editor_absoluteY="60dp" />
-
 
 
         </LinearLayout>
@@ -127,42 +123,43 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/screen_smaller"
-                android:text="Screen"
                 android:drawablePadding="@dimen/posture_padding"
+                android:text="Screen"
                 tools:layout_editor_absoluteX="16dp"
                 tools:layout_editor_absoluteY="60dp" />
 
 
-
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-        <RadioButton
-            android:id="@+id/radio_posture_rigid_defence"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/rigid_defense_smaller"
-            android:drawablePadding="@dimen/posture_padding"
+            <RadioButton
+                android:id="@+id/radio_posture_rigid_defence"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/rigid_defense_smaller"
+                android:drawablePadding="@dimen/posture_padding"
 
-            android:text="Rigid defence "
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="60dp" />
+                android:text="Rigid defense "
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="60dp" />
 
-        <RadioButton
-            android:id="@+id/radio_posture_defence"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            <RadioButton
+                android:id="@+id/radio_posture_defence"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
 
-            android:drawableLeft="@drawable/defense_smaller"
-            android:drawablePadding="@dimen/posture_padding"
+                android:drawableLeft="@drawable/defense_smaller"
+                android:drawablePadding="@dimen/posture_padding"
 
-            android:text="Defence"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="60dp" />
+                android:text="Defense"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="60dp" />
 
-    </LinearLayout>
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -198,14 +195,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="72dp"
-        app:layout_constraintTop_toBottomOf="@+id/postureRadio"
         app:layout_constraintBottom_toTopOf="@+id/groudcombatApply"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/postureRadio">
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
+
             <RadioButton
                 android:id="@+id/radio_attaktype_hasty"
                 android:layout_width="wrap_content"
@@ -235,11 +234,11 @@
         android:gravity="center"
         android:text="Initial combat differential:\n9 (unit) + 2 (posture) + 2 (assault type)\n=13\n\nMP cost: 6 (prepared assault)"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/groudcombatApply"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/attackTypeRadio"
-        app:layout_constraintBottom_toTopOf="@+id/groudcombatApply"
 
         />
 
@@ -252,6 +251,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/postureSelHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Attacking unit"
+        app:layout_constraintBottom_toTopOf="@+id/postureRadio"
+        app:layout_constraintEnd_toStartOf="@+id/currentUnitView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,11 +18,26 @@ class UnitSelectionActivity : AppCompatActivity() {
 
         val unitSelectionType = Communication.getUnitSelectionType(intent)
 
+        val activityHeader = findViewById<TextView>(R.id.textView)
+        if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
+            activityHeader.text = "SELECT THE ATTACKING UNIT"
+        } else {
+            activityHeader.text = "SELECT THE DEFENDING UNIT(S)"
+        }
+
         val gameState = getGameState(intent)
 
-        // TODO get this properly
         val oob = OrderOfBattle()
-        val allianceOob = oob.getOOB(Alliances.NATO)
+        val allianceOob : OrderOfBattle.OOBData = if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
+            oob.getOOB(gameState.activeAlliance)
+        } else {
+            if (gameState.activeAlliance == Alliances.NATO) {
+                oob.getOOB(Alliances.PACT)
+            } else {
+                oob.getOOB(Alliances.NATO)
+            }
+        }
+
 
         val level1RadioGroup = findViewById<RadioGroup>(R.id.level_1_radio_group)
         val level2RadioGroup = findViewById<RadioGroup>(R.id.level_2_radio_group)
@@ -82,7 +97,9 @@ class UnitSelectionActivity : AppCompatActivity() {
                     }
 
                     val intent = Intent(this, PostureAndAttackTypeActivity::class.java)
+                    intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.DEFENDER.toString())
                     intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+
                     startActivity(intent)
                     finish()
 

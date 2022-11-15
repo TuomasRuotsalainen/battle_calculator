@@ -39,14 +39,12 @@ class OrderOfBattle {
                                         {
                                             "name" : "74",
                                             "type" : "ARMOR",
-                                            "strength" : "4-5",
-                                            "image" : "foobar"
+                                            "strength" : "4-5"
                                         },
                                         {
                                             "name" : "73",
                                             "type" : "ARMOR",
-                                            "strength" : "4-7",
-                                            "image" : "foobar2"
+                                            "strength" : "4-7"
                                         }
                                     ]
                                 },
@@ -56,14 +54,12 @@ class OrderOfBattle {
                                         {
                                             "name" : "123",
                                             "type" : "ARMOR",
-                                            "strength" : "4-5",
-                                            "image" : "foobar"
+                                            "strength" : "4-5"
                                         },
                                         {
                                             "name" : "124",
                                             "type" : "ARMOR",
-                                            "strength" : "4-7",
-                                            "image" : "foobar2"
+                                            "strength" : "4-7"
                                         }
                                     ]
                                 }
@@ -78,14 +74,12 @@ class OrderOfBattle {
                                         {
                                             "name" : "145",
                                             "type" : "ARMOR",
-                                            "strength" : "4-5",
-                                            "image" : "foobar"
+                                            "strength" : "4-5"
                                         },
                                         {
                                             "name" : "146",
                                             "type" : "ARMOR",
-                                            "strength" : "4-7",
-                                            "image" : "foobar2"
+                                            "strength" : "4-7"
                                         }
                                     ]
                                 },
@@ -95,14 +89,12 @@ class OrderOfBattle {
                                         {
                                             "name" : "345",
                                             "type" : "ARMOR",
-                                            "strength" : "4-5",
-                                            "image" : "foobar"
+                                            "strength" : "4-5"
                                         },
                                         {
                                             "name" : "346",
                                             "type" : "ARMOR",
-                                            "strength" : "4-7",
-                                            "image" : "foobar2"
+                                            "strength" : "4-7"
                                         }
                                     ]
                                 }
@@ -122,14 +114,12 @@ class OrderOfBattle {
                                         {
                                             "name" : "76",
                                             "type" : "ARMOR",
-                                            "strength" : "4-5",
-                                            "image" : "foobar"
+                                            "strength" : "4-5"
                                         },
                                         {
                                             "name" : "66",
                                             "type" : "ARMOR",
-                                            "strength" : "4-7",
-                                            "image" : "foobar2"
+                                            "strength" : "4-7"
                                         }
                                     ]
                                 },
@@ -139,14 +129,12 @@ class OrderOfBattle {
                                         {
                                             "name" : "45",
                                             "type" : "ARMOR",
-                                            "strength" : "4-5",
-                                            "image" : "foobar"
+                                            "strength" : "4-5"
                                         },
                                         {
                                             "name" : "46",
                                             "type" : "ARMOR",
-                                            "strength" : "4-7",
-                                            "image" : "foobar2"
+                                            "strength" : "4-7"
                                         }
                                     ]
                                 }
@@ -158,7 +146,48 @@ class OrderOfBattle {
         },
         {
             "alliance_name" : "PACT",
-            "level_1" : []
+            "level_1" : [
+            {
+                    "name" : "Northern",
+                    "level_2" : [
+                        {
+                            "name" : "2nd Guards Tank",
+                            "level_3" : [
+                                {
+                                    "name" : "16th Guards Tank",
+                                    "level_4" : [
+                                        {
+                                            "name" : "74g",
+                                            "type" : "ARMOR",
+                                            "strength" : "6-3"
+                                        },
+                                        {
+                                            "name" : "34",
+                                            "type" : "MECHANIZED",
+                                            "strength" : "8-4"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name" : "21st Mot. Rifle",
+                                    "level_4" : [
+                                        {
+                                            "name" : "45M",
+                                            "type" : "MECHANIZED",
+                                            "strength" : "3-2"
+                                        },
+                                        {
+                                            "name" : "67e",
+                                            "type" : "ARMOR",
+                                            "strength" : "4-7"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
         }
     ]
     """
@@ -264,8 +293,7 @@ class OrderOfBattle {
     data class Level4 (
         val name: String,
         val type: String,
-        val strength: String,
-        val image: String
+        val strength: String
     )
 
 }

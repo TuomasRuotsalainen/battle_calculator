@@ -27,7 +27,8 @@ class Postures() {
     }
 
     fun getPostureEnumByStr(str : String) : PostureEnum {
-        return postureEnumMap[str] ?: throw Exception("Couldn't map $str to posture enum")
+        val trimmed = str.trim()
+        return postureEnumMap[trimmed] ?: throw Exception("Couldn't map $str to posture enum")
     }
 
     fun getPosture(postureEnum: PostureEnum): Posture {
@@ -82,11 +83,11 @@ fun getPostureFromString(str : String) : PostureEnum {
 }
 
 
-class Posture(
-    bombardmentModifier : Int, attackModifier : Int?, defenseModifier : Int, postureEnum: PostureEnum) {
+class Posture(bombardmentModifier : Int, attackModifier : Int?, defenseModifier : Int, postureEnum: PostureEnum) {
 
     val bombardment = bombardmentModifier
     val attack = attackModifier
     val defense = defenseModifier
+    val enum = postureEnum
 
 }

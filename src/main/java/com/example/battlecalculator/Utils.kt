@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.graphics.drawable.Drawable
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.*
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
@@ -32,6 +33,7 @@ class Images {
         fun getDrawable(ImageName: String, activity: AppCompatActivity, context: Context, applicationInfo: ApplicationInfo): Drawable? {
             var identifier = activity.resources.getIdentifier(ImageName, "drawable", applicationInfo.packageName)
             if (identifier == 0) {
+                Log.d("IMAGE DEBUG", "setting swamp")
                 identifier = activity.resources.getIdentifier("swamp_smaller", "drawable", applicationInfo.packageName)
             }
 
