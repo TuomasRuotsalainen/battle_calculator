@@ -1,13 +1,12 @@
 package com.example.battlecalculator
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.SeekBar
-import android.widget.Toast
 
 class DisengagementActivity : AppCompatActivity() {
 
@@ -15,8 +14,10 @@ class DisengagementActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_disengagement_selection)
 
+        var gameState = getGameState(intent)
+        Log.d("TUOMAS STATE", gameState.getStateString())
 
-        val disengagementApplyButton = findViewById<Button>(R.id.retreat_before_combat_apply)
+        val disengagementApplyButton = findViewById<Button>(R.id.combat1_apply)
 
         val noRetreatsButton = findViewById<RadioButton>(R.id.retreat_before_combat_radio_zero)
         noRetreatsButton.isChecked = true

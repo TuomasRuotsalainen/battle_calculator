@@ -11,13 +11,11 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import java.util.logging.Logger
 
-class TargetTerrainSelectionActivity : AppCompatActivity() {
+class FixedCombatModifierSelectionActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_target_terrain_selection)
-
-        val gameState = getGameState(intent)
 
         val forestCheck = findViewById<CheckBox>(R.id.checkBoxForest)
         val plainCheck = findViewById<CheckBox>(R.id.checkBoxPlain)
@@ -72,54 +70,43 @@ class TargetTerrainSelectionActivity : AppCompatActivity() {
 
         val intent = Intent(this, UnitSelectionActivity::class.java)
         applyButton.setOnClickListener{
-
-            val terrainList = mutableListOf<TerrainEnum>()
-
-            if (forestCheck.isChecked) {
-                terrainList.add(TerrainEnum.FOREST)
-            }
-
-            if (plainCheck.isChecked) {
-                terrainList.add(TerrainEnum.PLAIN)
-            }
-
-            if (townCheck.isChecked) {
-                terrainList.add(TerrainEnum.TOWN)
-            }
-
-            if (cityCheck.isChecked) {
-                terrainList.add(TerrainEnum.CITY)
-            }
-
-            if (swampCheck.isChecked) {
-                terrainList.add(TerrainEnum.SWAMP)
-            }
-
-            if (minorRiverCheck.isChecked) {
-                terrainList.add(TerrainEnum.MINORRIVER)
-            }
-
-            if (majorRiverCheck.isChecked) {
-                terrainList.add(TerrainEnum.MAJORRIVER)
-            }
-
-            if (defenseWorks1Check.isChecked) {
-                terrainList.add(TerrainEnum.DEFENSE1)
-            }
-
-            if (defenseWorks3Check.isChecked) {
-                terrainList.add(TerrainEnum.DEFENSE3)
-            }
-
-            if (bridgeCheck.isChecked) {
-                terrainList.add(TerrainEnum.BRIDGE)
-            }
-
-            gameState.hexTerrain = HexTerrain(terrainList)
-
-            intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+            //Toast.makeText(this, "Unit type: $radioButtonStr, attack strength: ${strengths.first}, defense strength: ${strengths.second}", Toast.LENGTH_LONG*10).show()
             startActivity(intent)
             finish()
         }
+
+
+        /*
+        val postureAssault = findViewById<RadioButton>(R.id.radio_posture_assault)
+        val postureMarchAssault = findViewById<RadioButton>(R.id.radio_posture_march_assault)
+        val postureFullAssault = findViewById<RadioButton>(R.id.radio_posture_full_assault)
+        val postureRecon = findViewById<RadioButton>(R.id.radio_posture_recon)
+        val postureRefit = findViewById<RadioButton>(R.id.radio_posture_refit)
+        val postureScreen = findViewById<RadioButton>(R.id.radio_posture_screen)
+        val postureRigidDef = findViewById<RadioButton>(R.id.radio_posture_rigid_defence)
+        val postureDefense = findViewById<RadioButton>(R.id.radio_posture_defence)
+        val postureTactical = findViewById<RadioButton>(R.id.radio_posture_tactical)
+        val postureAreaDef = findViewById<RadioButton>(R.id.radio_posture_area_defense)
+
+        val postureRadios = listOf(
+            postureAssault, postureMarchAssault, postureFullAssault, postureRecon, postureRefit,
+            postureScreen, postureRigidDef, postureDefense, postureTactical, postureAreaDef)
+
+        for (postureRadio in postureRadios) {
+            postureRadio.setOnClickListener {
+                uncheckAllPostureRadios(postureRadios)
+                postureRadio.isChecked = true
+            }
+        }
+
+
+
+
+         */
+
+
     }
+
+
+
 }

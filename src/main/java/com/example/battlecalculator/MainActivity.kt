@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         val groundAttackButton = findViewById<Button>(R.id.groundAttackButton)
         val artillerBombardmentButton = findViewById<Button>(R.id.artillerBomabrdmentButton)
 
+        //val intent = Intent(this, UnitSelectionActivity::class.java)
         val intent = Intent(this, UnitSelectionActivity::class.java)
         intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.ATTACKER.toString())
 

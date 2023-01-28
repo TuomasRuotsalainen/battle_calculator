@@ -18,6 +18,11 @@ fun GameState() : GameState {
     return GameState(stateStr)
 }
 
+fun getMockGameState(): GameState {
+    val stateStr = "Z=0300;S=1;AU=74-ASL;DU=34-RDEF,74g-DEF,;AT=HASTY;HEX=null;ACT=NATO"
+    return GameState(stateStr)
+}
+
 fun getGameState(intent: Intent) : GameState {
     val gameStateString = Utils.getStringFromIntent(intent, IntentExtraIDs.GAMESTATE.toString())
     return GameState(gameStateString)

@@ -1,12 +1,10 @@
 package com.example.battlecalculator
 
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.res.ResourcesCompat
 
 class UnitSelectionActivity : AppCompatActivity() {
 
@@ -65,7 +63,7 @@ class UnitSelectionActivity : AppCompatActivity() {
         setLevel1RadioButtons(allianceOob.level1!!,
             level1RadioGroup, level2RadioGroup, level3RadioGroup, level4RadioGroup, unitSelectionType)
 
-        val commitButton = findViewById<Button>(R.id.retreat_before_combat_apply)
+        val commitButton = findViewById<Button>(R.id.combat1_apply)
 
         commitButton.setOnClickListener {
 

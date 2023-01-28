@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:drawable="@drawable/shoot_and_scoot_smaller"
+        android:left="0dp" />
+    <item android:drawable="@drawable/barrage_smaller" android:left="50dp" />
+    <item android:drawable="@drawable/close_support_smaller" android:left="100dp" />
+</layer-list>

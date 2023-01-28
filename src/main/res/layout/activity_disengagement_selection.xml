@@ -95,7 +95,7 @@
     </RadioGroup>
 
     <Button
-        android:id="@+id/retreat_before_combat_apply"
+        android:id="@+id/combat1_apply"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Commit"

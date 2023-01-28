@@ -23,7 +23,7 @@
         android:layout_width="367dp"
         android:layout_height="48dp"
         android:layout_marginTop="20dp"
-        android:text="Target hex terrain features"
+        android:text="Select fixed combat modifiers"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -31,14 +31,16 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView5"
-        android:layout_width="361dp"
-        android:layout_height="28dp"
-        android:layout_marginTop="20dp"
-        android:text="- A hex might have multiple features. Select all of them"
+        android:id="@+id/textView10"
+        android:layout_width="367dp"
+        android:layout_height="48dp"
+        android:text="Current total combat modifier: -2"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        app:layout_constraintBottom_toTopOf="@+id/terrain_apply"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.84"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/defenderOptionsLayout" />
 
     <Button
         android:id="@+id/terrain_apply"
@@ -50,131 +52,130 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
-        android:id="@+id/terrainlayout"
+        android:id="@+id/defenderOptionsLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/textView5"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
         app:layout_constraintBottom_toTopOf="@+id/terrain_apply"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/attackerOptionsLayout"
         app:layout_constraintHorizontal_bias="0.078"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintVertical_bias="0.408">
 
         <CheckBox
-            android:id="@+id/checkBoxForest"
+            android:id="@+id/checkBoxNATOCountries"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:drawableStart="@drawable/forest_smaller"
-            android:text="Forest"
+            android:text="Defending NATO units \nfrom different countries"
             app:layout_constraintBottom_toTopOf="@+id/checkBox2"
             app:layout_constraintTop_toBottomOf="@+id/textView5"
             tools:layout_editor_absoluteX="19dp" />
 
         <CheckBox
-            android:id="@+id/checkBoxTown"
+            android:id="@+id/defenderResting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:drawableStart="@drawable/town_smaller"
-            android:text="Town"
+            android:text="Defender resting"
             tools:layout_editor_absoluteX="19dp"
             tools:layout_editor_absoluteY="226dp" />
 
         <CheckBox
-            android:id="@+id/checkBoxCity"
+            android:id="@+id/defenderEngaged"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:drawableStart="@drawable/city_smaller"
-            android:text="City"
+            android:text="Defender engaged"
             tools:layout_editor_absoluteX="19dp"
             tools:layout_editor_absoluteY="281dp" />
 
         <CheckBox
-            android:id="@+id/checkBoxPlain"
+            android:id="@+id/defenderHalfEngaged"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:drawableStart="@drawable/plain_smaller"
-            android:text="Plain"
+            android:text="Defender half-engaged"
             tools:layout_editor_absoluteX="19dp"
             tools:layout_editor_absoluteY="341dp" />
 
         <CheckBox
-            android:id="@+id/checkBoxSwamp"
+            android:id="@+id/defenderDelayed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:drawableStart="@drawable/swamp_smaller"
-            android:text="Swamp"
-            tools:layout_editor_absoluteX="19dp"
-            tools:layout_editor_absoluteY="170dp" />
-
-        <CheckBox
-            android:id="@+id/checkBoxMinorRiver"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:drawableStart="@drawable/minor_river_smaller"
-            android:text="Minor river crossing"
+            android:text="Defender delayed"
             tools:layout_editor_absoluteX="181dp"
             tools:layout_editor_absoluteY="112dp" />
 
+
+
         <CheckBox
-            android:id="@+id/checkBoxMajorRiver"
+            android:id="@+id/defenderOutOfCommand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/major_river_smaller"
-            android:text="Major river crossing"
+            android:text="Defender out of \ncommand range"
+            tools:layout_editor_absoluteX="181dp"
+            tools:layout_editor_absoluteY="178dp" />
+
+
+
+        <CheckBox
+            android:id="@+id/advanceAxis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PACT fighting outside\n Advance Axis"
+            tools:layout_editor_absoluteX="181dp"
+            tools:layout_editor_absoluteY="178dp" />
+
+        <CheckBox
+            android:id="@+id/defenderFrontLineCommand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Defender uses \nfrontline command\n(if selected, HQ cannot \nmove any more\nthis turn)"
             tools:layout_editor_absoluteX="181dp"
             tools:layout_editor_absoluteY="178dp" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/terrainstructurelayout"
+        android:id="@+id/attackerOptionsLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/terrain_apply"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5"
+        app:layout_constraintStart_toEndOf="@+id/defenderOptionsLayout"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
         app:layout_constraintVertical_bias="0.297">
 
         <CheckBox
-            android:id="@+id/checkBoxDefenseWorks1"
+            android:id="@+id/attackerHalfEngaged"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:drawableStart="@drawable/defensive_works_smaller"
-            android:text="Defence works 1"
-            app:layout_constraintBottom_toTopOf="@+id/checkBox2"
-            app:layout_constraintTop_toBottomOf="@+id/textView5"
-            tools:layout_editor_absoluteX="19dp" />
+            android:text="Attacker half-engaged"
+            tools:layout_editor_absoluteX="19dp"
+            tools:layout_editor_absoluteY="170dp" />
+
 
         <CheckBox
-            android:id="@+id/checkBoxDefenseWorks3"
+            android:id="@+id/attackerOutOfCommand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:drawableStart="@drawable/defensive_works_smaller"
-            android:text="Defence works 3"
-            tools:layout_editor_absoluteX="19dp"
-            tools:layout_editor_absoluteY="226dp" />
+            android:text="Attacker out of \ncommand range"
+            tools:layout_editor_absoluteX="181dp"
+            tools:layout_editor_absoluteY="178dp" />
 
         <CheckBox
-            android:id="@+id/checkBoxBridgeExists"
+            android:id="@+id/attackerFrontLineCommand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:drawableStart="@drawable/bridge_smaller"
-            android:text="Intact bridge\navailable for\nriver crossing"
-            tools:layout_editor_absoluteX="19dp"
-            tools:layout_editor_absoluteY="226dp" />
+            android:text="Attacker uses \nfrontline command\n(if selected, HQ cannot \nmove any more\nthis turn)"
+            tools:layout_editor_absoluteX="181dp"
+            tools:layout_editor_absoluteY="178dp" />
 
 
     </LinearLayout>
