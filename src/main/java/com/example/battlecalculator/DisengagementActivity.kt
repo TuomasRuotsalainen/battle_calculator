@@ -1,5 +1,6 @@
 package com.example.battlecalculator
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -24,19 +25,23 @@ class DisengagementActivity : AppCompatActivity() {
 
 
 
-        //val intent = Intent(this, PostureAndAttackTypeActivity::class.java)
+        val intent = Intent(this, FixedCombatModifierSelectionActivity::class.java)
         disengagementApplyButton.setOnClickListener{
             val radioButton = checkRadioButton()
             if (radioButton == R.id.retreat_before_combat_radio_zero) {
+                intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+                startActivity(intent)
+                finish()
                 // No retreats, go to combat
             } else if (radioButton == R.id.retreat_before_combat_radio_one) {
+                throw Exception("NOT IMPLEMENTED")
                 // One retreat
             } else {
                 // Two retreats
+                throw Exception("NOT IMPLEMENTED")
             }
-            //startActivity(intent)
 
-            //finish()
+
         }
     }
 

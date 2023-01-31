@@ -37,6 +37,30 @@ class Postures() {
             ?: throw Exception("Couldn't find posture $postureEnum from posture map")
     }
 
+    fun getCombatModifier(postureEnum: PostureEnum, isAttack: Boolean): Int? {
+        val posture = postureMap[postureEnum]
+        if (isAttack) {
+            return posture?.attack
+        }
+
+        return posture?.defense
+    }
+
+    fun getLeastFavourableDefenseModifier(postureEnums : List<PostureEnum>): Int {
+        if (postureEnums.size == 0) {
+            throw Exception("Posture enums size is 0")
+        }
+        var leastFavourable = -100
+        for (postureEnum in postureEnums) {
+            val posture = postureMap[postureEnum]
+            if (posture!!.defense > leastFavourable) {
+                leastFavourable = posture.defense
+            }
+        }
+
+        return leastFavourable
+    }
+
     private fun getPostureEnumHashMap() : HashMap<String, PostureEnum> {
         val postureMap = HashMap<String, PostureEnum>()
         postureMap["Full assault"] = PostureEnum.FASL

@@ -9,6 +9,16 @@ class HexTerrain(terrainFeatures : MutableList<TerrainEnum>) {
 
     val features : HashMap<TerrainEnum, Boolean> = convertToHashMap(terrainFeatures)
 
+    fun isPlainsOnly() : Boolean {
+        if (features[TerrainEnum.PLAIN] == true) {
+            if (features[TerrainEnum.TOWN] == false && features[TerrainEnum.CITY] == false && features[TerrainEnum.FOREST] == false && features[TerrainEnum.SWAMP] == false) {
+                return true
+            }
+        }
+
+        return false
+    }
+
     private fun convertToHashMap(terrainFeatures : MutableList<TerrainEnum>) : HashMap<TerrainEnum, Boolean> {
         val featureMap = HashMap<TerrainEnum, Boolean>()
 

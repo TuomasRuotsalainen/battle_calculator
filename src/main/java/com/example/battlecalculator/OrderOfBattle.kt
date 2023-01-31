@@ -11,6 +11,14 @@ class Unit(typeStr: String, strengthStr : String, val name: String) {
     val attack : Int = strengthStr[0].digitToInt()
     val defense : Int = strengthStr[2].digitToInt()
 
+    fun eatsArmourInCity(): Boolean {
+        if (type == UnitTypeEnum.MECHANIZED || type == UnitTypeEnum.MOTORIZED || type == UnitTypeEnum.INFANTRY) {
+            return true
+        }
+
+        return false
+    }
+
     private fun checker(strengthStr : String): Boolean {
         if (strengthStr.length != 3) {
             throw Exception("strength value of unit $name is not of length 3")

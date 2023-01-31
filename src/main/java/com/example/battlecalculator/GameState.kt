@@ -8,18 +8,18 @@ import com.example.battlecalculator.BuildConfig.DEBUG
 /*
 
 stateString example
-Z=0300;S=1,AU=12J-MASL;DU=13-DEF,14-ROAD,4-ROAD,AT=HASTY,HEX=PLAIN,FOREST,DEFENSE1,MINORRIVER;ACT=NATO
+Z=0300;S=1,AU=12J-MASL;DU=13-DEF,14-ROAD,4-ROAD,AT=HASTY,HEX=PLAIN,FOREST,DEFENSE1,MINORRIVER;ACT=NATO;FIXED=ATTACKER_HALF_ENGAGED,PACT_DEFENDING_REAR
 zulu time = 03:00, state = 1, attacking unit id = 12J, unit ids in target hex 13,14,4
 
 */
 
 fun GameState() : GameState {
-    val stateStr = "Z=0300;S=1;AU=null;DU=null;AT=null;HEX=null;ACT=NATO"
+    val stateStr = "Z=0300;S=1;AU=null;DU=null;AT=null;HEX=null;ACT=NATO;FIXED=null"
     return GameState(stateStr)
 }
 
 fun getMockGameState(): GameState {
-    val stateStr = "Z=0300;S=1;AU=74-ASL;DU=34-RDEF,74g-DEF,;AT=HASTY;HEX=null;ACT=NATO"
+    val stateStr = "Z=0300;S=1;AU=74-ASL;DU=34-RDEF,74g-DEF,;AT=HASTY;HEX=null;ACT=NATO;FIXED=ATTACKER_HALF_ENGAGED,PACT_DEFENDING_REAR"
     return GameState(stateStr)
 }
 
@@ -31,7 +31,7 @@ fun getGameState(intent: Intent) : GameState {
 class GameState(stateString : String) {
 
     private enum class DataIDs {
-        AU, DU, AT, HEX, ACT
+        AU, DU, AT, HEX, ACT, FIXED
     }
 
     private val dataMap = getDataMap(stateString)
@@ -42,6 +42,7 @@ class GameState(stateString : String) {
     var defendingUnits : MutableList<UnitState> = getDefUnitsStates()
     var hexTerrain : HexTerrain? = getHexTerrainState()
     var activeAlliance : Alliances = getActiveFaction()
+    var activeFixedModifiers : ActiveFixedModifiers = getFixedModifiers()
 
     fun getDefendingUnitStateWithoutPosture() : UnitState? {
         for (defendingUnitState in defendingUnits) {
@@ -75,8 +76,9 @@ class GameState(stateString : String) {
         val attackTypeStr = getAttackTypeStr()
         val hexTerrainStr = getHexTerrainStateStr()
         val allianceStr = getAllianceStr()
+        val activeFixedModifiersStr = getActiveFixedModifiersStr()
 
-        return "Z=0300;S=1;AU=$attackingUnitStr;DU=$defendingUnitsStr;AT=$attackTypeStr;HEX=$hexTerrainStr;ACT=$allianceStr"
+        return "Z=0300;S=1;AU=$attackingUnitStr;DU=$defendingUnitsStr;AT=$attackTypeStr;HEX=$hexTerrainStr;ACT=$allianceStr;FIXED=$activeFixedModifiersStr"
     }
 
     fun setDefendingUnit(unitState : UnitState) {
@@ -136,6 +138,50 @@ class GameState(stateString : String) {
         }
 
         return HexTerrain(terrainFeatureEnums)
+    }
+
+    private fun getFixedModifiers() : ActiveFixedModifiers {
+        val fixedModifiersStr = dataMap[DataIDs.FIXED.toString()] ?: throw Exception("Fixed modifiers FIXED not defined")
+
+        if (fixedModifiersStr == "null") {
+            return getEmptyActiveFixedModifiers()
+        }
+
+
+        val activeModifiers = fixedModifiersStr.split(",")
+        val fixedModifierEnums = mutableListOf<FixedModifierEnum>()
+        for (activeModifier in activeModifiers) {
+            for (fixedModifierEnum in FixedModifierEnum.values()) {
+                if (activeModifier == fixedModifierEnum.toString()) {
+                    fixedModifierEnums.add(fixedModifierEnum)
+                    break
+                }
+            }
+        }
+
+        return ActiveFixedModifiers(fixedModifierEnums)
+
+    }
+
+    private fun getActiveFixedModifiersStr() : String {
+        if (activeFixedModifiers.map.size == 0) {
+            return "null"
+        }
+
+        var str = ""
+        var iterator = 0
+        for (fixedModifierEnum in FixedModifierEnum.values()) {
+            if (activeFixedModifiers.map[fixedModifierEnum] == true) {
+                str += fixedModifierEnum.toString()
+            }
+
+            iterator++
+            if (iterator != activeFixedModifiers.map.size) {
+                str += ","
+            }
+        }
+
+        return str
     }
 
     private fun getHexTerrainStateStr() : String {
@@ -259,11 +305,19 @@ class GameState(stateString : String) {
     }
 }
 
-
-
 class UnitState(unitInput : Unit?, postureInput: PostureEnum?) {
     val unit = unitInput
     var posture = postureInput
+
+    fun isInfantryOutInTheOpen() : Boolean {
+        if (unit?.eatsArmourInCity() == true || unit?.type == UnitTypeEnum.RECON) {
+            if (posture != PostureEnum.DEF && posture != PostureEnum.RDEF && posture != PostureEnum.ADEF && posture != PostureEnum.SCRN) {
+                return true
+            }
+        }
+
+        return false
+    }
 
     fun getStateString() : String {
         var unitStr = ""
