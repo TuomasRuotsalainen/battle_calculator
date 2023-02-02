@@ -39,6 +39,7 @@ class GameState(stateString : String) {
 
     var attackingUnit : UnitState? = getAttackUnitStates()
     var attackType : AttackTypeEnum? = getAttackTypeEnum()
+    var riverCrossingType : RiverCrossingTypeEnum? = getRiverCrossingTypeEnum()
     var defendingUnits : MutableList<UnitState> = getDefUnitsStates()
     var hexTerrain : HexTerrain? = getHexTerrainState()
     var activeAlliance : Alliances = getActiveFaction()
@@ -201,6 +202,11 @@ class GameState(stateString : String) {
         }
 
         return str
+    }
+
+    private fun getRiverCrossingTypeEnum() : RiverCrossingTypeEnum? {
+        // TODO: This has to be added to the state, view and everywhere
+        return RiverCrossingTypeEnum.NONE
     }
 
     private fun getAttackTypeEnum() : AttackTypeEnum? {

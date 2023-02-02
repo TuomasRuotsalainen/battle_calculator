@@ -4,6 +4,10 @@ enum class PostureEnum {
     SCRN, DEF, RDEF, ADEF, ASL, FASL, TAC, REFT, MASL, ROAD, REC, MOV
 }
 
+enum class MovementModeEnum {
+    COLUM, TACTICAL, DEPLOYED
+}
+
 enum class UnitTypeEnum {
     INFANTRY, MOTORIZED, TOWED_ARTILLERY, HELICOPTER, ARMOR, MECHANIZED, OTHER_ARTILLERY, RECON, HQ
 }

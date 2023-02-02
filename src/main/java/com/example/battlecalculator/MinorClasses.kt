@@ -7,6 +7,10 @@ enum class AttackTypeEnum {
     HASTY, PREPARED
 }
 
+enum class RiverCrossingTypeEnum {
+    HASTY, PREPARED, NONE
+}
+
 class AttackType() {
     fun getMPCost(posture : PostureEnum, type : AttackTypeEnum) : Int {
         if (type == AttackTypeEnum.HASTY && posture == PostureEnum.MASL)    {
@@ -44,6 +48,14 @@ class ActiveFixedModifiers(list : MutableList<FixedModifierEnum>) {
 
     fun remove(modifier : FixedModifierEnum) {
         map[modifier] = false
+    }
+
+    fun contains(modifier : FixedModifierEnum): Boolean {
+        if (map[modifier] == true) {
+            return true
+        }
+
+        return false
     }
 
     private fun initMap(list : MutableList<FixedModifierEnum>) : HashMap<FixedModifierEnum, Boolean> {

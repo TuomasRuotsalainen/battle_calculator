@@ -4,7 +4,6 @@ enum class TerrainEnum {
     PLAIN, FOREST, TOWN, CITY, SWAMP, MINORRIVER, MAJORRIVER, DEFENSE1, DEFENSE3, BRIDGE
 }
 
-
 class HexTerrain(terrainFeatures : MutableList<TerrainEnum>) {
 
     val features : HashMap<TerrainEnum, Boolean> = convertToHashMap(terrainFeatures)
@@ -17,6 +16,25 @@ class HexTerrain(terrainFeatures : MutableList<TerrainEnum>) {
         }
 
         return false
+    }
+
+    fun getDefensiveWorksCombatModifier(): Int {
+        val defWorks1 = this.features[TerrainEnum.DEFENSE1]
+        val defWorks3 = this.features[TerrainEnum.DEFENSE3]
+
+        if (defWorks1 != null) {
+            if (defWorks1) {
+                return -1
+            }
+        }
+
+        if (defWorks3 != null) {
+            if (defWorks3) {
+                return -3
+            }
+        }
+
+        return 0
     }
 
     private fun convertToHashMap(terrainFeatures : MutableList<TerrainEnum>) : HashMap<TerrainEnum, Boolean> {

@@ -12,10 +12,6 @@ class Tables {
 
     private val disengagementTable = getDisengagementTable()
 
-    fun Test() {
-
-    }
-
     private fun getDisengagementTable(): HashMap<PostureEnum,HashMap<UnitTypeEnum,DisengagementResultRangeCell>> {
         // First ROW of cells
         val INF_ADEF_CELL = DisengagementResultRangeCell(4, 7)
@@ -114,5 +110,250 @@ class Tables {
         return disengagementTable
     }
 
+    class TerrainCombatTableRow() {
+        private val contents : HashMap<MovementModeEnum, Int> = HashMap()
+
+        fun setRow(columnCombatModifier : Int, tacticalCombatModifier : Int, deployedCombatModifier : Int) {
+            contents[MovementModeEnum.COLUM] = columnCombatModifier
+            contents[MovementModeEnum.TACTICAL] = tacticalCombatModifier
+            contents[MovementModeEnum.DEPLOYED] = deployedCombatModifier
+        }
+
+        fun getModifier(movementModeEnum: MovementModeEnum): Int {
+            return contents[movementModeEnum]
+                ?: throw Exception("Couldn't find modifier for $movementModeEnum")
+        }
+
+    }
+
+    class TerrainCombatTable() {
+        private val terrainContents : HashMap<TerrainEnum, TerrainCombatTableRow> = populateTerrainTable()
+        private val obstacleContents : HashMap<ObstacleEnum, TerrainCombatTableRow> = populateObstacleTable()
+
+        private enum class ObstacleEnum {
+            MINOR_HASTY, MINOR_PREPARED, MINOR_BRIDGED, MAJOR_PREPARED, MAJOR_BRIDGED
+        }
+
+        fun getCombatModifier(hexTerrain: HexTerrain, riverCrossingTypeEnum: RiverCrossingTypeEnum, defenderPostureEnums: List<PostureEnum>): Int {
+            val features = hexTerrain.features
+
+            val terrainEnums : MutableList<TerrainEnum> = mutableListOf()
+            for (feature in features) {
+                if (feature.value) {
+                    terrainEnums.add(feature.key)
+                }
+            }
+
+            val terrainCombatModifier = getTerrainModifier(terrainEnums, defenderPostureEnums)
+            val obstacleCombatModifier = getObstacleModifier(terrainEnums, defenderPostureEnums, riverCrossingTypeEnum)
+            return terrainCombatModifier + obstacleCombatModifier
+        }
+
+        private fun getObstacleModifier(
+            terrainEnums: List<TerrainEnum>,
+            defenderPostureEnums: List<PostureEnum>,
+            riverCrossingTypeEnum: RiverCrossingTypeEnum
+        ): Int {
+
+            if (!terrainEnums.contains(TerrainEnum.MAJORRIVER) && !terrainEnums.contains(TerrainEnum.MINORRIVER)) {
+                // No obstacles
+                return 0
+            }
+
+            val currentObstacle : ObstacleEnum
+            if (terrainEnums.contains(TerrainEnum.BRIDGE)) {
+                currentObstacle = if (terrainEnums.contains(TerrainEnum.MINORRIVER)) {
+                    ObstacleEnum.MINOR_BRIDGED
+                } else if(terrainEnums.contains(TerrainEnum.MAJORRIVER)) {
+                    ObstacleEnum.MAJOR_PREPARED
+                } else {
+                    throw Exception("There is a bridge but no river")
+                }
+            } else {
+                if (terrainEnums.contains(TerrainEnum.MINORRIVER)) {
+                    currentObstacle = if (riverCrossingTypeEnum == RiverCrossingTypeEnum.HASTY) {
+                        ObstacleEnum.MINOR_HASTY
+                    } else if(riverCrossingTypeEnum == RiverCrossingTypeEnum.PREPARED) {
+                        ObstacleEnum.MINOR_PREPARED
+                    } else {
+                        throw Exception("Crossing minor river with no crossing type")
+                    }
+                } else {
+                    // Case major river
+                    if (riverCrossingTypeEnum == RiverCrossingTypeEnum.PREPARED) {
+                        currentObstacle = ObstacleEnum.MINOR_PREPARED
+                    } else {
+                        throw Exception("Attempting to cross major river without preparation")
+                    }
+                }
+            }
+
+            val weakestMovementMode = MovementMode().getWeakestMovementMode(defenderPostureEnums)
+
+            val obstacleRow = obstacleContents[currentObstacle]
+                ?: throw Exception("No obstacle found for $currentObstacle")
+
+            return obstacleRow.getModifier(weakestMovementMode)
+
+        }
+
+        private fun getTerrainModifier(
+            terrainEnums: List<TerrainEnum>,
+            defenderPostureEnums: List<PostureEnum>
+        ): Int {
+            val weakestMovementMode = MovementMode().getWeakestMovementMode(defenderPostureEnums)
+
+            val terrainFeatures: List<TerrainEnum> =
+                listOf(TerrainEnum.SWAMP, TerrainEnum.PLAIN, TerrainEnum.TOWN, TerrainEnum.CITY)
+
+
+            val activeTerrainFeatures = terrainEnums.intersect(terrainFeatures)
+            val bestTerrainForDefense = findBestTerrainForDefense(activeTerrainFeatures, weakestMovementMode)
+
+            return terrainContents[bestTerrainForDefense]!!.getModifier(weakestMovementMode)
+        }
+
+        private fun findBestTerrainForDefense(enums : Set<TerrainEnum>, movementModeEnum: MovementModeEnum): TerrainEnum {
+
+            var minimumCombatModifier : Int? = null
+            var bestTerrain : TerrainEnum? = null
+            for (enum in enums) {
+                val row = terrainContents[enum] ?: throw Exception("Couldn't find row for enum $enum")
+                val combatModifier = row.getModifier(movementModeEnum)
+                if (minimumCombatModifier == null) {
+                    minimumCombatModifier = combatModifier
+                    bestTerrain = enum
+                    continue
+                }
+
+                if (minimumCombatModifier > combatModifier) {
+                    minimumCombatModifier = combatModifier
+                    bestTerrain = enum
+                    continue
+                }
+            }
+
+            if (bestTerrain == null) {
+                throw Exception("bestTerrain is null for some reason")
+            }
+
+            return bestTerrain
+        }
+
+         private fun populateTerrainTable(): HashMap<TerrainEnum, TerrainCombatTableRow> {
+
+             val contents: HashMap<TerrainEnum, TerrainCombatTableRow> = HashMap()
+
+             val forest = TerrainCombatTableRow()
+             forest.setRow(0, -1, -2)
+
+             val town = TerrainCombatTableRow()
+             town.setRow(-1, -2, -3)
+
+             val city = TerrainCombatTableRow()
+             city.setRow(-1, -3, -4)
+
+             val plain = TerrainCombatTableRow()
+             plain.setRow(0, 0, 0)
+
+             val swamp = TerrainCombatTableRow()
+             swamp.setRow(0, 0, 0)
+
+             contents[TerrainEnum.FOREST] = forest
+             contents[TerrainEnum.TOWN] = town
+             contents[TerrainEnum.CITY] = city
+             contents[TerrainEnum.PLAIN] = plain
+             contents[TerrainEnum.SWAMP] = swamp
+
+             return contents
+
+         }
+
+        private fun populateObstacleTable() : HashMap<ObstacleEnum, TerrainCombatTableRow> {
+            val contents : HashMap<ObstacleEnum, TerrainCombatTableRow> = HashMap()
+
+            val minorRiverHasty = TerrainCombatTableRow()
+            minorRiverHasty.setRow(-1, -3, -3)
+
+            val minorRiverPrepared = TerrainCombatTableRow()
+            minorRiverPrepared.setRow(-1, -2, -2)
+
+            val minorRiverBridged = TerrainCombatTableRow()
+            minorRiverBridged.setRow(0, -1, -1)
+
+            val majorRiverPrepared = TerrainCombatTableRow()
+            majorRiverPrepared.setRow(-2, -4, -4)
+
+            val majorRiverBridged = TerrainCombatTableRow()
+            majorRiverBridged.setRow(-1, -3, -3)
+
+            contents[ObstacleEnum.MINOR_HASTY] = minorRiverHasty
+            contents[ObstacleEnum.MINOR_PREPARED] = minorRiverPrepared
+            contents[ObstacleEnum.MINOR_BRIDGED] = minorRiverBridged
+
+            contents[ObstacleEnum.MAJOR_PREPARED] = majorRiverPrepared
+            contents[ObstacleEnum.MAJOR_BRIDGED] = majorRiverBridged
+
+            return contents
+
+        }
+
+    class MovementMode() {
+        private val data : HashMap<PostureEnum, MovementModeEnum> = populateData()
+
+        fun get(posture: PostureEnum): MovementModeEnum {
+            return data[posture]
+                ?: throw Exception("Couldn't find movement mode for posture ${posture.toString()}")
+        }
+
+        fun getWeakestMovementMode(defenderPostureEnums : List<PostureEnum>) : MovementModeEnum {
+            var weakestMovementMode: MovementModeEnum? = null
+
+            for (posture in defenderPostureEnums) {
+                val currentMovementMode = this.get(posture)
+
+                if (currentMovementMode == MovementModeEnum.COLUM) {
+                    weakestMovementMode = currentMovementMode
+                    break
+                }
+
+                if (weakestMovementMode == null) {
+                    weakestMovementMode = currentMovementMode
+                    continue
+                }
+
+                if (currentMovementMode == MovementModeEnum.TACTICAL && weakestMovementMode == MovementModeEnum.DEPLOYED) {
+                    weakestMovementMode = MovementModeEnum.TACTICAL
+                    continue
+                }
+
+            }
+
+            if (weakestMovementMode == null) {
+                throw Exception("Weakest movement mode is null for some reason")
+            }
+
+            return weakestMovementMode
+        }
+
+        private fun populateData() : HashMap<PostureEnum, MovementModeEnum> {
+            val data : HashMap<PostureEnum, MovementModeEnum> = HashMap()
+
+            data[PostureEnum.SCRN] = MovementModeEnum.TACTICAL
+            data[PostureEnum.TAC] = MovementModeEnum.TACTICAL
+            data[PostureEnum.REC] = MovementModeEnum.TACTICAL
+            data[PostureEnum.MASL] = MovementModeEnum.TACTICAL
+
+            data[PostureEnum.ROAD] = MovementModeEnum.COLUM
+
+            data[PostureEnum.DEF] = MovementModeEnum.DEPLOYED
+            data[PostureEnum.ADEF] = MovementModeEnum.DEPLOYED
+            data[PostureEnum.RDEF] = MovementModeEnum.DEPLOYED
+            data[PostureEnum.ASL] = MovementModeEnum.DEPLOYED
+            data[PostureEnum.FASL] = MovementModeEnum.DEPLOYED
+
+            return data
+        }
+    }
 
 }

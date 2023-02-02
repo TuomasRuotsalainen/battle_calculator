@@ -1,8 +1,5 @@
 package com.example.battlecalculator
 
-import android.content.Intent
-import android.util.Log
-
 class Calculator(private val postures: Postures) {
     fun getInitialAttackDifferential(unit : Unit, posture : PostureEnum, attackTypeEnum: AttackTypeEnum): Int? {
         // Note, that defender type influences this as well
@@ -23,18 +20,30 @@ class Calculator(private val postures: Postures) {
         return unit.defense + (-postures.getPosture(posture).defense)
     }
 
-    fun calculateCurrentCombatDifferential(state : GameState): Int {
+    fun calculateCurrentCombatDifferential(state: GameState): Int {
         if (state.attackingUnit == null || state.defendingUnits.size == 0) {
             throw Exception("Attacking or defending units not defined")
         }
 
-        val attacker : UnitState = state.attackingUnit!!
+        return calculateInitialDifferential(state)
+
+
+    }
+
+    private fun calculateInitialDifferential(state : GameState): Int {
+        val attacker: UnitState = state.attackingUnit!!
         val defenders = state.defendingUnits
 
-        val attackerCombatStrength = calculateCombatStrength(attacker, defenders, state.hexTerrain!!, true)
+        val attackerCombatStrength =
+            calculateCombatStrength(attacker, defenders, state.hexTerrain!!, true)
         var defenderCombatStrength = 0
         for (defender in defenders) {
-            defenderCombatStrength =+ calculateCombatStrength(defender, mutableListOf(state.attackingUnit!!), state.hexTerrain!!, false)
+            defenderCombatStrength = +calculateCombatStrength(
+                defender,
+                mutableListOf(state.attackingUnit!!),
+                state.hexTerrain!!,
+                false
+            )
         }
 
         val postures = Postures()
@@ -49,18 +58,63 @@ class Calculator(private val postures: Postures) {
         }
 
         val totalCombatDifferential = defenderCombatStrength - attackerCombatStrength
-        val combatDifferentialAfterPostures = totalCombatDifferential + attackerPostureModifier + defenderPostureModifier
+        val combatDifferentialAfterPostures =
+            totalCombatDifferential + attackerPostureModifier + defenderPostureModifier
 
         val attackTypeEnum = state.attackType!!
         val attackTypeModifier = AttackType().getCombatModifier(attackTypeEnum)
 
+        if (state.hexTerrain == null) {
+            throw Exception("Hexterrain is null when calculating results")
+        }
 
+        val terrainCombatModifier = Tables.TerrainCombatTable().getCombatModifier(state.hexTerrain!!, RiverCrossingTypeEnum.PREPARED, defenderPostures)
 
-        return combatDifferentialAfterPostures
+        return combatDifferentialAfterPostures + attackTypeModifier + terrainCombatModifier
     }
 
-    private fun calculateFixedModifiers(state : GameState): (Int, List<String>) {
+    private fun calculateFixedModifiers(state : GameState): Int {
+        var totalModifier = 0
+        var cadreModifier = 0
+        var nationalityModifier = 0
+        var defensiveWorksModifier = 0
 
+        val attacker: UnitState = state.attackingUnit!!
+
+        var defenderMinCadre : Int? = null
+        for (defendingUnit in state.defendingUnits) {
+            if (defenderMinCadre == null) {
+                defenderMinCadre = defendingUnit.unit!!.cadre
+                continue
+            }
+
+            if (defendingUnit.unit!!.cadre < defenderMinCadre) {
+                defenderMinCadre = defendingUnit.unit.cadre
+            }
+        }
+
+        if (defenderMinCadre != null) {
+            cadreModifier = defenderMinCadre - attacker.unit!!.cadre
+        } else {
+            throw Exception("Defender cadre is null")
+        }
+
+        if (state.activeFixedModifiers.contains(FixedModifierEnum.NATO_DEFENDS_MULTI_COUNTRY)) {
+            nationalityModifier = 2
+        }
+
+        if (state.hexTerrain != null) {
+            defensiveWorksModifier = state.hexTerrain!!.getDefensiveWorksCombatModifier()
+        }
+
+
+
+
+
+
+
+
+        return 0
     }
 
     private fun calculateCombatStrength(unitInQuestion : UnitState, opposingUnits : List<UnitState>, terrain : HexTerrain, isAttacking : Boolean) : Int {
