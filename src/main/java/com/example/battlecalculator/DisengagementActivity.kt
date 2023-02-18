@@ -27,18 +27,21 @@ class DisengagementActivity : AppCompatActivity() {
 
         val intent = Intent(this, FixedCombatModifierSelectionActivity::class.java)
         disengagementApplyButton.setOnClickListener{
-            val radioButton = checkRadioButton()
-            if (radioButton == R.id.retreat_before_combat_radio_zero) {
-                intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
-                startActivity(intent)
-                finish()
-                // No retreats, go to combat
-            } else if (radioButton == R.id.retreat_before_combat_radio_one) {
-                throw Exception("NOT IMPLEMENTED")
-                // One retreat
-            } else {
-                // Two retreats
-                throw Exception("NOT IMPLEMENTED")
+            when (checkRadioButton()) {
+                R.id.retreat_before_combat_radio_zero -> {
+                    intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+                    startActivity(intent)
+                    finish()
+                    // No retreats, go to combat
+                }
+                R.id.retreat_before_combat_radio_one -> {
+                    throw Exception("NOT IMPLEMENTED")
+                    // One retreat
+                }
+                else -> {
+                    // Two retreats
+                    throw Exception("NOT IMPLEMENTED")
+                }
             }
 
 

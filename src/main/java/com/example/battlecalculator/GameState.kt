@@ -291,6 +291,7 @@ class GameState(stateString : String) {
         val properties = str.split("-")
         var unit : Unit? = null
         var posture : PostureEnum? = null
+        var attrition : Int? = null
 
         if (properties.isNotEmpty()) {
             val unitID = properties[0]
@@ -306,14 +307,22 @@ class GameState(stateString : String) {
             }
         }
 
-        return UnitState(unit, posture)
+        if (properties.size > 2) {
+            val attritionStr = properties[2]
+            if (attritionStr != "") {
+                attrition = attritionStr.toInt()
+            }
+        }
+
+        return UnitState(unit, posture, attrition)
 
     }
 }
 
-class UnitState(unitInput : Unit?, postureInput: PostureEnum?) {
+class UnitState(unitInput : Unit?, postureInput: PostureEnum?, attrition: Int?) {
     val unit = unitInput
     var posture = postureInput
+    var attrition = attrition
 
     fun isInfantryOutInTheOpen() : Boolean {
         if (unit?.eatsArmourInCity() == true || unit?.type == UnitTypeEnum.RECON) {
@@ -336,6 +345,10 @@ class UnitState(unitInput : Unit?, postureInput: PostureEnum?) {
 
         if (posture != null) {
             unitStr += "-$posture"
+        }
+
+        if (attrition != null) {
+            unitStr += "-$attrition"
         }
 
         return unitStr

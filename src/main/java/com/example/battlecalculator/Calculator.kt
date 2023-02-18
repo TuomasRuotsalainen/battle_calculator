@@ -74,10 +74,20 @@ class Calculator(private val postures: Postures) {
     }
 
     private fun calculateFixedModifiers(state : GameState): Int {
-        var totalModifier = 0
         var cadreModifier = 0
-        var nationalityModifier = 0
         var defensiveWorksModifier = 0
+        var attritionModifier = 0
+
+        /*
+        var totalModifier = 0
+        var nationalityModifier = 0
+        var defenderRestingModifier = 0
+        var defenderDelayedModifier = 0
+        var defenderEngagementModifier = 0
+        var attackerEngagementModifier = 0
+        var attackerOutOfCommandModifier = 0
+        var defenderOutOfCommandModifier = 0
+        */
 
         val attacker: UnitState = state.attackingUnit!!
 
@@ -99,13 +109,51 @@ class Calculator(private val postures: Postures) {
             throw Exception("Defender cadre is null")
         }
 
+        if (state.hexTerrain != null) {
+            defensiveWorksModifier = state.hexTerrain!!.getDefensiveWorksCombatModifier()
+        }
+
+        val attackerAttrition = state.attackingUnit!!.attrition!!
+        var defenderTotalAttrition = 0
+        for (defender in state.defendingUnits) {
+            defenderTotalAttrition += defender.attrition!!
+        }
+
+        attritionModifier = defenderTotalAttrition - attackerAttrition
+
+        val fixedModifiers = FixedModifiers()
+
+        var fixedModifierCounter = 0
+        for (fixedModifier in FixedModifierEnum.values()) {
+            if (state.activeFixedModifiers.contains(fixedModifier)) {
+                fixedModifierCounter += fixedModifiers.getModifier(fixedModifier)
+            }
+        }
+
+        
+
+        /*
         if (state.activeFixedModifiers.contains(FixedModifierEnum.NATO_DEFENDS_MULTI_COUNTRY)) {
             nationalityModifier = 2
         }
 
-        if (state.hexTerrain != null) {
-            defensiveWorksModifier = state.hexTerrain!!.getDefensiveWorksCombatModifier()
+        if (state.activeFixedModifiers.contains(FixedModifierEnum.DEFENDER_RESTING)) {
+            defenderRestingModifier = 3
         }
+
+        if (state.activeFixedModifiers.contains(FixedModifierEnum.DEFENDER_DELAYED)) {
+            defenderDelayedModifier = 3
+        }
+
+        if (state.activeFixedModifiers.contains(FixedModifierEnum.DEFENDER_ENGAGED)) {
+            defenderEngagementModifier = 2
+        } else if (state.activeFixedModifiers.contains(FixedModifierEnum.DEFENDER_HALF_ENGAGED)) {
+            defenderEngagementModifier = 1
+        }
+
+        if (state.activeFixedModifiers.contains(FixedModifierEnum.ATTACKER_HALF_ENGAGED)) {
+            attackerEngagementModifier = -2
+        }*/
 
 
 

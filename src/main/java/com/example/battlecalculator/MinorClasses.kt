@@ -1,6 +1,5 @@
 package com.example.battlecalculator
 
-import java.util.*
 import kotlin.collections.HashMap
 
 enum class AttackTypeEnum {
@@ -40,14 +39,10 @@ fun getEmptyActiveFixedModifiers() : ActiveFixedModifiers {
 }
 
 class ActiveFixedModifiers(list : MutableList<FixedModifierEnum>) {
-    val map : HashMap<FixedModifierEnum, Boolean> = initMap(list)
+    private val map : HashMap<FixedModifierEnum, Boolean> = initMap(list)
 
     fun add(modifier : FixedModifierEnum) {
         map[modifier] = true
-    }
-
-    fun remove(modifier : FixedModifierEnum) {
-        map[modifier] = false
     }
 
     fun contains(modifier : FixedModifierEnum): Boolean {
@@ -70,7 +65,12 @@ class ActiveFixedModifiers(list : MutableList<FixedModifierEnum>) {
 }
 
 class FixedModifiers() {
-    val map : HashMap<FixedModifierEnum, Int> = initMap()
+    private val map : HashMap<FixedModifierEnum, Int> = initMap()
+
+    fun getModifier(fixedModifierEnum: FixedModifierEnum): Int {
+        return map[fixedModifierEnum]
+            ?: throw Exception("Couldn't find fixed modifier for enum $fixedModifierEnum")
+    }
 
     private fun initMap() : HashMap<FixedModifierEnum, Int> {
         val map = HashMap<FixedModifierEnum, Int>()
