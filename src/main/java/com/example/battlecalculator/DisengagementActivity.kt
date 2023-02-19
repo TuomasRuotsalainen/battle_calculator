@@ -25,7 +25,7 @@ class DisengagementActivity : AppCompatActivity() {
 
 
 
-        val intent = Intent(this, FixedCombatModifierSelectionActivity::class.java)
+        val intent = Intent(this, TargetTerrainSelectionActivity::class.java)
         disengagementApplyButton.setOnClickListener{
             when (checkRadioButton()) {
                 R.id.retreat_before_combat_radio_zero -> {

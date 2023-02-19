@@ -223,7 +223,7 @@ class GameState(stateString : String) {
         var str = ""
         var iterator = 0
         for (feature in hexTerrain!!.features) {
-            str += feature.toString()
+            str += feature.key.toString()
 
             iterator++
             if (iterator != hexTerrain!!.features.size) {

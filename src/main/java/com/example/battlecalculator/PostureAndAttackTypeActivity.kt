@@ -128,7 +128,7 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
         currentUnitView.setImageDrawable(currentUnitDrawable)
 
         val postures = Postures()
-        val calculator = Calculator(postures)
+        val calculator = Calculator()
 
         val textView = findViewById<TextView>(R.id.combatDifferential)
 

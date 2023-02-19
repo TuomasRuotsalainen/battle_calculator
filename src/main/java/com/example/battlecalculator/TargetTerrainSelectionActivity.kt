@@ -70,7 +70,7 @@ class TargetTerrainSelectionActivity : AppCompatActivity() {
 
         val applyButton = findViewById<Button>(R.id.terrain_apply)
 
-        val intent = Intent(this, UnitSelectionActivity::class.java)
+        val intent = Intent(this, FixedCombatModifierSelectionActivity::class.java)
         applyButton.setOnClickListener{
 
             val terrainList = mutableListOf<TerrainEnum>()

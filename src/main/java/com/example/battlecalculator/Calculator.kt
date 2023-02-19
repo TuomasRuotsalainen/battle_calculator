@@ -1,7 +1,8 @@
 package com.example.battlecalculator
 
-class Calculator(private val postures: Postures) {
+class Calculator() {
     fun getInitialAttackDifferential(unit : Unit, posture : PostureEnum, attackTypeEnum: AttackTypeEnum): Int? {
+        val postures = Postures()
         // Note, that defender type influences this as well
         val unitPosture = postures.getPosture(posture)
         if (unitPosture.attack == null) {
@@ -10,19 +11,22 @@ class Calculator(private val postures: Postures) {
 
         val attackTypeDifferential = AttackType().getCombatModifier(attackTypeEnum)
 
-        //Log.d("TUOMAS TAG", "Posture: ${unitPosture.attack}, unit attack value: ${unit.attack}, attack type modifier: $attackTypeDifferential")
-
         return unitPosture.attack + unit.attack + attackTypeDifferential
     }
 
 
     fun getInitialDefenseDifferential(unit : Unit, posture : PostureEnum): Int {
+        val postures = Postures()
         return unit.defense + (-postures.getPosture(posture).defense)
     }
 
     fun calculateCurrentCombatDifferential(state: GameState): Int {
         if (state.attackingUnit == null || state.defendingUnits.size == 0) {
             throw Exception("Attacking or defending units not defined")
+        }
+
+        if (state.hexTerrain == null) {
+            throw Exception("Calculator: hexTerrain is null")
         }
 
         return calculateInitialDifferential(state)

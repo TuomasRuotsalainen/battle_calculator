@@ -31,7 +31,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView10"
+        android:id="@+id/resultView"
         android:layout_width="367dp"
         android:layout_height="48dp"
         android:text="Current total combat modifier: -2"
@@ -83,24 +83,6 @@
             tools:layout_editor_absoluteY="226dp" />
 
         <CheckBox
-            android:id="@+id/defenderEngaged"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:text="Defender engaged"
-            tools:layout_editor_absoluteX="19dp"
-            tools:layout_editor_absoluteY="281dp" />
-
-        <CheckBox
-            android:id="@+id/defenderHalfEngaged"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:text="Defender half-engaged"
-            tools:layout_editor_absoluteX="19dp"
-            tools:layout_editor_absoluteY="341dp" />
-
-        <CheckBox
             android:id="@+id/defenderDelayed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -110,30 +92,11 @@
             tools:layout_editor_absoluteY="112dp" />
 
 
-
-        <CheckBox
-            android:id="@+id/defenderOutOfCommand"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Defender out of \ncommand range"
-            tools:layout_editor_absoluteX="181dp"
-            tools:layout_editor_absoluteY="178dp" />
-
-
-
         <CheckBox
             android:id="@+id/defenderAdvanceAxis"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="PACT fighting outside\n Advance Axis"
-            tools:layout_editor_absoluteX="181dp"
-            tools:layout_editor_absoluteY="178dp" />
-
-        <CheckBox
-            android:id="@+id/defenderFrontLineCommand"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Defender uses \nfrontline command\n(if selected, HQ cannot \nmove any more\nthis turn)"
             tools:layout_editor_absoluteX="181dp"
             tools:layout_editor_absoluteY="178dp" />
 
@@ -158,33 +121,6 @@
             android:text="PACT fighting outside\n Advance Axis"
             tools:layout_editor_absoluteX="181dp"
             tools:layout_editor_absoluteY="178dp" />
-
-        <CheckBox
-            android:id="@+id/attackerHalfEngaged"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:text="Attacker half-engaged"
-            tools:layout_editor_absoluteX="19dp"
-            tools:layout_editor_absoluteY="170dp" />
-
-
-        <CheckBox
-            android:id="@+id/attackerOutOfCommand"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Attacker out of \ncommand range"
-            tools:layout_editor_absoluteX="181dp"
-            tools:layout_editor_absoluteY="178dp" />
-
-        <CheckBox
-            android:id="@+id/attackerFrontLineCommand"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Attacker uses \nfrontline command\n(if selected, HQ cannot \nmove any more\nthis turn)"
-            tools:layout_editor_absoluteX="181dp"
-            tools:layout_editor_absoluteY="178dp" />
-
 
     </LinearLayout>
 

@@ -15,6 +15,7 @@ class FixedCombatModifierSelectionActivity : AppCompatActivity() {
         setContentView(R.layout.activity_fixed_combat_modifiers)
 
         val gameState = getGameState(intent)
+        val calculator = Calculator()
 
         val defenderOptions = findViewById<LinearLayout>(R.id.defenderOptionsLayout)
         val attackerOptions = findViewById<LinearLayout>(R.id.attackerOptionsLayout)
@@ -22,6 +23,10 @@ class FixedCombatModifierSelectionActivity : AppCompatActivity() {
         val natoDefendView = findViewById<CheckBox>(R.id.checkBoxNATOCountries)
         val attackerAdvanceAxisView = findViewById<CheckBox>(R.id.attackerAdvanceAxis)
         val defenderAdvanceAxisView = findViewById<CheckBox>(R.id.defenderAdvanceAxis)
+        val defenderResting = findViewById<CheckBox>(R.id.defenderResting)
+        val defenderDelayed = findViewById<CheckBox>(R.id.defenderDelayed)
+
+        val resultView = findViewById<TextView>(R.id.resultView)
 
         if (gameState.activeAlliance == Alliances.NATO) {
             // Add nato option to defender
@@ -31,102 +36,21 @@ class FixedCombatModifierSelectionActivity : AppCompatActivity() {
             defenderOptions.removeView(defenderAdvanceAxisView)
         }
 
-        val defenderResting = findViewById<CheckBox>(R.id.defenderResting)
-        val defenderEngaged = findViewById<CheckBox>(R.id.defenderEngaged)
-        val defenderHalfEngaged = findViewById<CheckBox>(R.id.defenderHalfEngaged)
-        val defenderDelayed = findViewById<CheckBox>(R.id.defenderDelayed)
-        val defenderOutOfCommandRange = findViewById<CheckBox>(R.id.defenderOutOfCommand)
-        val defenderFrontLineCommand = findViewById<CheckBox>(R.id.defenderFrontLineCommand)
-
-        val attackerHalfEngaged = findViewById<CheckBox>(R.id.attackerHalfEngaged)
-        val attackerOutOfCommandRange = findViewById<CheckBox>(R.id.attackerOutOfCommand)
-        val attackerFrontLineCommand = findViewById<CheckBox>(R.id.attackerFrontLineCommand)
-
         val buttonMap : HashMap<CheckBox, FixedModifierEnum> = HashMap()
         buttonMap[defenderResting] = FixedModifierEnum.DEFENDER_RESTING
-        buttonMap[defenderEngaged] = FixedModifierEnum.DEFENDER_ENGAGED
-        buttonMap[defenderHalfEngaged] = FixedModifierEnum.DEFENDER_HALF_ENGAGED
         buttonMap[defenderDelayed] = FixedModifierEnum.DEFENDER_DELAYED
+        buttonMap[attackerAdvanceAxisView] = FixedModifierEnum.PACT_ATTACKING_REAR
+        buttonMap[defenderAdvanceAxisView] = FixedModifierEnum.PACT_DEFENDING_REAR
+        buttonMap[natoDefendView] = FixedModifierEnum.NATO_DEFENDS_MULTI_COUNTRY
 
-        defenderResting.setOnClickListener {
-            gameState.activeFixedModifiers.map[FixedModifierEnum.DEFENDER_RESTING] = defenderResting.isChecked
-        }
-
-        defenderEngaged.setOnClickListener {
-            gameState.activeFixedModifiers.map[FixedModifierEnum.DEFENDER_ENGAGED] = defenderEngaged.isChecked
-        }
-
-
-        /*
-        NATO_DEFENDS_MULTI_COUNTRY,
-        DEFENDER_RESTING,
-        DEFENDER_ENGAGED,
-        DEFENDER_HALF_ENGAGED,
-        DEFENDER_DELAYED,
-        DEFENDER_OUT_OF_COMMAND_SCREEN_REC,
-        DEFENDER_OUT_OF_COMMAND,
-        DEFENDER_FRONT_LINE_COMMAND,
-        PACT_ATTACKING_REAR,
-        PACT_DEFENDING_REAR,
-        ATTACKER_HALF_ENGAGED,
-        ATTACKER_OUT_OF_COMMAND,
-        ATTACKER_OUT_OF_COMMAND_SCREEN_REC,
-        ATTACKER_FRONT_LINE_COMMAND,
-        ATTACKER_USES_REC,
-        ATTACKER_USES_SAPPERS,
-        DEFENDER_USES_SAPPERS
-        */
-
-        /*
-        val forestCheck = findViewById<CheckBox>(R.id.checkBoxForest)
-        val plainCheck = findViewById<CheckBox>(R.id.checkBoxPlain)
-        val townCheck = findViewById<CheckBox>(R.id.checkBoxTown)
-        val cityCheck = findViewById<CheckBox>(R.id.checkBoxCity)
-        val swampCheck = findViewById<CheckBox>(R.id.checkBoxSwamp)
-        val minorRiverCheck = findViewById<CheckBox>(R.id.checkBoxMinorRiver)
-        val majorRiverCheck = findViewById<CheckBox>(R.id.checkBoxMajorRiver)
-
-        val defenseWorks1Check = findViewById<CheckBox>(R.id.checkBoxDefenseWorks1)
-        val defenseWorks3Check = findViewById<CheckBox>(R.id.checkBoxDefenseWorks3)
-        val bridgeCheck = findViewById<CheckBox>(R.id.checkBoxBridgeExists)
-*/
-        /*
-        plainCheck.isChecked = true
-
-        defenseWorks3Check.setOnClickListener {
-            defenseWorks1Check.isChecked = false
-        }
-
-        defenseWorks1Check.setOnClickListener {
-            defenseWorks3Check.isChecked = false
-        }
-
-        majorRiverCheck.setOnClickListener {
-            if (!majorRiverCheck.isChecked && !minorRiverCheck.isChecked) {
-                bridgeCheck.isChecked = false
-            }
-            if (majorRiverCheck.isChecked) {
-                minorRiverCheck.isChecked = false
+        for ((key, modifier) in buttonMap ) {
+            key.setOnClickListener {
+                gameState.activeFixedModifiers.map[modifier] = key.isChecked
+                val currentDifferential = calculator.calculateCurrentCombatDifferential(gameState)
+                resultView.text = "Current total combat modifier: $currentDifferential"
             }
 
         }
-
-        minorRiverCheck.setOnClickListener {
-            if (!majorRiverCheck.isChecked && !minorRiverCheck.isChecked) {
-                bridgeCheck.isChecked = false
-            }
-
-            if (minorRiverCheck.isChecked) {
-                majorRiverCheck.isChecked = false
-            }
-        }
-
-        bridgeCheck.setOnClickListener {
-            if (!majorRiverCheck.isChecked && !minorRiverCheck.isChecked) {
-                bridgeCheck.isChecked = false
-            }
-        }*/
-
 
         val applyButton = findViewById<Button>(R.id.fixed_apply)
 
