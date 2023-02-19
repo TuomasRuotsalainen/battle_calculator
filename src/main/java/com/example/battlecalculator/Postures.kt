@@ -106,6 +106,26 @@ fun getPostureFromString(str : String) : PostureEnum {
     throw Exception("Couldn't convert $str to posture enum")
 }
 
+fun getCommandStateFromString(str : String) : CommandStateEnum {
+    for (enum in CommandStateEnum.values()) {
+        if (str == enum.toString()) {
+            return enum
+        }
+    }
+
+    throw Exception("Couldn't convert $str to command state enum")
+}
+
+fun getEngagementStateFromString(str : String) : EngagementStateEnum {
+    for (enum in EngagementStateEnum.values()) {
+        if (str == enum.toString()) {
+            return enum
+        }
+    }
+
+    throw Exception("Couldn't convert $str to engagement state enum")
+}
+
 
 class Posture(bombardmentModifier : Int, attackModifier : Int?, defenseModifier : Int, postureEnum: PostureEnum) {
 

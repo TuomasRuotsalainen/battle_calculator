@@ -160,6 +160,10 @@ class Tables {
                 return 0
             }
 
+            if (riverCrossingTypeEnum == RiverCrossingTypeEnum.NONE) {
+                throw Exception("There is a river, but river crossing type is NONE")
+            }
+
             val currentObstacle : ObstacleEnum
             if (terrainEnums.contains(TerrainEnum.BRIDGE)) {
                 currentObstacle = if (terrainEnums.contains(TerrainEnum.MINORRIVER)) {
@@ -354,6 +358,7 @@ class Tables {
 
             return data
         }
+    }
     }
 
 }

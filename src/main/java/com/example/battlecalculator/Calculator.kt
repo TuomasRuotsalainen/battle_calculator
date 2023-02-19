@@ -68,26 +68,17 @@ class Calculator(private val postures: Postures) {
             throw Exception("Hexterrain is null when calculating results")
         }
 
-        val terrainCombatModifier = Tables.TerrainCombatTable().getCombatModifier(state.hexTerrain!!, RiverCrossingTypeEnum.PREPARED, defenderPostures)
+        val terrainCombatModifier = Tables.TerrainCombatTable().getCombatModifier(state.hexTerrain!!, state.riverCrossingType!!, defenderPostures)
 
-        return combatDifferentialAfterPostures + attackTypeModifier + terrainCombatModifier
+        val fixedModifiers = calculateFixedModifiers(state)
+
+        return combatDifferentialAfterPostures + attackTypeModifier + terrainCombatModifier + fixedModifiers
     }
 
     private fun calculateFixedModifiers(state : GameState): Int {
         var cadreModifier = 0
         var defensiveWorksModifier = 0
         var attritionModifier = 0
-
-        /*
-        var totalModifier = 0
-        var nationalityModifier = 0
-        var defenderRestingModifier = 0
-        var defenderDelayedModifier = 0
-        var defenderEngagementModifier = 0
-        var attackerEngagementModifier = 0
-        var attackerOutOfCommandModifier = 0
-        var defenderOutOfCommandModifier = 0
-        */
 
         val attacker: UnitState = state.attackingUnit!!
 
@@ -130,37 +121,33 @@ class Calculator(private val postures: Postures) {
             }
         }
 
-        
-
-        /*
-        if (state.activeFixedModifiers.contains(FixedModifierEnum.NATO_DEFENDS_MULTI_COUNTRY)) {
-            nationalityModifier = 2
+        var adjacencyModifier = 0
+        if (state.adjacentAttackerCount != null) {
+            adjacencyModifier += state.adjacentAttackerCount!! * 2
         }
 
-        if (state.activeFixedModifiers.contains(FixedModifierEnum.DEFENDER_RESTING)) {
-            defenderRestingModifier = 3
+        if (state.adjacentDefenderCount != null) {
+            adjacencyModifier += state.adjacentDefenderCount!! * -1
         }
 
-        if (state.activeFixedModifiers.contains(FixedModifierEnum.DEFENDER_DELAYED)) {
-            defenderDelayedModifier = 3
+
+        return cadreModifier + defensiveWorksModifier + attritionModifier + adjacencyModifier + fixedModifierCounter
+    }
+
+    private fun calculateCommandStateDifferential(unitInQuestion : UnitState, isAttacker : Boolean): Int {
+        if (unitInQuestion.unit == null) {
+            throw Exception("calculateCommandStateDifferential: unit is null")
         }
 
-        if (state.activeFixedModifiers.contains(FixedModifierEnum.DEFENDER_ENGAGED)) {
-            defenderEngagementModifier = 2
-        } else if (state.activeFixedModifiers.contains(FixedModifierEnum.DEFENDER_HALF_ENGAGED)) {
-            defenderEngagementModifier = 1
+        if (unitInQuestion.commandState == null) {
+            throw Exception("calculateCommandStateDifferential: commandState is null")
         }
 
-        if (state.activeFixedModifiers.contains(FixedModifierEnum.ATTACKER_HALF_ENGAGED)) {
-            attackerEngagementModifier = -2
-        }*/
+        if (isAttacker) {
 
+        }
 
-
-
-
-
-
+        // TODO finish this
 
         return 0
     }

@@ -14,6 +14,7 @@ import android.widget.TextView
 class PostureAndAttackTypeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_posture_and_attack_type)
 
@@ -21,6 +22,88 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
         val gameState = getGameState(intent)
         if (gameState.attackingUnit == null) {
             throw Exception("Attacking unit state is null")
+
+        }
+
+        val currentUnitState : UnitState = if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
+            gameState.attackingUnit!!
+        } else {
+            gameState.getDefendingUnitStateWithoutPosture() ?:
+            // This means that we should not have started this activity any more
+            throw Exception("Started a posture and attack type activity for defender when all defending units have a posture already")
+        }
+
+        currentUnitState.attrition = 0 // TODO add proper setting for attrition
+
+        fun setCommandStateButtons() {
+            val normal = findViewById<RadioButton>(R.id.radio_command_status_none)
+            val frontLine = findViewById<RadioButton>(R.id.radio_command_status_front_line)
+            val outOfCommand = findViewById<RadioButton>(R.id.radio_command_status_out)
+
+            normal.isChecked = true
+            currentUnitState.commandState = CommandStateEnum.NORMAL
+
+            normal.setOnClickListener {
+                if (normal.isChecked) {
+                    frontLine.isChecked = false
+                    outOfCommand.isChecked = false
+                    currentUnitState.commandState = CommandStateEnum.NORMAL
+
+                }
+            }
+
+            frontLine.setOnClickListener {
+                if (frontLine.isChecked) {
+                    normal.isChecked = false
+                    outOfCommand.isChecked = false
+                    currentUnitState.commandState = CommandStateEnum.FRONT_LINE_COMMAND
+                }
+            }
+
+            outOfCommand.setOnClickListener {
+                if (outOfCommand.isChecked) {
+                    normal.isChecked = false
+                    frontLine.isChecked = false
+                    currentUnitState.commandState = CommandStateEnum.OUT_OF_COMMAND
+                }
+            }
+
+        }
+
+        fun setEngagementStateButtons() {
+            val none = findViewById<RadioButton>(R.id.radio_engagement_status_none)
+            val halfEngaged = findViewById<RadioButton>(R.id.radio_engagement_status_half_engaged)
+            val engaged = findViewById<RadioButton>(R.id.radio_engagement_status_enganged)
+
+            none.isChecked = true
+            currentUnitState.engagementState = EngagementStateEnum.NONE
+
+            none.setOnClickListener {
+                if (none.isChecked) {
+                    halfEngaged.isChecked = false
+                    engaged.isChecked = false
+                    currentUnitState.engagementState = EngagementStateEnum.NONE
+
+                }
+            }
+
+            halfEngaged.setOnClickListener {
+                if (halfEngaged.isChecked) {
+                    none.isChecked = false
+                    engaged.isChecked = false
+                    currentUnitState.engagementState = EngagementStateEnum.HALF_ENGAGED
+
+                }
+            }
+
+            engaged.setOnClickListener {
+                if (engaged.isChecked) {
+                    none.isChecked = false
+                    halfEngaged.isChecked = false
+                    currentUnitState.engagementState = EngagementStateEnum.ENGAGED
+
+                }
+            }
 
         }
 
@@ -35,14 +118,6 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
             throw Exception("Attacking unit is null")
         }
 
-
-        val currentUnitState : UnitState = if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
-            gameState.attackingUnit!!
-        } else {
-            gameState.getDefendingUnitStateWithoutPosture() ?:
-                // This means that we should not have started this activity any more
-                throw Exception("Started a posture and attack type activity for defender when all defending units have a posture already")
-        }
 
         val imageName = Images.getImageFileName(currentUnitState.unit!!.name)
         val currentUnitDrawable =
@@ -82,7 +157,7 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
                 uncheckAllPostureRadios(postureRadios)
                 postureRadio.isChecked = true
                 selectedPosture = postures.getPostureEnumByStr(postureRadio.text.toString())
-                val textContent = getTextViewString(currentUnitState.unit, gameState.attackType!!, selectedPosture, calculator, unitSelectionType)
+                val textContent = getTextViewString(currentUnitState.unit, gameState.attackType!!, selectedPosture, calculator, unitSelectionType, currentUnitState.commandState!!)
                 textView.text = textContent
 
             }
@@ -98,14 +173,14 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
             hasty.setOnClickListener {
                 prepared.isChecked = false
                 gameState.attackType = AttackTypeEnum.HASTY
-                val textContent = getTextViewString(currentUnitState.unit, gameState.attackType!!, selectedPosture, calculator, unitSelectionType)
+                val textContent = getTextViewString(currentUnitState.unit, gameState.attackType!!, selectedPosture, calculator, unitSelectionType, currentUnitState.commandState!!)
                 textView.text = textContent
             }
 
             prepared.setOnClickListener {
                 hasty.isChecked = false
                 gameState.attackType = AttackTypeEnum.PREPARED
-                val textContent = getTextViewString(currentUnitState.unit, gameState.attackType!!, selectedPosture, calculator, unitSelectionType)
+                val textContent = getTextViewString(currentUnitState.unit, gameState.attackType!!, selectedPosture, calculator, unitSelectionType, currentUnitState.commandState!!)
                 textView.text = textContent
             }
 
@@ -115,7 +190,10 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
             attackTypeGroup.removeAllViews()
         }
 
-        val textContent = getTextViewString(currentUnitState.unit, gameState.attackType!!, selectedPosture, calculator, unitSelectionType)
+        setCommandStateButtons()
+        setEngagementStateButtons()
+
+        val textContent = getTextViewString(currentUnitState.unit, gameState.attackType!!, selectedPosture, calculator, unitSelectionType, currentUnitState.commandState!!)
         textView.text = textContent
 
         val applyButton = findViewById<Button>(R.id.groudcombatApply)
@@ -142,9 +220,11 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
 
                 val nextDefender = gameState.getDefendingUnitStateWithoutPosture()
                 if (nextDefender != null) {
+                    Log.d("TUOMAS TAG:", "Lets go to defender selection")
                     val nextIntent = Intent(this, PostureAndAttackTypeActivity::class.java)
                     nextIntent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
                     nextIntent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.DEFENDER.toString())
+                    Log.d("TUOMAS TAG:", "Starting activity with intent $nextIntent")
                     startActivity(nextIntent)
                     finish()
                 } else {
@@ -161,7 +241,9 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
 
     }
 
-    private fun getTextViewString(unit: Unit, attack: AttackTypeEnum, postureEnum: PostureEnum, calculator: Calculator, unitSelectionType: UnitSelectionTypes): String {
+    private fun getTextViewString(unit: Unit, attack: AttackTypeEnum, postureEnum: PostureEnum, calculator: Calculator, unitSelectionType: UnitSelectionTypes, commandStateEnum: CommandStateEnum): String {
+        // TODO implement this with calculator
+
         val posture = Postures().getPosture(postureEnum)
 
         return if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
@@ -177,7 +259,7 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
                 attackType.getCombatModifier(
                     attack
                 )
-            } (attack type)\n=$initialDifferential\n\nMP cost: ${attackType.getMPCost(posture.enum, attack)} (prepared assault)"
+            } (attack type)\n=$initialDifferential \n\nMP cost: ${attackType.getMPCost(posture.enum, attack)} (prepared assault)"
         } else {
             val initialDifferential = calculator.getInitialDefenseDifferential(unit, posture.enum)
             "Initial defense differential:\n${unit.defense} (unit) + ${posture.defense} (posture) \n=$initialDifferential"

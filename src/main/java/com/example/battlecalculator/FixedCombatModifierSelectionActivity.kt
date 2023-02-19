@@ -42,10 +42,40 @@ class FixedCombatModifierSelectionActivity : AppCompatActivity() {
         val attackerOutOfCommandRange = findViewById<CheckBox>(R.id.attackerOutOfCommand)
         val attackerFrontLineCommand = findViewById<CheckBox>(R.id.attackerFrontLineCommand)
 
+        val buttonMap : HashMap<CheckBox, FixedModifierEnum> = HashMap()
+        buttonMap[defenderResting] = FixedModifierEnum.DEFENDER_RESTING
+        buttonMap[defenderEngaged] = FixedModifierEnum.DEFENDER_ENGAGED
+        buttonMap[defenderHalfEngaged] = FixedModifierEnum.DEFENDER_HALF_ENGAGED
+        buttonMap[defenderDelayed] = FixedModifierEnum.DEFENDER_DELAYED
+
         defenderResting.setOnClickListener {
             gameState.activeFixedModifiers.map[FixedModifierEnum.DEFENDER_RESTING] = defenderResting.isChecked
-            updateTotalCombatDifferential(0, gameState.activeFixedModifiers)
         }
+
+        defenderEngaged.setOnClickListener {
+            gameState.activeFixedModifiers.map[FixedModifierEnum.DEFENDER_ENGAGED] = defenderEngaged.isChecked
+        }
+
+
+        /*
+        NATO_DEFENDS_MULTI_COUNTRY,
+        DEFENDER_RESTING,
+        DEFENDER_ENGAGED,
+        DEFENDER_HALF_ENGAGED,
+        DEFENDER_DELAYED,
+        DEFENDER_OUT_OF_COMMAND_SCREEN_REC,
+        DEFENDER_OUT_OF_COMMAND,
+        DEFENDER_FRONT_LINE_COMMAND,
+        PACT_ATTACKING_REAR,
+        PACT_DEFENDING_REAR,
+        ATTACKER_HALF_ENGAGED,
+        ATTACKER_OUT_OF_COMMAND,
+        ATTACKER_OUT_OF_COMMAND_SCREEN_REC,
+        ATTACKER_FRONT_LINE_COMMAND,
+        ATTACKER_USES_REC,
+        ATTACKER_USES_SAPPERS,
+        DEFENDER_USES_SAPPERS
+        */
 
         /*
         val forestCheck = findViewById<CheckBox>(R.id.checkBoxForest)
@@ -103,26 +133,11 @@ class FixedCombatModifierSelectionActivity : AppCompatActivity() {
         val intent = Intent(this, UnitSelectionActivity::class.java)
         applyButton.setOnClickListener{
             //Toast.makeText(this, "Unit type: $radioButtonStr, attack strength: ${strengths.first}, defense strength: ${strengths.second}", Toast.LENGTH_LONG*10).show()
+            throw Exception("Not implemented yet!")
             startActivity(intent)
             finish()
         }
     }
 
-    private fun updateTotalCombatDifferential(initial: Int, fixedModifiers: ActiveFixedModifiers) {
-        var totalModifier : Int = initial
-        val modifierData = FixedModifiers()
-        for (fixedModifier in fixedModifiers.map) {
-            if (fixedModifier.value) {
-                val modifierValue = modifierData.map[fixedModifier.key]
-                    ?: throw Exception("Modifier value is null: ${fixedModifier.key}")
-                totalModifier += modifierValue
-            }
-        }
 
-        val resultsView = findViewById<TextView>(R.id.textView10)
-        val text = "Current total combat modifier: $totalModifier"
-        resultsView.text = text
-
-
-    }
 }

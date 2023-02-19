@@ -39,7 +39,7 @@ fun getEmptyActiveFixedModifiers() : ActiveFixedModifiers {
 }
 
 class ActiveFixedModifiers(list : MutableList<FixedModifierEnum>) {
-    private val map : HashMap<FixedModifierEnum, Boolean> = initMap(list)
+    val map : HashMap<FixedModifierEnum, Boolean> = initMap(list)
 
     fun add(modifier : FixedModifierEnum) {
         map[modifier] = true
@@ -65,7 +65,7 @@ class ActiveFixedModifiers(list : MutableList<FixedModifierEnum>) {
 }
 
 class FixedModifiers() {
-    private val map : HashMap<FixedModifierEnum, Int> = initMap()
+    val map : HashMap<FixedModifierEnum, Int> = initMap()
 
     fun getModifier(fixedModifierEnum: FixedModifierEnum): Int {
         return map[fixedModifierEnum]
@@ -88,6 +88,9 @@ class FixedModifiers() {
         map[FixedModifierEnum.ATTACKER_OUT_OF_COMMAND] = -4
         map[FixedModifierEnum.ATTACKER_OUT_OF_COMMAND_SCREEN_REC] = -2
         map[FixedModifierEnum.ATTACKER_FRONT_LINE_COMMAND] = 2
+        map[FixedModifierEnum.ATTACKER_USES_REC] = 2
+        map[FixedModifierEnum.ATTACKER_USES_SAPPERS] = 2
+        map[FixedModifierEnum.DEFENDER_USES_SAPPERS] = -1
 
         return map
     }

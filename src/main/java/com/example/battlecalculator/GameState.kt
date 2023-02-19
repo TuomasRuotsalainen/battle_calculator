@@ -14,12 +14,12 @@ zulu time = 03:00, state = 1, attacking unit id = 12J, unit ids in target hex 13
 */
 
 fun GameState() : GameState {
-    val stateStr = "Z=0300;S=1;AU=null;DU=null;AT=null;HEX=null;ACT=NATO;FIXED=null"
+    val stateStr = "Z=0300;S=1;AU=null;DU=null;AT=null;HEX=null;ACT=NATO;FIXED=null;ADJ_AT=null;ADJ_DEF=null"
     return GameState(stateStr)
 }
 
 fun getMockGameState(): GameState {
-    val stateStr = "Z=0300;S=1;AU=74-ASL;DU=34-RDEF,74g-DEF,;AT=HASTY;HEX=null;ACT=NATO;FIXED=ATTACKER_HALF_ENGAGED,PACT_DEFENDING_REAR"
+    val stateStr = "Z=0300;S=1;AU=74-ASL;DU=34-RDEF,74g-DEF,;AT=HASTY;HEX=null;ACT=NATO;FIXED=ATTACKER_HALF_ENGAGED,PACT_DEFENDING_REAR;ADJ_AT=1;ADJ_DEF=1"
     return GameState(stateStr)
 }
 
@@ -31,7 +31,7 @@ fun getGameState(intent: Intent) : GameState {
 class GameState(stateString : String) {
 
     private enum class DataIDs {
-        AU, DU, AT, HEX, ACT, FIXED
+        AU, DU, AT, HEX, ACT, FIXED, ADJ_AT, ADJ_DEF
     }
 
     private val dataMap = getDataMap(stateString)
@@ -44,6 +44,8 @@ class GameState(stateString : String) {
     var hexTerrain : HexTerrain? = getHexTerrainState()
     var activeAlliance : Alliances = getActiveFaction()
     var activeFixedModifiers : ActiveFixedModifiers = getFixedModifiers()
+    var adjacentDefenderCount : Int? = getAdjacentDefenderUnits()
+    var adjacentAttackerCount : Int? = getAdjacentAttackerUnits()
 
     fun getDefendingUnitStateWithoutPosture() : UnitState? {
         for (defendingUnitState in defendingUnits) {
@@ -78,8 +80,10 @@ class GameState(stateString : String) {
         val hexTerrainStr = getHexTerrainStateStr()
         val allianceStr = getAllianceStr()
         val activeFixedModifiersStr = getActiveFixedModifiersStr()
+        val adjacentDefenderCountStr = getAdjacentDefenderCountStr()
+        val adjacentAttackerCountStr = getAdjacentAttackerCountStr()
 
-        return "Z=0300;S=1;AU=$attackingUnitStr;DU=$defendingUnitsStr;AT=$attackTypeStr;HEX=$hexTerrainStr;ACT=$allianceStr;FIXED=$activeFixedModifiersStr"
+        return "Z=0300;S=1;AU=$attackingUnitStr;DU=$defendingUnitsStr;AT=$attackTypeStr;HEX=$hexTerrainStr;ACT=$allianceStr;FIXED=$activeFixedModifiersStr;ADJ_DEF=$adjacentDefenderCountStr;ADJ_AT=$adjacentAttackerCountStr"
     }
 
     fun setDefendingUnit(unitState : UnitState) {
@@ -162,6 +166,32 @@ class GameState(stateString : String) {
 
         return ActiveFixedModifiers(fixedModifierEnums)
 
+    }
+
+    private fun getAdjacentAttackerUnits() : Int? {
+        val adjacentAttackerUnitsStr = dataMap[DataIDs.ADJ_AT.toString()] ?: throw Exception("Fixed modifiers ADJ_AT not defined")
+        return adjacentAttackerUnitsStr.toIntOrNull()
+    }
+
+    private fun getAdjacentDefenderCountStr() : String {
+        return if (adjacentDefenderCount == null) {
+            "null"
+        } else {
+            adjacentAttackerCount.toString()
+        }
+    }
+
+    private fun getAdjacentAttackerCountStr() : String {
+        return if (adjacentAttackerCount == null) {
+            "null"
+        } else {
+            adjacentAttackerCount.toString()
+        }
+    }
+
+    private fun getAdjacentDefenderUnits() : Int? {
+        val adjacentDefenderUnitsStr = dataMap[DataIDs.ADJ_DEF.toString()] ?: throw Exception("Fixed modifiers ADJ_DEF not defined")
+        return adjacentDefenderUnitsStr.toIntOrNull()
     }
 
     private fun getActiveFixedModifiersStr() : String {
@@ -276,7 +306,7 @@ class GameState(stateString : String) {
         for (dataCell in dataCells) {
             val dataCellContents = dataCell.split("=")
             if (dataCellContents.size != 2) {
-                throw Exception("Encountered dataCell with bad content length: $dataCell")
+                throw Exception("Encountered dataCell with bad content length: $dataCell. Associated game state string: $stateString")
             }
 
             dataMap[dataCellContents[0]] = dataCellContents[1]
@@ -292,6 +322,10 @@ class GameState(stateString : String) {
         var unit : Unit? = null
         var posture : PostureEnum? = null
         var attrition : Int? = null
+        var commandState : CommandStateEnum? = null
+        var engagementState : EngagementStateEnum? = null
+
+        Log.d("TUOMAS STATE", "converting this to unit state: $str")
 
         if (properties.isNotEmpty()) {
             val unitID = properties[0]
@@ -314,15 +348,31 @@ class GameState(stateString : String) {
             }
         }
 
-        return UnitState(unit, posture, attrition)
+        if (properties.size > 3) {
+            val commandStateStr = properties[3]
+            if (commandStateStr != "") {
+                commandState = getCommandStateFromString(commandStateStr)
+            }
+        }
+
+        if (properties.size > 4) {
+            val engagementStateStr = properties[4]
+            if (engagementStateStr != "") {
+                engagementState = getEngagementStateFromString(engagementStateStr)
+            }
+        }
+
+        return UnitState(unit, posture, attrition, commandState, engagementState)
 
     }
 }
 
-class UnitState(unitInput : Unit?, postureInput: PostureEnum?, attrition: Int?) {
+class UnitState(unitInput : Unit?, postureInput: PostureEnum?, attrition: Int?, commandStateEnum: CommandStateEnum?, engagementStateEnum : EngagementStateEnum?) {
     val unit = unitInput
     var posture = postureInput
     var attrition = attrition
+    var commandState = commandStateEnum
+    var engagementState = engagementStateEnum
 
     fun isInfantryOutInTheOpen() : Boolean {
         if (unit?.eatsArmourInCity() == true || unit?.type == UnitTypeEnum.RECON) {
@@ -349,6 +399,14 @@ class UnitState(unitInput : Unit?, postureInput: PostureEnum?, attrition: Int?) 
 
         if (attrition != null) {
             unitStr += "-$attrition"
+        }
+
+        if (commandState != null) {
+            unitStr += "-$commandState"
+        }
+
+        if (engagementState != null) {
+            unitStr += "-$engagementState"
         }
 
         return unitStr
