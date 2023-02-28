@@ -60,6 +60,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/attacker_aircraft"
             >
 
             <TextView
@@ -85,6 +86,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/attacker_helo_1"
 
             >
 
@@ -110,6 +112,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/attacker_helo_2"
 
             >
             <TextView
@@ -149,6 +152,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/defender_aircraft"
             >
 
             <TextView
@@ -172,6 +176,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/defender_helo_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
@@ -197,6 +202,7 @@
 
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/defender_helo_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 

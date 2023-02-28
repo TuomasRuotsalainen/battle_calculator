@@ -54,10 +54,11 @@ class FixedCombatModifierSelectionActivity : AppCompatActivity() {
 
         val applyButton = findViewById<Button>(R.id.fixed_apply)
 
-        val intent = Intent(this, UnitSelectionActivity::class.java)
+        val intent = Intent(this, CombatSupportActivity::class.java)
         applyButton.setOnClickListener{
             //Toast.makeText(this, "Unit type: $radioButtonStr, attack strength: ${strengths.first}, defense strength: ${strengths.second}", Toast.LENGTH_LONG*10).show()
-            throw Exception("Not implemented yet!")
+            intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+            intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.ATTACKER.toString())
             startActivity(intent)
             finish()
         }

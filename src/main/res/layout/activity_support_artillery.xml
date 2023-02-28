@@ -157,7 +157,7 @@
         android:id="@+id/helicopter_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Helicopter barrage strengths\n(Not at night,\nFlip each unit after use)"
+        android:text="Helicopter barrage strengths\n(Not at night or in a city,\nFlip each unit after use)"
 
         app:layout_constraintTop_toBottomOf="@+id/artillery_strength"
         app:layout_constraintBottom_toTopOf="@+id/air_points"
@@ -255,10 +255,44 @@
         android:text="Initial combat support total: 5/16"
 
         app:layout_constraintTop_toBottomOf="@+id/air_points"
-        app:layout_constraintBottom_toTopOf="@+id/apply"
+        app:layout_constraintBottom_toTopOf="@+id/ew_points_input"
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/ew_points"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EW points"
+
+        app:layout_constraintTop_toBottomOf="@+id/total_support"
+        app:layout_constraintBottom_toTopOf="@+id/apply"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/artillery_strength"
+
+        android:gravity="center"
+        />
+
+    <EditText
+        android:id="@+id/ew_points_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="2"
+        android:hint="0"
+        android:inputType="number"
+        tools:layout_editor_absoluteX="253dp"
+        tools:layout_editor_absoluteY="304dp"
+
+        app:layout_constraintStart_toEndOf="@+id/attacker_label"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/total_support"
+        app:layout_constraintBottom_toTopOf="@+id/apply"
+
+
         />
 
     <Button
@@ -270,7 +304,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
 
-        app:layout_constraintTop_toBottomOf="@+id/total_support"
+        app:layout_constraintTop_toBottomOf="@+id/ew_points_input"
         app:layout_constraintBottom_toBottomOf="parent"
 
         />

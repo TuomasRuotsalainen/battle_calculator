@@ -1,6 +1,7 @@
 package com.example.battlecalculator
 
 import android.content.Intent
+import android.provider.ContactsContract.Data
 import android.util.Log
 import com.example.battlecalculator.BuildConfig.DEBUG
 
@@ -14,12 +15,12 @@ zulu time = 03:00, state = 1, attacking unit id = 12J, unit ids in target hex 13
 */
 
 fun GameState() : GameState {
-    val stateStr = "Z=0300;S=1;AU=null;DU=null;AT=null;HEX=null;ACT=NATO;FIXED=null;ADJ_AT=null;ADJ_DEF=null"
+    val stateStr = "Z=0300;S=1;AU=null;DU=null;AT=null;HEX=null;ACT=NATO;FIXED=null;ADJ_AT=null;ADJ_DEF=null;COM_SUP=null"
     return GameState(stateStr)
 }
 
 fun getMockGameState(): GameState {
-    val stateStr = "Z=0300;S=1;AU=74-ASL;DU=34-RDEF,74g-DEF,;AT=HASTY;HEX=null;ACT=NATO;FIXED=ATTACKER_HALF_ENGAGED,PACT_DEFENDING_REAR;ADJ_AT=1;ADJ_DEF=1"
+    val stateStr = "Z=0300;S=1;AU=74-ASL;DU=34-RDEF,74g-DEF,;AT=HASTY;HEX=null;ACT=NATO;FIXED=ATTACKER_HALF_ENGAGED,PACT_DEFENDING_REAR;ADJ_AT=1;ADJ_DEF=1;COM_SUP=DEF-2-2,3,0-2-true&AT-0-0,0,0-5-false"
     return GameState(stateStr)
 }
 
@@ -31,7 +32,7 @@ fun getGameState(intent: Intent) : GameState {
 class GameState(stateString : String) {
 
     private enum class DataIDs {
-        AU, DU, AT, HEX, ACT, FIXED, ADJ_AT, ADJ_DEF
+        AU, DU, AT, HEX, ACT, FIXED, ADJ_AT, ADJ_DEF, COM_SUP
     }
 
     private val dataMap = getDataMap(stateString)
@@ -46,6 +47,7 @@ class GameState(stateString : String) {
     var activeFixedModifiers : ActiveFixedModifiers = getFixedModifiers()
     var adjacentDefenderCount : Int? = getAdjacentDefenderUnits()
     var adjacentAttackerCount : Int? = getAdjacentAttackerUnits()
+    var combatSupport : CombatSupportSelection? = getCombatSupportSelection()
 
     fun getDefendingUnitStateWithoutPosture() : UnitState? {
         for (defendingUnitState in defendingUnits) {
@@ -82,8 +84,9 @@ class GameState(stateString : String) {
         val activeFixedModifiersStr = getActiveFixedModifiersStr()
         val adjacentDefenderCountStr = getAdjacentDefenderCountStr()
         val adjacentAttackerCountStr = getAdjacentAttackerCountStr()
+        val combatSupportSelectionStr = getCombatSupportSelectionStr()
 
-        return "Z=0300;S=1;AU=$attackingUnitStr;DU=$defendingUnitsStr;AT=$attackTypeStr;HEX=$hexTerrainStr;ACT=$allianceStr;FIXED=$activeFixedModifiersStr;ADJ_DEF=$adjacentDefenderCountStr;ADJ_AT=$adjacentAttackerCountStr"
+        return "Z=0300;S=1;AU=$attackingUnitStr;DU=$defendingUnitsStr;AT=$attackTypeStr;HEX=$hexTerrainStr;ACT=$allianceStr;FIXED=$activeFixedModifiersStr;ADJ_DEF=$adjacentDefenderCountStr;ADJ_AT=$adjacentAttackerCountStr;COM_SUP=$combatSupportSelectionStr"
     }
 
     fun setDefendingUnit(unitState : UnitState) {
@@ -125,7 +128,7 @@ class GameState(stateString : String) {
     }
 
     private fun getHexTerrainState() : HexTerrain? {
-        val hexTerrainStr = dataMap[DataIDs.HEX.toString()] ?: throw Exception("Hex terrain HEX to defined")
+        val hexTerrainStr = dataMap[DataIDs.HEX.toString()] ?: throw Exception("Hex terrain HEX not defined")
 
         if (hexTerrainStr == "null") {
             return null
@@ -143,6 +146,40 @@ class GameState(stateString : String) {
         }
 
         return HexTerrain(terrainFeatureEnums)
+    }
+
+    private fun getCombatSupportSelection() : CombatSupportSelection? {
+        val combatSupportSelection = CombatSupportSelection()
+
+        val combatSupportStr = dataMap[DataIDs.COM_SUP.toString()] ?: throw Exception("Combat support COM_SUP not defined")
+
+        if (combatSupportStr == "null") {
+            return null
+        }
+
+        val selections = combatSupportStr.split("&")
+
+        if (selections.isEmpty() || selections.size > 2) {
+            throw Exception("Combat support string $combatSupportStr has a weird number of selections")
+        }
+
+        for (selection in selections) {
+            val combatSupport = parseCombatSupport(selection)
+            if (combatSupport.isAttacker) {
+                if (combatSupportSelection.getAttackerCombatSupport() != null) {
+                    throw Exception("Encountered two attacker combat support settings for combatSupportStr $combatSupportStr")
+                }
+                combatSupportSelection.setAttackerCombatSupport(combatSupport)
+            } else {
+                if (combatSupportSelection.getDefenderCombatSupport() != null) {
+                    throw Exception("Encountered two defender combat support settings for combatSupportStr $combatSupportStr")
+                }
+                combatSupportSelection.setDefenderCombatSupport(combatSupport)
+            }
+        }
+
+        return combatSupportSelection
+
     }
 
     private fun getFixedModifiers() : ActiveFixedModifiers {
@@ -187,6 +224,14 @@ class GameState(stateString : String) {
         } else {
             adjacentAttackerCount.toString()
         }
+    }
+
+    private fun getCombatSupportSelectionStr() : String {
+        if (combatSupport == null) {
+            return "null"
+        }
+
+        return combatSupport!!.toStateString()
     }
 
     private fun getAdjacentDefenderUnits() : Int? {
@@ -324,8 +369,6 @@ class GameState(stateString : String) {
         var attrition : Int? = null
         var commandState : CommandStateEnum? = null
         var engagementState : EngagementStateEnum? = null
-
-        Log.d("TUOMAS STATE", "converting this to unit state: $str")
 
         if (properties.isNotEmpty()) {
             val unitID = properties[0]

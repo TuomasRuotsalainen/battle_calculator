@@ -359,6 +359,91 @@ class Tables {
             return data
         }
     }
+
+
+    }
+
+    class AAFire() {
+
+        private val map : HashMap<Int, Row> = populateMap()
+
+        class Result(private val abortedAirPoints : Int, private val shotDownAirPoints : Int, private val attritionToHelicopters : Int) {
+            fun getAbortedAirPoints() : Int {
+                return abortedAirPoints
+            }
+
+            fun getShotDownAirPoints() : Int {
+                return shotDownAirPoints
+            }
+
+            fun getAttritionToHelicopters() : Int {
+                return attritionToHelicopters
+            }
+        }
+
+        fun getResult(die : DieRoll, aaFireValue : Int): Result {
+            val row = map[die.getResultWithModifiers()-1]!!
+            val cell = row.getResult(aaFireValue) ?: return Result(0,0,0)
+            return Result(abortedAirPoints = cell.A, shotDownAirPoints = cell.S, attritionToHelicopters = cell.S + cell.A)
+        }
+
+        private fun populateMap() : HashMap<Int, Row> {
+            val map = HashMap<Int, Row>()
+            map[0] = Row(listOf(null, null, null, null, null))
+            map[1] = Row(listOf(null, null, null, null, Cell(A=1, S=0)))
+            map[2] = Row(listOf(null, null, null, Cell(A=1, S=0), Cell(A=1, S=0)))
+            map[3] = Row(listOf(null, null, Cell(A=1, S=0), Cell(A=1, S=0), Cell(A=1, S=0)))
+            map[4] = Row(listOf(null, null, Cell(A=1, S=0), Cell(A=1, S=0), Cell(A=2, S=0)))
+            map[5] = Row(listOf(null, Cell(A=1, S=0), Cell(A=1, S=0), Cell(A=2, S=0), Cell(A=2, S=0)))
+            map[6] = Row(listOf(null, Cell(A=1, S=0), Cell(A=2, S=0), Cell(A=2, S=0), Cell(A=1, S=1)))
+            map[7] = Row(listOf(Cell(A=1, S=0), Cell(A=1, S=0), Cell(A=2, S=0), Cell(A=1, S=1), Cell(A=1, S=1)))
+            map[8] = Row(listOf(Cell(A=1, S=0), Cell(A=2, S=0), Cell(A=1, S=1), Cell(A=1, S=1), Cell(A=1, S=1)))
+            map[9] = Row(listOf(Cell(A=1, S=0), Cell(A=2, S=0), Cell(A=1, S=1), Cell(A=1, S=1), Cell(A=2, S=1)))
+            map[10] = Row(listOf(Cell(A=2, S=0), Cell(A=1, S=1), Cell(A=1, S=1), Cell(A=2, S=1), Cell(A=2, S=1)))
+            map[11] = Row(listOf(Cell(A=2, S=0), Cell(A=1, S=1), Cell(A=2, S=1), Cell(A=2, S=1), Cell(A=2, S=1)))
+
+            return map
+        }
+
+        private class Cell(val S : Int, val A : Int) {
+
+        }
+
+        private class Row(cells : List<Cell?>) {
+            private val map : HashMap<Int, Cell?> = populateMap(cells)
+
+            fun getResult(AAValue : Int): Cell? {
+                if (AAValue < 0) {
+                    throw Exception("AA value should never be less than 0")
+                }
+
+                return when (AAValue) {
+                    0 -> null
+                    1,2 -> map[0]
+                    3,4 -> map[1]
+                    5,6 -> map[2]
+                    7,8 -> map[3]
+                    else -> map[4]
+
+                }
+            }
+
+            private fun populateMap(cells : List<Cell?>) : HashMap<Int, Cell?> {
+                if (cells.size != 5) {
+                    throw Exception("Wrong size contents provided in populateMap for AAFire row")
+                }
+
+                val map = HashMap<Int, Cell?>()
+                var idx = 0
+                for (cell in cells) {
+                    map[idx] = cell
+                    idx += 1
+                }
+
+                return map
+
+            }
+        }
     }
 
 }
