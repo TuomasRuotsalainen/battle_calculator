@@ -93,7 +93,7 @@ class CombatSupportActivity : AppCompatActivity() {
 
             } else {
                 gameState.combatSupport!!.setDefenderCombatSupport(createCombatSupport())
-                intent = Intent(this, CombatSupportActivity::class.java)
+                intent = Intent(this, AAFireActivity::class.java)
             }
 
             intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())

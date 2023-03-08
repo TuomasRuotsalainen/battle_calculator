@@ -123,6 +123,9 @@ class CombatSupportSelection() {
         }
 
         if (defenderSupport != null) {
+            if (str.isNotEmpty()) {
+                str += "&"
+            }
             str += defenderSupport!!.toStateString()
         }
 
@@ -195,11 +198,12 @@ class CombatSupport(val artilleryPoints: Int, private var airPoints : Int, val h
         return airPoints
     }
 
-    fun adjustAirPoints(newAirPoints : Int) {
-        if (newAirPoints < 0) {
+    fun adjustAirPoints(aaResult : Tables.AAFire.Result) {
+        val aaDecrease = aaResult.getAbortedAirPoints() + aaResult.getShotDownAirPoints()
+        if (aaDecrease > airPoints) {
             airPoints = 0
         }
-        airPoints = newAirPoints
+        airPoints -= aaDecrease
     }
 
     fun toStateString() : String {
@@ -214,11 +218,12 @@ class CombatSupport(val artilleryPoints: Int, private var airPoints : Int, val h
 
         str += "-$artilleryPoints"
 
+        str += "-"
         for (heliPoint in helicopterPoints) {
             str += "$heliPoint,"
         }
 
-        str.dropLast(1)
+        str = str.dropLast(1)
 
         str += "-$airPoints"
         str += if (targetInCASZone) {

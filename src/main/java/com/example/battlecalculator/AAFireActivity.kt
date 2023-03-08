@@ -16,8 +16,6 @@ class AAFireActivity : AppCompatActivity() {
 
         var gameState = getGameState(intent)
 
-        val unitSelectionType = Communication.getUnitSelectionType(intent)
-
         if (gameState.combatSupport == null) {
             throw Exception("Combat support is null")
         }
@@ -34,7 +32,27 @@ class AAFireActivity : AppCompatActivity() {
 
         val defenderCS = gameState.combatSupport!!.getAttackerCombatSupport()
 
+        class AASetting(val aaToAttackerAir : Int, val aaToAttackerHelo1 : Int, val aaToAttackerHelo2 : Int, val aaToDefenderAir : Int, val aaToDefenderHelo1 : Int, val aaToDefenderHelo2 : Int,) {}
 
+        fun getAASetting() : AASetting {
+            return AASetting(
+                getIntFromTextField(findViewById(R.id.aa_against_attacker_aircraft_input)),
+                getIntFromTextField(findViewById(R.id.aa_against_attacker_heli_1_input)),
+                getIntFromTextField(findViewById(R.id.aa_against_attacker_heli_2_input)),
+                getIntFromTextField(findViewById(R.id.aa_against_defender_aircraft_input)),
+                getIntFromTextField(findViewById(R.id.aa_against_defender_heli_1_input)),
+                getIntFromTextField(findViewById(R.id.aa_against_defender_heli_2_input)),
+            )
+        }
+
+        fun displayAAResults(aaResultAttackerAircraft : Tables.AAFire.Result, aaResultDefenderAircraft : Tables.AAFire.Result) {
+            val attackerAircraftView = findViewById<TextView>(R.id.aa_against_attacker_aircraft_input)
+            attackerAircraftView.text = "Attacker air points\naborted: ${aaResultAttackerAircraft.getAbortedAirPoints()}\nshot down: ${aaResultAttackerAircraft.getShotDownAirPoints()}"
+
+            val defenderAircraftView = findViewById<TextView>(R.id.aa_against_attacker_aircraft_input)
+            defenderAircraftView.text = "Defender air points\naborted: ${aaResultDefenderAircraft.getAbortedAirPoints()}\nshot down: ${aaResultDefenderAircraft.getShotDownAirPoints()}"
+
+        }
 
         if (attackerCS!!.getAirPoints() == 0) {
             attackerAir.removeAllViews()
@@ -58,13 +76,9 @@ class AAFireActivity : AppCompatActivity() {
 
         val aaFire = Tables.AAFire()
 
-        fun executeAAForAircraft(cs : CombatSupport, aaValue : Int) {
+        fun executeAAForAircraft(aaValue : Int): Tables.AAFire.Result {
             val die = DieRoll()
-            val result = aaFire.getResult(die, aaValue)
-            val aborted = result.getAbortedAirPoints()
-            val destroyed = result.getShotDownAirPoints()
-
-            cs.adjustAirPoints(cs.getAirPoints()-aborted-destroyed)
+            return aaFire.getResult(die, aaValue)
         }
 
         fun executeAAForHelicopter(aaValue : Int, die : DieRoll) {
@@ -74,19 +88,43 @@ class AAFireActivity : AppCompatActivity() {
 
         }
 
+        var isFirstClick = true
+
         val aaApply = findViewById<Button>(R.id.apply)
 
         aaApply.setOnClickListener{
 
-            if (attackerCS.getAirPoints() > 0) {
-                //executeAAForAircraft()
+            if (isFirstClick) {
+                val aaSetting = getAASetting()
+                val attackerAirResult = executeAAForAircraft(aaSetting.aaToAttackerAir)
+                val defenderAirResult = executeAAForAircraft(aaSetting.aaToDefenderAir)
+
+                displayAAResults(attackerAirResult, defenderAirResult)
+
+                val attackerCS = gameState.combatSupport!!.getAttackerCombatSupport()
+                val airPointsBefore = gameState.combatSupport!!.getAttackerCombatSupport()!!.getAirPoints()
+                attackerCS!!.adjustAirPoints(attackerAirResult)
+
+                val airPointsAfter = gameState.combatSupport!!.getAttackerCombatSupport()!!.getAirPoints()
+
+                if (airPointsBefore - (attackerAirResult.getAbortedAirPoints()+attackerAirResult.getShotDownAirPoints()) != airPointsAfter) {
+                    throw Exception("This way of setting things is not working")
+                }
+
+                aaApply.text = "Apply AA resuls"
+
+                isFirstClick = false
+
+            } else {
+                val intent : Intent = Intent(this, AAFireActivity::class.java)
+                intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+
+                startActivity(intent)
+                finish()
             }
 
-            val intent : Intent = Intent(this, AAFireActivity::class.java)
-            intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
 
-            startActivity(intent)
-            finish()
+
         }
     }
 
