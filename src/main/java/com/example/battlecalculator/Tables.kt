@@ -367,7 +367,7 @@ class Tables {
 
         private val map : HashMap<Int, Row> = populateMap()
 
-        class Result(private val abortedAirPoints : Int, private val shotDownAirPoints : Int, private val attritionToHelicopters : Int) {
+        class Result(private val dieRoll : DieRoll, private val abortedAirPoints : Int, private val shotDownAirPoints : Int, private val attritionToHelicopters : Int) {
             fun getAbortedAirPoints() : Int {
                 return abortedAirPoints
             }
@@ -379,12 +379,16 @@ class Tables {
             fun getAttritionToHelicopters() : Int {
                 return attritionToHelicopters
             }
+
+            fun getDieRoll() : DieRoll {
+                return dieRoll
+            }
         }
 
         fun getResult(die : DieRoll, aaFireValue : Int): Result {
             val row = map[die.getResultWithModifiers()-1]!!
-            val cell = row.getResult(aaFireValue) ?: return Result(0,0,0)
-            return Result(abortedAirPoints = cell.A, shotDownAirPoints = cell.S, attritionToHelicopters = cell.S + cell.A)
+            val cell = row.getResult(aaFireValue) ?: return Result(die, 0,0,0)
+            return Result(dieRoll = die, abortedAirPoints = cell.A, shotDownAirPoints = cell.S, attritionToHelicopters = cell.S + cell.A)
         }
 
         private fun populateMap() : HashMap<Int, Row> {

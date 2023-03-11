@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.*
 import kotlin.Unit
 
@@ -20,103 +21,266 @@ class AAFireActivity : AppCompatActivity() {
             throw Exception("Combat support is null")
         }
 
-        val attackerAir = findViewById<LinearLayout>(R.id.attacker_aircraft)
-        val attackerHelo1 = findViewById<LinearLayout>(R.id.attacker_helo_1)
-        val attackerHelo2 = findViewById<LinearLayout>(R.id.attacker_helo_2)
+        class AASettingRow(private val layout : LinearLayout) {
+            private val textView : TextView = layout.getChildAt(0) as TextView
+            private val editText : EditText = layout.getChildAt(1) as EditText
+            private val rotaryCheckBox : CheckBox? = getCheckbox(layout)
 
-        val attackerCS = gameState.combatSupport!!.getAttackerCombatSupport()
+            fun setResult(text : String, enableCheckBox : Boolean) {
+                textView.text = text
 
-        val defenderAir = findViewById<LinearLayout>(R.id.defender_aircraft)
-        val defenderHelo1 = findViewById<LinearLayout>(R.id.defender_helo_1)
-        val defenderHelo2 = findViewById<LinearLayout>(R.id.defender_helo_2)
+                // remove EditText view
+                this.layout.removeViewAt(1)
 
-        val defenderCS = gameState.combatSupport!!.getAttackerCombatSupport()
+                if (enableCheckBox) {
+                    enableCheckBox()
+                }
+            }
 
-        class AASetting(val aaToAttackerAir : Int, val aaToAttackerHelo1 : Int, val aaToAttackerHelo2 : Int, val aaToDefenderAir : Int, val aaToDefenderHelo1 : Int, val aaToDefenderHelo2 : Int,) {}
+            fun getValue() : Int {
+                return Helpers.getIntFromTextField(editText)
+            }
 
-        fun getAASetting() : AASetting {
-            return AASetting(
-                getIntFromTextField(findViewById(R.id.aa_against_attacker_aircraft_input)),
-                getIntFromTextField(findViewById(R.id.aa_against_attacker_heli_1_input)),
-                getIntFromTextField(findViewById(R.id.aa_against_attacker_heli_2_input)),
-                getIntFromTextField(findViewById(R.id.aa_against_defender_aircraft_input)),
-                getIntFromTextField(findViewById(R.id.aa_against_defender_heli_1_input)),
-                getIntFromTextField(findViewById(R.id.aa_against_defender_heli_2_input)),
-            )
+            fun enableCheckBox() {
+                this.layout.addView(this.rotaryCheckBox)
+            }
+
+            fun isRotaryDestroyed() : Boolean {
+                return rotaryCheckBox!!.isChecked
+            }
+
+            fun removeCheckBox() {
+                layout.removeViewAt(2)
+            }
+
+            private fun getCheckbox(layout : LinearLayout) : CheckBox? {
+                if (layout.childCount > 2) {
+                    return layout.getChildAt(2) as CheckBox
+                }
+
+                return null
+            }
         }
 
-        fun displayAAResults(aaResultAttackerAircraft : Tables.AAFire.Result, aaResultDefenderAircraft : Tables.AAFire.Result) {
-            val attackerAircraftView = findViewById<TextView>(R.id.aa_against_attacker_aircraft_input)
-            attackerAircraftView.text = "Attacker air points\naborted: ${aaResultAttackerAircraft.getAbortedAirPoints()}\nshot down: ${aaResultAttackerAircraft.getShotDownAirPoints()}"
+        class AASettings(private val mainLayout : LinearLayout, private val combatSupport: CombatSupport, private val name : String) {
+            private val fixed : AASettingRow? = createFixedRow()
+            private val rotary : List<AASettingRow> = createRotaryRows()
 
-            val defenderAircraftView = findViewById<TextView>(R.id.aa_against_attacker_aircraft_input)
-            defenderAircraftView.text = "Defender air points\naborted: ${aaResultDefenderAircraft.getAbortedAirPoints()}\nshot down: ${aaResultDefenderAircraft.getShotDownAirPoints()}"
+            private var fixedResult : Tables.AAFire.Result? = null
+            private var rotaryResult : List<Tables.AAFire.Result> = listOf<Tables.AAFire.Result>()
 
+            fun fixedInUse() : Boolean {
+                return (fixed != null)
+            }
+
+            fun rotaryInUse() : Boolean {
+                return rotary.isNotEmpty()
+            }
+
+            fun getAaAgainstFixed(): Int? {
+                if (fixed == null) {
+                    return null
+                }
+
+                return fixed.getValue()
+            }
+
+            fun getDestroyedRotariesIndexes(): List<Int> {
+                val destroyedList = mutableListOf<Int>()
+                var idx = 0
+                for (rotaryRow in rotary) {
+                    if (rotaryRow.isRotaryDestroyed()) {
+                        destroyedList.add(idx)
+                    }
+
+                    idx += 1
+                }
+
+                return destroyedList
+            }
+
+            fun getAaAgainstRotary(): List<Int> {
+                val list = mutableListOf<Int>()
+                for (row in rotary) {
+                    list.add(row.getValue())
+                }
+
+                return list
+            }
+
+            fun getFixedResult(): Tables.AAFire.Result? {
+                return fixedResult
+            }
+
+            fun getRotaryResult(): List<Tables.AAFire.Result> {
+                return getRotaryResult()
+            }
+
+
+            fun setResults(fixedResult : Tables.AAFire.Result?, rotaryResults : List<Tables.AAFire.Result>) {
+                if (fixedInUse()) {
+                    if (fixedResult == null) {
+                        throw Exception("No results for AA against fixed wing, but fixed wing in use")
+                    }
+
+                    fixed!!.setResult("Die roll result: ${fixedResult.getDieRoll().getResultWithoutModifiers()}. ${this.name} air points aborted: ${fixedResult.getAbortedAirPoints()}air points shot down: ${fixedResult.getShotDownAirPoints()}", false)
+                    this.fixedResult = fixedResult
+                }
+
+                if (rotaryInUse()) {
+                    if (rotary.size != rotaryResults.size) {
+                        throw Exception("The amount of used rotary is different than the number of rotary results")
+                    }
+
+                    var idx = 0
+                    for (rotaryRow in rotary) {
+                        val attrition = rotaryResults[idx].getAttritionToHelicopters()
+                        val enableCheckBox = attrition > 0
+                        rotaryRow.setResult("Die roll result: ${rotaryResults[idx].getDieRoll().getResultWithoutModifiers()}. ${this.name} rotary wing ${idx+1} suffered $attrition attrition.", enableCheckBox)
+                        idx += 1
+
+                    }
+
+                    this.rotaryResult = rotaryResults
+                }
+            }
+
+            private fun createRotaryRows() : List<AASettingRow> {
+                val rotaryList = mutableListOf<AASettingRow>()
+                val rotaryCount = combatSupport.getHelicopterCount()
+                for (i in 0 until rotaryCount) {
+                    val rowLayout = mainLayout.getChildAt(i+1) as LinearLayout
+                    val settingRow = AASettingRow(rowLayout)
+                    settingRow.removeCheckBox()
+                    rotaryList.add(settingRow)
+                }
+
+                val maxRotaryRows = 3
+                val rotaryRowsToBeRemoved = maxRotaryRows - rotaryList.size
+                for (i in 0 until rotaryRowsToBeRemoved) {
+                    val idx = maxRotaryRows - i
+                    val layoutToRemove = mainLayout.getChildAt(idx) as LinearLayout
+                    removeRow(layoutToRemove)
+                }
+
+                return rotaryList
+            }
+
+            private fun removeRow(linearLayout: LinearLayout) {
+                while (linearLayout.childCount > 0) {
+                    linearLayout.removeViewAt(0)
+                }
+            }
+
+            private fun createFixedRow() : AASettingRow? {
+                if (mainLayout.childCount != 4)    {
+                    throw Exception("Child count of main layout is not 4")
+                }
+
+                val rowLayout = mainLayout.getChildAt(0) as LinearLayout
+
+                return if (combatSupport.getAirPoints() != 0) {
+                    return AASettingRow(rowLayout)
+                } else {
+                    removeRow(rowLayout)
+                    null
+                }
+            }
         }
 
-        if (attackerCS!!.getAirPoints() == 0) {
-            attackerAir.removeAllViews()
-        }
+        val attackerAASettings = AASettings(findViewById<LinearLayout>(R.id.aa_against_defender), gameState.combatSupport!!.getDefenderCombatSupport()!!, "Defender")
 
-        if (attackerCS.getHelicopterCount() == 0) {
-            attackerHelo1.removeAllViews()
-        } else if (attackerCS.getHelicopterCount() == 1) {
-            attackerHelo2.removeAllViews()
-        }
+        val defenderAASettings = AASettings(findViewById<LinearLayout>(R.id.aa_against_attacker), gameState.combatSupport!!.getAttackerCombatSupport()!!, "Attacker")
 
-        if (defenderCS!!.getAirPoints() == 0) {
-            defenderAir.removeAllViews()
-        }
+        fun addTextFieldListener(editText: EditText, onTextChanged: (String) -> Unit): Unit =
+            editText.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-        if (defenderCS.getHelicopterCount() == 0) {
-            defenderHelo1.removeAllViews()
-        } else if (defenderCS.getHelicopterCount() == 1) {
-            defenderHelo2.removeAllViews()
-        }
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if(editText.text.toString() == "") {
+                        editText.setText("0")
+                    }
+
+                    onTextChanged(s.toString())
+                }
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
 
         val aaFire = Tables.AAFire()
-
-        fun executeAAForAircraft(aaValue : Int): Tables.AAFire.Result {
-            val die = DieRoll()
-            return aaFire.getResult(die, aaValue)
-        }
-
-        fun executeAAForHelicopter(aaValue : Int, die : DieRoll) {
-            val result = aaFire.getResult(die, aaValue)
-            val attritionToHelos = result.getAttritionToHelicopters()
-
-
-        }
 
         var isFirstClick = true
 
         val aaApply = findViewById<Button>(R.id.apply)
 
-        aaApply.setOnClickListener{
+        aaApply.setOnClickListener {
+
+            Log.d("DEBUG", "Apply button pressed. isFirstClick: $isFirstClick")
 
             if (isFirstClick) {
-                val aaSetting = getAASetting()
-                val attackerAirResult = executeAAForAircraft(aaSetting.aaToAttackerAir)
-                val defenderAirResult = executeAAForAircraft(aaSetting.aaToDefenderAir)
 
-                displayAAResults(attackerAirResult, defenderAirResult)
+                Log.d("DEBUG", "Starting to calculate AA results")
 
-                val attackerCS = gameState.combatSupport!!.getAttackerCombatSupport()
-                val airPointsBefore = gameState.combatSupport!!.getAttackerCombatSupport()!!.getAirPoints()
-                attackerCS!!.adjustAirPoints(attackerAirResult)
+                fun executeAA(aaValue : Int?): Tables.AAFire.Result? {
+                    if (aaValue == null) {
+                        return null
+                    }
 
-                val airPointsAfter = gameState.combatSupport!!.getAttackerCombatSupport()!!.getAirPoints()
-
-                if (airPointsBefore - (attackerAirResult.getAbortedAirPoints()+attackerAirResult.getShotDownAirPoints()) != airPointsAfter) {
-                    throw Exception("This way of setting things is not working")
+                    val die = DieRoll()
+                    return aaFire.getResult(die, aaValue)
                 }
 
-                aaApply.text = "Apply AA resuls"
+                fun executeAaAndSetResults(aaSettings: AASettings) {
+                    val aaResultFixed = executeAA(aaSettings.getAaAgainstFixed())
+                    val aaResultRotary = mutableListOf<Tables.AAFire.Result>()
+                    for (aaAgainstRotary in aaSettings.getAaAgainstRotary()) {
+                        val resultAgainstRotary = executeAA(aaAgainstRotary)
+                            ?: throw Exception("AA against rotary shouldn't be null")
+                        aaResultRotary.add(resultAgainstRotary)
+                    }
 
+                    aaSettings.setResults(aaResultFixed, aaResultRotary)
+                }
+
+                executeAaAndSetResults(defenderAASettings)
+                executeAaAndSetResults(attackerAASettings)
+
+                aaApply.text = "Apply AA resuls"
                 isFirstClick = false
 
+
             } else {
-                val intent : Intent = Intent(this, AAFireActivity::class.java)
+
+                Log.d("DEBUG", "Starting to apply AA results")
+
+                fun adjustCombatSupport(combatSupport: CombatSupport) : CombatSupport {
+                    if (defenderAASettings.fixedInUse()) {
+                        combatSupport.adjustAirPoints(defenderAASettings.getFixedResult()!!)
+                    }
+
+                    if (defenderAASettings.rotaryInUse()) {
+                        val destroyedRotaries = defenderAASettings.getDestroyedRotariesIndexes()
+                        for (rotary in destroyedRotaries) {
+                            combatSupport.adjustHelicopterPoints(rotary)
+                        }
+                    }
+
+                    return combatSupport
+                }
+
+                var attackerCS = gameState.combatSupport!!.getAttackerCombatSupport()!!
+                var defenderCS = gameState.combatSupport!!.getDefenderCombatSupport()!!
+
+                attackerCS = adjustCombatSupport(attackerCS)
+                defenderCS = adjustCombatSupport(defenderCS)
+
+                gameState.combatSupport!!.setAttackerCombatSupport(attackerCS)
+                gameState.combatSupport!!.setDefenderCombatSupport(defenderCS)
+
+                Log.d("DEBUG", "Switching to EWActivity")
+
+                val intent = Intent(this, EWActivity::class.java)
                 intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
 
                 startActivity(intent)
@@ -126,10 +290,12 @@ class AAFireActivity : AppCompatActivity() {
 
 
         }
+
+
+
+
+
     }
 
-    private fun getIntFromTextField(editText: EditText) : Int {
-        return editText.text.toString().toIntOrNull() ?: throw Exception("Encountered null text field with value ${editText.text}")
-    }
 
 }

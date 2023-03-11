@@ -1,5 +1,6 @@
 package com.example.battlecalculator
 
+import android.util.Log
 import kotlin.collections.HashMap
 
 enum class AttackTypeEnum {
@@ -100,6 +101,14 @@ class CombatSupportSelection() {
     private var attackerSupport : CombatSupport? = null
     private var defenderSupport : CombatSupport? = null
 
+    fun isAirBeingUsed() : Boolean {
+        if (attackerSupport == null || defenderSupport == null) {
+            throw Exception("This method shouldn't be called when CS isn't defined")
+        }
+
+        return (attackerSupport!!.getAirPoints() != 0 || attackerSupport!!.getHelicopterCount() != 0 || defenderSupport!!.getAirPoints() != 0 || defenderSupport!!.getHelicopterCount() != 0)
+    }
+
     fun setAttackerCombatSupport(support : CombatSupport) {
         attackerSupport = support
     }
@@ -188,10 +197,17 @@ fun parseCombatSupport(str : String) : CombatSupport {
 
 }
 
-class CombatSupport(val artilleryPoints: Int, private var airPoints : Int, val helicopterPoints : List<Int>, val targetInCASZone : Boolean, val isAttacker : Boolean, val ewPoints : Int) {
+class CombatSupport(val artilleryPoints: Int, private var airPoints : Int, var helicopterPoints : List<Int>, val targetInCASZone : Boolean, val isAttacker : Boolean, val ewPoints : Int) {
 
     fun getHelicopterCount() : Int {
-        return helicopterPoints.size
+        var counter = 0
+        for (heliPoint in helicopterPoints) {
+            if (heliPoint > 0) {
+                counter += 1
+            }
+        }
+
+        return counter
     }
 
     fun getAirPoints() : Int {
@@ -206,33 +222,69 @@ class CombatSupport(val artilleryPoints: Int, private var airPoints : Int, val h
         airPoints -= aaDecrease
     }
 
+    fun adjustHelicopterPoints(shotDownHelicopterIndex: Int) {
+        if (shotDownHelicopterIndex < 0) {
+            throw Exception("shotDownHelicopterIndex is less than 0")
+        }
+        helicopterPoints = helicopterPoints.mapIndexed { index, value ->
+            if (index == shotDownHelicopterIndex) 0 else value
+        }
+    }
+
     fun toStateString() : String {
         //AT-0-0,0,0-5-false-2
-
         var str = ""
+
+        Log.d("DEBUG", str)
+
         str += if (isAttacker) {
             "AT"
         } else {
             "DEF"
         }
 
+        Log.d("DEBUG", str)
+
         str += "-$artilleryPoints"
 
+        Log.d("DEBUG", str)
+
         str += "-"
+        Log.d("DEBUG", str)
         for (heliPoint in helicopterPoints) {
             str += "$heliPoint,"
+            Log.d("DEBUG", str)
         }
-
+        Log.d("DEBUG", str)
         str = str.dropLast(1)
-
+        Log.d("DEBUG", str)
         str += "-$airPoints"
+        Log.d("DEBUG", str)
         str += if (targetInCASZone) {
             "-true"
         } else {
             "-false"
         }
+        Log.d("DEBUG", str)
 
         str +="-$ewPoints"
+
+        Log.d("DEBUG", str)
+        Log.d("DEBUG", "Parsed combat support string: $str")
+
+        val contents = str.split("-")
+        if (contents.size != 6) {
+            Log.d("artilleryPoints", "$artilleryPoints")
+            Log.d("airPoints", "$airPoints")
+            Log.d("artilleryPoints", "$artilleryPoints")
+            Log.d("helicopterPoints", "$helicopterPoints")
+            Log.d("targetInCASZone", "$targetInCASZone")
+            Log.d("isAttacker", "$isAttacker")
+            Log.d("ewPoints", "$ewPoints")
+            throw Exception("Bad contents length for combat support string $str. ")
+        }
+
+
 
         return str
     }
@@ -252,6 +304,10 @@ class DieRoll() {
     private var result : Int = roll()
 
     fun getResultWithModifiers() : Int {
+        return result
+    }
+
+    fun getResultWithoutModifiers() : Int {
         return result
     }
 

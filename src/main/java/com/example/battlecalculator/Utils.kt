@@ -20,6 +20,14 @@ class Utils {
 
 }
 
+class Helpers {
+    companion object General {
+        fun getIntFromTextField(editText: EditText) : Int {
+            return editText.text.toString().toIntOrNull() ?: throw Exception("Encountered null text field with value ${editText.text}")
+        }
+    }
+}
+
 class Images {
     companion object Tools {
         fun getImageFileName(unitName : String): String {

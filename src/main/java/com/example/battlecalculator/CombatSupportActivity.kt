@@ -53,12 +53,12 @@ class CombatSupportActivity : AppCompatActivity() {
 
         fun createCombatSupport() : CombatSupport {
             return CombatSupport(
-                getIntFromTextField(artilleryStrength),
-                getIntFromTextField(airPoints),
-                listOf(getIntFromTextField(heliStrength1), getIntFromTextField(heliStrength2), getIntFromTextField(heliStrength3)),
+                Helpers.getIntFromTextField(artilleryStrength),
+                Helpers.getIntFromTextField(airPoints),
+                listOf(Helpers.getIntFromTextField(heliStrength1), Helpers.getIntFromTextField(heliStrength2), Helpers.getIntFromTextField(heliStrength3)),
                 insideCAS.isChecked,
                 unitSelectionType == UnitSelectionTypes.ATTACKER,
-                getIntFromTextField(ewPoints)
+                Helpers.getIntFromTextField(ewPoints)
             )
         }
 
@@ -93,7 +93,13 @@ class CombatSupportActivity : AppCompatActivity() {
 
             } else {
                 gameState.combatSupport!!.setDefenderCombatSupport(createCombatSupport())
-                intent = Intent(this, AAFireActivity::class.java)
+
+                if (gameState.combatSupport!!.isAirBeingUsed()) {
+                    intent = Intent(this, AAFireActivity::class.java)
+                } else {
+                    throw Exception("This scenario hasn't been implemented yet!")
+                }
+
             }
 
             intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
@@ -103,8 +109,6 @@ class CombatSupportActivity : AppCompatActivity() {
         }
     }
 
-    private fun getIntFromTextField(editText: EditText) : Int {
-        return editText.text.toString().toIntOrNull() ?: throw Exception("Encountered null text field with value ${editText.text}")
-    }
+
 
 }
