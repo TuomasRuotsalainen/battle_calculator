@@ -4,11 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.graphics.drawable.Drawable
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.*
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.content.res.ResourcesCompat
+import kotlin.Unit
 
 class Utils {
     companion object IntentTools {
@@ -25,6 +28,21 @@ class Helpers {
         fun getIntFromTextField(editText: EditText) : Int {
             return editText.text.toString().toIntOrNull() ?: throw Exception("Encountered null text field with value ${editText.text}")
         }
+
+        fun addTextFieldListener(editText: EditText, onTextChanged: (String) -> Unit): Unit =
+            editText.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if(editText.text.toString() == "") {
+                        editText.setText("0")
+                    }
+                    onTextChanged(s.toString())
+                }
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
     }
 }
 

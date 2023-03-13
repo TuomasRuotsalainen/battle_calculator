@@ -142,9 +142,11 @@ class CombatSupportSelection() {
     }
 }
 
+const val DELIMITER = "#"
+
 fun parseCombatSupport(str : String) : CombatSupport {
-    // DEF-2-2,3,0-2-true-2
-    // AT-0-0,0,0-5-false-0
+    // DEF-2-2,3,0-2-true-2,0
+    // AT-0-0,0,0-5-false-0,1
 
     val isAttacker : Boolean
     val artilleryPoints : Int
@@ -152,7 +154,7 @@ fun parseCombatSupport(str : String) : CombatSupport {
     val airPoints : Int
     val insideCAS : Boolean
 
-    val contents = str.split("-")
+    val contents = str.split(DELIMITER)
     if (contents.size != 6) {
         throw Exception("Bad contents length for combat support string $str")
     }
@@ -190,14 +192,31 @@ fun parseCombatSupport(str : String) : CombatSupport {
         throw Exception("Couldn't convert inside CAS string to bool for string  $str")
     }
 
-    val ewPoints = contents[5].toIntOrNull()!!
+    val ewPoints : Int?
+    val ewDieModifier : Int?
+    val ewValues = contents[5]
+    if (ewValues == "null") {
+        ewPoints = null
+        ewDieModifier = null
+    } else {
+        val values = ewValues.split(",")
+        if (values.size != 2) {
+            throw Exception("Incorrect EW value length encountered for string $str")
+        }
+        ewPoints = values[0].toIntOrNull()
+        ewDieModifier = values[1].toIntOrNull()
+
+        if (ewDieModifier == null || ewPoints == null) {
+            throw Exception("Encountered null first or second num for string $str")
+        }
+    }
 
 
-    return CombatSupport(artilleryPoints, airPoints, helicopterPoints, insideCAS, isAttacker, ewPoints)
+    return CombatSupport(artilleryPoints, airPoints, helicopterPoints, insideCAS, isAttacker, ewPoints, ewDieModifier)
 
 }
 
-class CombatSupport(val artilleryPoints: Int, private var airPoints : Int, var helicopterPoints : List<Int>, val targetInCASZone : Boolean, val isAttacker : Boolean, val ewPoints : Int) {
+class CombatSupport(val artilleryPoints: Int, private var airPoints : Int, var helicopterPoints : List<Int>, val targetInCASZone : Boolean, val isAttacker : Boolean, private var ewPoints: Int?, private var ewRollModifier: Int?) {
 
     fun getHelicopterCount() : Int {
         var counter = 0
@@ -212,6 +231,19 @@ class CombatSupport(val artilleryPoints: Int, private var airPoints : Int, var h
 
     fun getAirPoints() : Int {
         return airPoints
+    }
+
+    fun setEW(newEwPoints : Int, rollModifier : Int) {
+        this.ewRollModifier = rollModifier
+        this.ewPoints = newEwPoints
+    }
+
+    fun getEWRollModifier() : Int? {
+        return ewRollModifier
+    }
+
+    fun getEWPoints() : Int? {
+        return ewPoints
     }
 
     fun adjustAirPoints(aaResult : Tables.AAFire.Result) {
@@ -235,6 +267,8 @@ class CombatSupport(val artilleryPoints: Int, private var airPoints : Int, var h
         //AT-0-0,0,0-5-false-2
         var str = ""
 
+
+
         Log.d("DEBUG", str)
 
         str += if (isAttacker) {
@@ -245,11 +279,11 @@ class CombatSupport(val artilleryPoints: Int, private var airPoints : Int, var h
 
         Log.d("DEBUG", str)
 
-        str += "-$artilleryPoints"
+        str += DELIMITER+"$artilleryPoints"
 
         Log.d("DEBUG", str)
 
-        str += "-"
+        str += DELIMITER
         Log.d("DEBUG", str)
         for (heliPoint in helicopterPoints) {
             str += "$heliPoint,"
@@ -258,21 +292,29 @@ class CombatSupport(val artilleryPoints: Int, private var airPoints : Int, var h
         Log.d("DEBUG", str)
         str = str.dropLast(1)
         Log.d("DEBUG", str)
-        str += "-$airPoints"
+        str += DELIMITER+"$airPoints"
         Log.d("DEBUG", str)
         str += if (targetInCASZone) {
-            "-true"
+            DELIMITER+"true"
         } else {
-            "-false"
+            DELIMITER+"false"
         }
         Log.d("DEBUG", str)
 
-        str +="-$ewPoints"
+        if (ewPoints == null) {
+            str +=DELIMITER+"null"
+        } else {
+            if (ewRollModifier == null) {
+                throw Exception("ewRollModifier shouldn't be null when ewPoints is not null.")
+            }
+            str += DELIMITER+"${ewPoints!!}"
+            str += ",${ewRollModifier!!}"
+        }
 
         Log.d("DEBUG", str)
         Log.d("DEBUG", "Parsed combat support string: $str")
 
-        val contents = str.split("-")
+        val contents = str.split(DELIMITER)
         if (contents.size != 6) {
             Log.d("artilleryPoints", "$artilleryPoints")
             Log.d("airPoints", "$airPoints")
@@ -281,6 +323,7 @@ class CombatSupport(val artilleryPoints: Int, private var airPoints : Int, var h
             Log.d("targetInCASZone", "$targetInCASZone")
             Log.d("isAttacker", "$isAttacker")
             Log.d("ewPoints", "$ewPoints")
+            Log.d("ewRollModifier", "$ewRollModifier")
             throw Exception("Bad contents length for combat support string $str. ")
         }
 

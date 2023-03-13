@@ -271,7 +271,7 @@
         app:layout_constraintBottom_toTopOf="@+id/apply"
 
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/artillery_strength"
+        app:layout_constraintEnd_toStartOf="@+id/ew_points_input"
 
         android:gravity="center"
         />
@@ -286,14 +286,31 @@
         tools:layout_editor_absoluteX="253dp"
         tools:layout_editor_absoluteY="304dp"
 
-        app:layout_constraintStart_toEndOf="@+id/attacker_label"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ew_points"
+        app:layout_constraintEnd_toStartOf="@+id/ew_rules"
 
         app:layout_constraintTop_toBottomOf="@+id/total_support"
         app:layout_constraintBottom_toTopOf="@+id/apply"
 
 
         />
+
+    <Button
+        android:id="@+id/ew_rules"
+        android:text="EW rules"
+
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:textSize="12sp"
+
+        app:layout_constraintStart_toEndOf="@+id/ew_points_input"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/total_support"
+        app:layout_constraintBottom_toTopOf="@+id/apply"
+
+        />
+
 
     <Button
         android:id="@+id/apply"

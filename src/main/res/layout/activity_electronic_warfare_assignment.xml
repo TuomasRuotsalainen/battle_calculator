@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+    <TextView
+        android:id="@+id/header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Attacker electronic warfare usage"
+
+        app:layout_constraintBottom_toTopOf="@+id/aa_rules"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+
+        />
+
+    <TextView
+        android:id="@+id/aa_rules"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="EW points usage conditions:\n\n
+    1. The HQ must be within 4 hexes of the enemy unit\n
+    2. At least one involved unit must be under the HQ\n
+    3. The hex under attack must be within the HQ command range\n"
+
+        app:layout_constraintBottom_toTopOf="@+id/ew_points"
+        app:layout_constraintTop_toBottomOf="@+id/header"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ew_points"
+
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/aa_rules"
+        app:layout_constraintBottom_toTopOf="@+id/hq_attrition"
+
+
+
+        >
+        <TextView
+            android:id="@+id/ew_points_input_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Assigned EW points"
+            android:gravity="center"
+            />
+
+        <EditText
+            android:id="@+id/ew_points_input"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="2"
+            android:hint="0"
+            android:inputType="number"
+
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/hq_attrition"
+
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/ew_points"
+        app:layout_constraintBottom_toTopOf="@+id/attacker_in_city"
+
+
+
+        >
+        <TextView
+            android:id="@+id/hq_attrition_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Attrition on the HQ using EW"
+            android:gravity="center"
+            />
+
+        <EditText
+            android:id="@+id/hq_attrition_input"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="2"
+            android:hint="0"
+            android:inputType="number"
+
+            />
+
+    </LinearLayout>
+
+
+    <CheckBox
+        android:id="@+id/attacker_in_city"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Attacker in city"
+
+        app:layout_constraintTop_toBottomOf="@+id/hq_attrition"
+        app:layout_constraintBottom_toTopOf="@+id/attacker_in_town"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+
+
+    <CheckBox
+        android:id="@+id/attacker_in_town"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Attacker in town"
+
+        app:layout_constraintTop_toBottomOf="@+id/attacker_in_city"
+        app:layout_constraintBottom_toTopOf="@+id/ew_estimation"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"  />
+
+    <TextView
+        android:id="@+id/ew_estimation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Die roll modifier: +1 \n
+         (-2 for HQ attrition, +1 for NATO vs PACT)\n\n
+        Mean EW result: Combat modifier +2, enemy aviation combat support halved"
+
+        app:layout_constraintTop_toBottomOf="@+id/attacker_in_town"
+        app:layout_constraintBottom_toTopOf="@+id/apply"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        />
+
+    <Button
+        android:id="@+id/apply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Assign EW points"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/ew_estimation"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        />
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

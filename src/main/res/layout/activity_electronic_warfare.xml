@@ -30,82 +30,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="EW points usage conditions:\n1. The HQ must be within 4 hexes of the enemy unit\n2. At least one involved unit must be under the HQ\n3.The hex under attack must be within the HQ command range"
-        tools:layout_editor_absoluteX="162dp"
-        tools:layout_editor_absoluteY="24dp"
+        android:text="Current combat modifier (attacker:defender)\n3:5\n\n Combat support allocation after AA fire (attacker:defender)\n12:10\n\nEW points allocation (attacker:defender)\n1:2"
 
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/ew_points"
+        app:layout_constraintBottom_toTopOf="@+id/apply"
+        app:layout_constraintEnd_toEndOf="parent"
 
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
 
 
         />
 
-    <LinearLayout
-        android:id="@+id/ew_points"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
 
-        app:layout_constraintTop_toBottomOf="@+id/aa_rules"
-        app:layout_constraintBottom_toBottomOf="@+id/apply"
-        >
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
-
-            <TextView
-                android:id="@+id/attacker_ew"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Attacker EW points" />
-
-            <EditText
-                android:id="@+id/attacker_ew_input"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="2"
-                android:hint="0"
-                android:inputType="number"
-
-                />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            >
-
-            <TextView
-                android:id="@+id/defender_ew"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Defender EW points" />
-
-            <EditText
-                android:id="@+id/defender_ew_input"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="2"
-                android:hint="0"
-                android:inputType="number"
-
-                />
-
-        </LinearLayout>
-
-
-    </LinearLayout>
 
 
 
@@ -118,7 +54,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
 
-        app:layout_constraintTop_toBottomOf="@+id/ew_points"
+        app:layout_constraintTop_toBottomOf="@+id/aa_rules"
         app:layout_constraintBottom_toBottomOf="parent"
 
         />

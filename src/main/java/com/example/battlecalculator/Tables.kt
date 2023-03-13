@@ -450,4 +450,134 @@ class Tables {
         }
     }
 
+    class EWResult(val combatModifier : Pair<Int, Int>, val effects : List<EwEffectEnum>) {
+    }
+
+    class EW() {
+
+        private val map = populateTable()
+
+        fun getResultForModifiedRoll(modifiedRoll: Int, ewPointsInUse: Int): EWResult {
+            val emptyResult = EWResult(Pair(0, 0), listOf())
+
+            if (modifiedRoll < -1) {
+                return emptyResult
+            }
+
+            if (ewPointsInUse < 1) {
+                return emptyResult
+            }
+
+            if (ewPointsInUse > 6) {
+                throw Exception("Can't use more than 6 EW points")
+            }
+
+            if (modifiedRoll > 11) {
+                throw Exception("Modified die roll can't be greater than 11")
+            }
+
+            return map[Pair(ewPointsInUse, modifiedRoll)] ?: return emptyResult
+        }
+
+        private fun populateTable(): MutableMap<Pair<Int, Int>, EWResult?> {
+
+            // Pair(x,y) -> first column (EW points), then row (modified die result)
+
+            val resultMap = mutableMapOf<Pair<Int, Int>, EWResult?>()
+
+            // Column 1
+            resultMap[Pair(1, -1)] = null
+            resultMap[Pair(1, -0)] = null
+            resultMap[Pair(1, 1)] = null
+            resultMap[Pair(1, 2)] = null
+            resultMap[Pair(1, 3)] = null
+            resultMap[Pair(1, 4)] = null
+            resultMap[Pair(1, 5)] = null
+            resultMap[Pair(1, 6)] = null
+            resultMap[Pair(1, 7)] = EWResult(Pair(1, -2), listOf())
+            resultMap[Pair(1, 8)] = EWResult(Pair(1, -2), listOf())
+            resultMap[Pair(1, 9)] = EWResult(Pair(1, -2), listOf())
+            resultMap[Pair(1, 10)] = EWResult(Pair(2, -3), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED))
+            resultMap[Pair(1, 11)] = EWResult(Pair(1, -2), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED))
+
+            // Column 2
+            resultMap[Pair(2, -1)] = null
+            resultMap[Pair(2, -0)] = null
+            resultMap[Pair(2, 1)] = null
+            resultMap[Pair(2, 2)] = null
+            resultMap[Pair(2, 3)] = null
+            resultMap[Pair(2, 4)] = null
+            resultMap[Pair(2, 5)] = EWResult(Pair(1, -2), listOf())
+            resultMap[Pair(2, 6)] = EWResult(Pair(1, -2), listOf())
+            resultMap[Pair(2, 7)] = EWResult(Pair(1, -2), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED))
+            resultMap[Pair(2, 8)] = EWResult(Pair(2, -3), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED))
+            resultMap[Pair(2, 9)] = EWResult(Pair(2, -3), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED))
+            resultMap[Pair(2, 10)] = EWResult(Pair(2, -3), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED))
+            resultMap[Pair(2, 11)] = EWResult(Pair(2, -4), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED))
+
+            // Column 3
+            resultMap[Pair(3, -1)] = null
+            resultMap[Pair(3, -0)] = null
+            resultMap[Pair(3, 1)] = null
+            resultMap[Pair(3, 2)] = null
+            resultMap[Pair(3, 3)] = EWResult(Pair(1, -2), listOf())
+            resultMap[Pair(3, 4)] = EWResult(Pair(1, -2), listOf())
+            resultMap[Pair(3, 5)] = EWResult(Pair(1, -2), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED))
+            resultMap[Pair(3, 6)] = EWResult(Pair(2, -3), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED))
+            resultMap[Pair(3, 7)] = EWResult(Pair(2, -3), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED))
+            resultMap[Pair(3, 8)] = EWResult(Pair(2, -3), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED))
+            resultMap[Pair(3, 9)] = EWResult(Pair(2, -4), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED))
+            resultMap[Pair(3, 10)] = EWResult(Pair(3, -4), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED))
+            resultMap[Pair(3, 11)] = EWResult(Pair(3, -4), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED, EwEffectEnum.ENEMY_COMMAND_DISRUPTED))
+
+            // Column 4
+            resultMap[Pair(4, -1)] = null
+            resultMap[Pair(4, -0)] = null
+            resultMap[Pair(4, 1)] = EWResult(Pair(1, -2), listOf())
+            resultMap[Pair(4, 2)] = EWResult(Pair(1, -2), listOf())
+            resultMap[Pair(4, 3)] = EWResult(Pair(1, -2), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED))
+            resultMap[Pair(4, 4)] = EWResult(Pair(2, -3), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED))
+            resultMap[Pair(4, 5)] = EWResult(Pair(2, -3), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED))
+            resultMap[Pair(4, 6)] = EWResult(Pair(2, -3), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED))
+            resultMap[Pair(4, 7)] = EWResult(Pair(2, -4), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED))
+            resultMap[Pair(4, 8)] = EWResult(Pair(3, -4), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED))
+            resultMap[Pair(4, 9)] = EWResult(Pair(3, -4), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED, EwEffectEnum.ENEMY_COMMAND_DISRUPTED))
+            resultMap[Pair(4, 10)] = EWResult(Pair(3, -5), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED, EwEffectEnum.ENEMY_COMMAND_DISRUPTED))
+            resultMap[Pair(4, 11)] = EWResult(Pair(4, -5), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED, EwEffectEnum.ENEMY_COMMAND_DISRUPTED))
+
+            // Column 5
+            resultMap[Pair(5, -1)] = null
+            resultMap[Pair(5, -0)] = EWResult(Pair(1, -2), listOf())
+            resultMap[Pair(5, 1)] = EWResult(Pair(1, -2), listOf())
+            resultMap[Pair(5, 2)] = EWResult(Pair(1, -2), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED))
+            resultMap[Pair(5, 3)] = EWResult(Pair(2, -3), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED))
+            resultMap[Pair(5, 4)] = EWResult(Pair(2, -3), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED))
+            resultMap[Pair(5, 5)] = EWResult(Pair(2, -3), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED))
+            resultMap[Pair(5, 6)] = EWResult(Pair(2, -4), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED))
+            resultMap[Pair(5, 7)] = EWResult(Pair(3, -4), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED))
+            resultMap[Pair(5, 8)] = EWResult(Pair(3, -4), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED, EwEffectEnum.ENEMY_COMMAND_DISRUPTED))
+            resultMap[Pair(5, 9)] = EWResult(Pair(3, -5), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED, EwEffectEnum.ENEMY_COMMAND_DISRUPTED))
+            resultMap[Pair(5, 10)] = EWResult(Pair(4, -5), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED, EwEffectEnum.ENEMY_COMMAND_DISRUPTED))
+            resultMap[Pair(5, 11)] = EWResult(Pair(4, -6), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED, EwEffectEnum.ENEMY_COMMAND_DISRUPTED))
+
+            // Column 6
+            resultMap[Pair(6, -1)] = EWResult(Pair(1, -2), listOf())
+            resultMap[Pair(6, -0)] = EWResult(Pair(1, -2), listOf())
+            resultMap[Pair(6, 1)] = EWResult(Pair(1, -2), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED))
+            resultMap[Pair(6, 2)] = EWResult(Pair(2, -3), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED))
+            resultMap[Pair(6, 3)] = EWResult(Pair(2, -3), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED))
+            resultMap[Pair(6, 4)] = EWResult(Pair(2, -3), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED))
+            resultMap[Pair(6, 5)] = EWResult(Pair(2, -4), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED))
+            resultMap[Pair(6, 6)] = EWResult(Pair(3, -4), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED))
+            resultMap[Pair(6, 7)] = EWResult(Pair(3, -4), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED, EwEffectEnum.ENEMY_COMMAND_DISRUPTED))
+            resultMap[Pair(6, 8)] = EWResult(Pair(3, -5), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED, EwEffectEnum.ENEMY_COMMAND_DISRUPTED))
+            resultMap[Pair(6, 9)] = EWResult(Pair(4, -5), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED, EwEffectEnum.ENEMY_COMMAND_DISRUPTED))
+            resultMap[Pair(6, 10)] = EWResult(Pair(4, -6), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED, EwEffectEnum.ENEMY_COMMAND_DISRUPTED))
+            resultMap[Pair(6, 11)] = EWResult(Pair(4, -6), listOf(EwEffectEnum.ENEMY_AVIATION_HALVED, EwEffectEnum.ENEMY_ARTILLERY_HALVED, EwEffectEnum.ENEMY_COMMAND_DISRUPTED))
+
+            return resultMap
+        }
+
+    }
+
 }

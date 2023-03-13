@@ -35,3 +35,7 @@ enum class CommandStateEnum {
 enum class EngagementStateEnum {
     NONE, HALF_ENGAGED, ENGAGED
 }
+
+enum class EwEffectEnum {
+    ENEMY_AVIATION_HALVED, ENEMY_ARTILLERY_HALVED, ENEMY_COMMAND_DISRUPTED
+}

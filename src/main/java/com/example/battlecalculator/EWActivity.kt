@@ -18,12 +18,25 @@ class EWActivity : AppCompatActivity() {
 
         var gameState = getGameState(intent)
 
+        //val attackerEWPoints = gameState.combatSupport!!.getAttackerCombatSupport()!!.getEWPoints()
+        //val defenderEWPoints = gameState.combatSupport!!.getDefenderCombatSupport()!!.getEWPoints()
+
+        /*
+        if (attackerEWPoints == 0 && defenderEWPoints == 0) {
+            throw Exception("EW activity shouldn't be opened if no EW points in use")
+        }*/
+
         if (gameState.combatSupport == null) {
             throw Exception("Combat support is null")
         }
 
+        val ewTable = Tables.EW()
 
+        val applyButton = findViewById<Button>(R.id.apply)
 
+        applyButton.setOnClickListener {
+
+        }
 
     }
 

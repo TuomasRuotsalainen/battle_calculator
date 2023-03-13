@@ -1,5 +1,6 @@
 package com.example.battlecalculator
 
+import android.app.AlertDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -45,9 +46,8 @@ class CombatSupportActivity : AppCompatActivity() {
         val heliStrength2 = findViewById<EditText>(R.id.helicopter_barrage_strength_2)
         val heliStrength3 = findViewById<EditText>(R.id.helicopter_barrage_strength_3)
         val airPoints = findViewById<EditText>(R.id.air_points_strength)
-        val ewPoints = findViewById<EditText>(R.id.ew_points_input)
 
-        val textFields = listOf(artilleryStrength, heliStrength1, heliStrength2, heliStrength3, airPoints, ewPoints)
+        val textFields = listOf(artilleryStrength, heliStrength1, heliStrength2, heliStrength3, airPoints)
 
         val insideCAS = findViewById<CheckBox>(R.id.cas_enabled)
 
@@ -58,7 +58,7 @@ class CombatSupportActivity : AppCompatActivity() {
                 listOf(Helpers.getIntFromTextField(heliStrength1), Helpers.getIntFromTextField(heliStrength2), Helpers.getIntFromTextField(heliStrength3)),
                 insideCAS.isChecked,
                 unitSelectionType == UnitSelectionTypes.ATTACKER,
-                Helpers.getIntFromTextField(ewPoints)
+                null, null
             )
         }
 
@@ -79,8 +79,25 @@ class CombatSupportActivity : AppCompatActivity() {
             updateCombatSupportValue()
         }
 
+        val ewRulesBtn = findViewById<Button>(R.id.ew_rules)
+
+        ewRulesBtn.setOnClickListener {
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage("""EW points usage conditions:
+                |1. The HQ must be within 4 hexes of the enemy unit
+                |2. At least one involved unit must be under the HQ
+                |3. The hex under attack must be within the HQ command range""".trimMargin())
+            builder.setPositiveButton("Understood") { dialog, _ ->
+                // Close the popup
+                dialog.dismiss()
+            }
+            val dialog = builder.create()
+            dialog.show()
+        }
+
         combatSupportApply.setOnClickListener{
-            val intent : Intent
+            val intent = Intent(this, EWInputActivity::class.java)
+            intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), unitSelectionType.toString())
 
             if (gameState.combatSupport == null) {
                 gameState.combatSupport = CombatSupportSelection()
@@ -88,18 +105,8 @@ class CombatSupportActivity : AppCompatActivity() {
 
             if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
                 gameState.combatSupport!!.setAttackerCombatSupport(createCombatSupport())
-                intent = Intent(this, CombatSupportActivity::class.java)
-                intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.DEFENDER.toString())
-
             } else {
                 gameState.combatSupport!!.setDefenderCombatSupport(createCombatSupport())
-
-                if (gameState.combatSupport!!.isAirBeingUsed()) {
-                    intent = Intent(this, AAFireActivity::class.java)
-                } else {
-                    throw Exception("This scenario hasn't been implemented yet!")
-                }
-
             }
 
             intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
