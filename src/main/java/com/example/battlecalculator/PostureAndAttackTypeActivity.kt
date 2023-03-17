@@ -33,6 +33,7 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
             throw Exception("Started a posture and attack type activity for defender when all defending units have a posture already")
         }
 
+        // TODO command and engagement selections not working
         currentUnitState.attrition = 0 // TODO add proper setting for attrition
 
         fun setCommandStateButtons() {

@@ -55,7 +55,7 @@ class CombatSupportActivity : AppCompatActivity() {
             return CombatSupport(
                 Helpers.getIntFromTextField(artilleryStrength),
                 Helpers.getIntFromTextField(airPoints),
-                listOf(Helpers.getIntFromTextField(heliStrength1), Helpers.getIntFromTextField(heliStrength2), Helpers.getIntFromTextField(heliStrength3)),
+                mutableListOf(Helpers.getIntFromTextField(heliStrength1), Helpers.getIntFromTextField(heliStrength2), Helpers.getIntFromTextField(heliStrength3)),
                 insideCAS.isChecked,
                 unitSelectionType == UnitSelectionTypes.ATTACKER,
                 null, null

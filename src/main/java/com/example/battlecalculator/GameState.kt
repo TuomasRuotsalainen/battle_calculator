@@ -35,6 +35,20 @@ class GameState(stateString : String) {
         AU, DU, AT, HEX, ACT, FIXED, ADJ_AT, ADJ_DEF, COM_SUP
     }
 
+    fun areSappersHit(result : Tables.GroundCombatResult) : Boolean {
+        if (result.attackerSapperEliminated) {
+            if (activeAlliance == Alliances.PACT) {
+                return true
+            }
+        } else if (result.defenderSapperEliminated) {
+            if (activeAlliance == Alliances.NATO) {
+                return true
+            }
+        }
+
+        return false
+    }
+
     private val dataMap = getDataMap(stateString)
     val oob = OrderOfBattle()
 

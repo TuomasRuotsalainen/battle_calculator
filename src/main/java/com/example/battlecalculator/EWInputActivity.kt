@@ -218,8 +218,6 @@ class EWInputActivity : AppCompatActivity() {
                 finish()
             }
 
-            // TODO calculate the EW result and add it to combat support
-
             // TODO above: make sure that user is unable to input breaking values
 
         }

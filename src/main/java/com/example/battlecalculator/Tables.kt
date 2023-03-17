@@ -451,6 +451,29 @@ class Tables {
     }
 
     class EWResult(val combatModifier : Pair<Int, Int>, val effects : List<EwEffectEnum>) {
+        fun getResultAsText(isAttacker: Boolean) : String {
+            var text = if (isAttacker) {
+                "Change in combat modifier: ${combatModifier.first} "
+            } else {
+                "Change in combat modifier: ${combatModifier.second}. "
+            }
+
+            for (effect in effects) {
+                text += when (effect) {
+                    EwEffectEnum.ENEMY_ARTILLERY_HALVED -> {
+                        "Enemy artillery combat support halved. "
+                    }
+                    EwEffectEnum.ENEMY_AVIATION_HALVED -> {
+                        "Enemy aviation support halved. "
+                    }
+                    EwEffectEnum.ENEMY_COMMAND_DISRUPTED -> {
+                        "Enemy out of command and disabled front line command. "
+                    }
+                }
+            }
+
+            return text
+        }
     }
 
     class EW() {
@@ -578,6 +601,282 @@ class Tables {
             return resultMap
         }
 
+    }
+
+    class CombatSupport() {
+
+        private val attackerTable = initAttackerTable()
+        private val defenderTable = initDefenderTable()
+
+        fun calculateForAttacker(combatSupportPoints : Int, dieRoll: DieRoll) : Int {
+            return calculate(combatSupportPoints, dieRoll, true)
+        }
+
+        fun calculateForDefender(combatSupportPoints : Int, dieRoll: DieRoll) : Int {
+            return calculate(combatSupportPoints, dieRoll, false)
+        }
+
+        private fun calculate(combatSupportPoints : Int, dieRoll: DieRoll, isAttacker: Boolean) : Int {
+            if (combatSupportPoints < 0) {
+                throw Exception("Combat support can't be smaller than 0")
+            }
+
+            val validatedPoints = if (combatSupportPoints > 16) {
+                16
+            } else {
+                combatSupportPoints
+            }
+
+            val row = if (isAttacker) {
+                attackerTable[dieRoll.getResultWithoutModifiers()]
+            } else {
+                defenderTable[dieRoll.getResultWithoutModifiers()]
+            }
+
+            return when (validatedPoints) {
+                0 -> row[0]
+                1,2-> row[1]
+                3,4-> row[2]
+                5,6-> row[3]
+                7,8-> row[4]
+                9,10-> row[5]
+                11,12-> row[6]
+                13,15-> row[7]
+                16-> row[8]
+                else -> throw Exception("Couldn't map validatedPoints $validatedPoints")
+            }
+        }
+
+        private fun initAttackerTable() : MutableList<List<Int>> {
+            // each list represents a row
+            val list = mutableListOf<List<Int>>()
+
+            list.add(listOf(-3, -2, -2, -1, 0, 1, 2, 2, 2))
+            list.add(listOf(-2, -2, -1, 0, 0, 2, 2, 2, 3))
+            list.add(listOf(-2, -2, -1, 0, 1, 2, 2, 3, 3))
+            list.add(listOf(-2, -1, 0, 0, 2, 2, 3, 3, 4))
+            list.add(listOf(-1, -1, 0, 1, 2, 3, 3, 4, 4))
+            list.add(listOf(-1, -1, 0, 1, 2, 3, 4, 4, 5))
+            list.add(listOf(-1, 0, 0, 2, 3, 4, 4, 5, 5))
+            list.add(listOf(0, 0, 1, 2, 3, 4, 5, 5, 6))
+            list.add(listOf(0, 1, 1, 2, 4, 5, 5, 6, 6))
+            list.add(listOf(0, 1, 2, 3, 4, 5, 6, 6, 7))
+
+            return list
+        }
+
+        private fun initDefenderTable() : MutableList<List<Int>> {
+            // each list represents a row
+            val list = mutableListOf<List<Int>>()
+
+            list.add(listOf(0, 0, 0, 0, -1, -2, -2, -3, -3))
+            list.add(listOf(0, 0, 0, -1, -1, -2, -3, -3, -4))
+            list.add(listOf(0, 0, 0, -1, -2, -2, -3, -4, -4))
+            list.add(listOf(0, 0, -1, -1, -2, -3, -3, -4, -4))
+            list.add(listOf(0, 0, -1, -2, -2, -3, -4, -4, -5))
+            list.add(listOf(0, -1, -1, -2, -3, -3, -4, -5, -5))
+            list.add(listOf(0, -1, -2, -2, -3, -4, -4, -5, -5))
+            list.add(listOf(0, -1, -2, -3, -3, -4, -5, -5, -6))
+            list.add(listOf(0, -1, -1, -2, -4, -5, -5, -6, -6))
+            list.add(listOf(0, -1, -2, -3, -4, -5, -6, -6, -7))
+
+            return list
+        }
+    }
+
+    class GroundCombatResult(val attackerAttrition : Int, val attackerSapperEliminated: Boolean, val defenderAttrition : Int, val defenderSapperEliminated: Boolean) {}
+
+    class GroundCombat() {
+        // table needs to be searched Pair<y,x>
+        private val table = initTable()
+
+        fun getResult(dieRoll : DieRoll, combatDifferential : Int) : GroundCombatResult {
+            val finalDiff = if (combatDifferential > 9) {
+                9
+            } else {
+                combatDifferential
+            }
+
+            if (combatDifferential < -5) {
+                throw Exception("Combat differential is smaller than -5. Shouldn't be possible")
+            }
+
+            val result = table[Pair(dieRoll.getResultWithoutModifiers(), finalDiff)]
+
+            return result!!
+        }
+
+        private fun initTable() : Map<Pair<Int, Int>, GroundCombatResult> {
+            // x = combat modifier, y = die roll result
+            val table = mutableMapOf<Pair<Int, Int>, GroundCombatResult>()
+
+            table[Pair(1, -5)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(2, -5)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(3, -5)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(4, -5)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(5, -5)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(6, -5)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(7, -5)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(8, -5)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(9, -5)] = GroundCombatResult(1, false, 0, false)
+            table[Pair(10, -5)] = GroundCombatResult(0, false, 0, true)
+
+            table[Pair(1, -4)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(2, -4)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(3, -4)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(4, -4)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(5, -4)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(6, -4)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(7, -4)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(8, -4)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(9, -4)] = GroundCombatResult(0, false, 0, false)
+            table[Pair(10, -4)] = GroundCombatResult(0, false, 0, true)
+
+            table[Pair(1, -3)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(2, -3)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(3, -3)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(4, -3)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(5, -3)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(6, -3)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(7, -3)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(8, -3)] = GroundCombatResult(0, false, 0, false)
+            table[Pair(9, -3)] = GroundCombatResult(0, false, 0, true)
+            table[Pair(10, -3)] = GroundCombatResult(1, false, 1, true)
+
+            table[Pair(1, -2)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(2, -2)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(3, -2)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(4, -2)] = GroundCombatResult(2, true, 1, false)
+            table[Pair(5, -2)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(6, -2)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(7, -2)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(8, -2)] = GroundCombatResult(0, false, 0, false)
+            table[Pair(9, -2)] = GroundCombatResult(0, false, 0, true)
+            table[Pair(10, -2)] = GroundCombatResult(1, false, 1, true)
+
+            table[Pair(1, -1)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(2, -1)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(3, -1)] = GroundCombatResult(2, true, 1, false)
+            table[Pair(4, -1)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(5, -1)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(6, -1)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(7, -1)] = GroundCombatResult(0, false, 0, false)
+            table[Pair(8, -1)] = GroundCombatResult(0, false, 0, true)
+            table[Pair(9, -1)] = GroundCombatResult(1, false, 1, true)
+            table[Pair(10, -1)] = GroundCombatResult(1, false, 1, true)
+
+            table[Pair(1, 0)] = GroundCombatResult(2, true, 0, false)
+            table[Pair(2, 0)] = GroundCombatResult(2, true, 1, false)
+            table[Pair(3, 0)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(4, 0)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(5, 0)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(6, 0)] = GroundCombatResult(0, true, 0, false)
+            table[Pair(7, 0)] = GroundCombatResult(0, false, 0, false)
+            table[Pair(8, 0)] = GroundCombatResult(1, false, 1, true)
+            table[Pair(9, 0)] = GroundCombatResult(1, false, 1, true)
+            table[Pair(10, 0)] = GroundCombatResult(0, false, 1, true)
+
+            table[Pair(1, 1)] = GroundCombatResult(2, true, 1, false)
+            table[Pair(2, 1)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(3, 1)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(4, 1)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(5, 1)] = GroundCombatResult(0, true, 0, false)
+            table[Pair(6, 1)] = GroundCombatResult(0, false, 0, false)
+            table[Pair(7, 1)] = GroundCombatResult(0, false, 0, false)
+            table[Pair(8, 1)] = GroundCombatResult(1, false, 1, true)
+            table[Pair(9, 1)] = GroundCombatResult(1, false, 1, true)
+            table[Pair(10, 1)] = GroundCombatResult(0, false, 1, true)
+
+            table[Pair(1, 2)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(2, 2)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(3, 2)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(4, 2)] = GroundCombatResult(0, true, 0, false)
+            table[Pair(5, 2)] = GroundCombatResult(0, true, 0, false)
+            table[Pair(6, 2)] = GroundCombatResult(0, false, 0, false)
+            table[Pair(7, 2)] = GroundCombatResult(1, false, 1, true)
+            table[Pair(8, 2)] = GroundCombatResult(1, false, 1, true)
+            table[Pair(9, 2)] = GroundCombatResult(0, false, 1, true)
+            table[Pair(10, 2)] = GroundCombatResult(0, false, 1, true)
+
+            table[Pair(1, 3)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(2, 3)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(3, 3)] = GroundCombatResult(0, true, 0, false)
+            table[Pair(4, 3)] = GroundCombatResult(0, true, 0, false)
+            table[Pair(5, 3)] = GroundCombatResult(0, false, 0, false)
+            table[Pair(6, 3)] = GroundCombatResult(1, false, 1, true)
+            table[Pair(7, 3)] = GroundCombatResult(1, false, 1, true)
+            table[Pair(8, 3)] = GroundCombatResult(0, false, 1, true)
+            table[Pair(9, 3)] = GroundCombatResult(0, false, 1, true)
+            table[Pair(10, 3)] = GroundCombatResult(0, false, 1, true)
+
+            table[Pair(1, 4)] = GroundCombatResult(1, true, 0, false)
+            table[Pair(2, 4)] = GroundCombatResult(0, true, 0, false)
+            table[Pair(3, 4)] = GroundCombatResult(0, true, 0, false)
+            table[Pair(4, 4)] = GroundCombatResult(1, true, 1, false)
+            table[Pair(5, 4)] = GroundCombatResult(1, false, 1, false)
+            table[Pair(6, 4)] = GroundCombatResult(0, false, 1, true)
+            table[Pair(7, 4)] = GroundCombatResult(0, false, 1, true)
+            table[Pair(8, 4)] = GroundCombatResult(0, false, 1, true)
+            table[Pair(9, 4)] = GroundCombatResult(1, false, 2, true)
+            table[Pair(10, 4)] = GroundCombatResult(1, false, 2, true)
+
+            table[Pair(1, 5)] = GroundCombatResult(0, true, 0, false)
+            table[Pair(2, 5)] = GroundCombatResult(1, true, 1, false)
+            table[Pair(3, 5)] = GroundCombatResult(1, true, 1, false)
+            table[Pair(4, 5)] = GroundCombatResult(1, false, 1, false)
+            table[Pair(5, 5)] = GroundCombatResult(0, false, 1, true)
+            table[Pair(6, 5)] = GroundCombatResult(0, false, 1, true)
+            table[Pair(7, 5)] = GroundCombatResult(0, false, 1, true)
+            table[Pair(8, 5)] = GroundCombatResult(1, false, 2, true)
+            table[Pair(9, 5)] = GroundCombatResult(1, false, 2, true)
+            table[Pair(10, 5)] = GroundCombatResult(0, false, 2, true)
+
+            table[Pair(1, 6)] = GroundCombatResult(1, true, 1, false)
+            table[Pair(2, 6)] = GroundCombatResult(1, true, 1, false)
+            table[Pair(3, 6)] = GroundCombatResult(1, true, 1, false)
+            table[Pair(4, 6)] = GroundCombatResult(0, false, 1, false)
+            table[Pair(5, 6)] = GroundCombatResult(0, false, 1, true)
+            table[Pair(6, 6)] = GroundCombatResult(0, false, 1, true)
+            table[Pair(7, 6)] = GroundCombatResult(1, false, 2, true)
+            table[Pair(8, 6)] = GroundCombatResult(1, false, 2, true)
+            table[Pair(9, 6)] = GroundCombatResult(0, false, 2, true)
+            table[Pair(10, 6)] = GroundCombatResult(0, false, 2, true)
+
+            table[Pair(1, 7)] = GroundCombatResult(1, true, 1, false)
+            table[Pair(2, 7)] = GroundCombatResult(1, true, 1, false)
+            table[Pair(3, 7)] = GroundCombatResult(0, false, 1, false)
+            table[Pair(4, 7)] = GroundCombatResult(0, false, 1, true)
+            table[Pair(5, 7)] = GroundCombatResult(0, false, 1, true)
+            table[Pair(6, 7)] = GroundCombatResult(1, false, 2, true)
+            table[Pair(7, 7)] = GroundCombatResult(1, false, 2, true)
+            table[Pair(8, 7)] = GroundCombatResult(0, false, 2, true)
+            table[Pair(9, 7)] = GroundCombatResult(0, false, 2, true)
+            table[Pair(10, 7)] = GroundCombatResult(0, false, 2, true)
+
+            table[Pair(1, 8)] = GroundCombatResult(1, true, 1, false)
+            table[Pair(2, 8)] = GroundCombatResult(0, true, 1, false)
+            table[Pair(3, 8)] = GroundCombatResult(0, false, 1, false)
+            table[Pair(4, 8)] = GroundCombatResult(0, false, 1, true)
+            table[Pair(5, 8)] = GroundCombatResult(1, false, 2, true)
+            table[Pair(6, 8)] = GroundCombatResult(1, false, 2, true)
+            table[Pair(7, 8)] = GroundCombatResult(0, false, 2, true)
+            table[Pair(8, 8)] = GroundCombatResult(0, false, 2, true)
+            table[Pair(9, 8)] = GroundCombatResult(0, false, 2, true)
+            table[Pair(10, 8)] = GroundCombatResult(0, false, 2, true)
+
+            table[Pair(1, 9)] = GroundCombatResult(0, true, 1, false)
+            table[Pair(2, 9)] = GroundCombatResult(0, true, 1, false)
+            table[Pair(3, 9)] = GroundCombatResult(0, false, 1, false)
+            table[Pair(4, 9)] = GroundCombatResult(1, false, 2, true)
+            table[Pair(5, 9)] = GroundCombatResult(1, false, 2, true)
+            table[Pair(6, 9)] = GroundCombatResult(0, false, 2, true)
+            table[Pair(7, 9)] = GroundCombatResult(0, false, 2, true)
+            table[Pair(8, 9)] = GroundCombatResult(0, false, 2, true)
+            table[Pair(9, 9)] = GroundCombatResult(0, false, 2, true)
+            table[Pair(10, 9)] = GroundCombatResult(0, false, 2, true)
+
+            return table
+        }
     }
 
 }

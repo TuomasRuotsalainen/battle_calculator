@@ -46,6 +46,32 @@ class ActiveFixedModifiers(list : MutableList<FixedModifierEnum>) {
         map[modifier] = true
     }
 
+    fun sappersInUse(isAttacker: Boolean) : Boolean {
+        return if (isAttacker) {
+            map.contains(FixedModifierEnum.ATTACKER_USES_SAPPERS)
+        } else {
+            map.contains(FixedModifierEnum.DEFENDER_USES_SAPPERS)
+        }
+    }
+
+    fun remove(modifier: FixedModifierEnum) {
+        map[modifier] = false
+    }
+
+    fun applyEW(attackerEWResult: Tables.EWResult, defenderEWResult: Tables.EWResult) {
+        if (attackerEWResult.effects.contains(EwEffectEnum.ENEMY_COMMAND_DISRUPTED)) {
+            this.add(FixedModifierEnum.DEFENDER_OUT_OF_COMMAND)
+            this.add(FixedModifierEnum.DEFENDER_OUT_OF_COMMAND_SCREEN_REC)
+            this.remove(FixedModifierEnum.DEFENDER_FRONT_LINE_COMMAND)
+        }
+
+        if (defenderEWResult.effects.contains(EwEffectEnum.ENEMY_COMMAND_DISRUPTED)) {
+            this.add(FixedModifierEnum.ATTACKER_OUT_OF_COMMAND)
+            this.add(FixedModifierEnum.ATTACKER_OUT_OF_COMMAND_SCREEN_REC)
+            this.remove(FixedModifierEnum.ATTACKER_FRONT_LINE_COMMAND)
+        }
+    }
+
     fun contains(modifier : FixedModifierEnum): Boolean {
         if (map[modifier] == true) {
             return true
@@ -100,6 +126,15 @@ class FixedModifiers() {
 class CombatSupportSelection() {
     private var attackerSupport : CombatSupport? = null
     private var defenderSupport : CombatSupport? = null
+
+    fun ewInUse() : Boolean {
+        return (attackerSupport!!.getEWPoints()!! > 0) || (defenderSupport!!.getEWPoints()!! > 0)
+    }
+
+    fun applyEwResults(attackerEWResult: Tables.EWResult, defenderEWResult: Tables.EWResult) {
+        this.attackerSupport!!.adjustCombatSupport(defenderEWResult)
+        this.defenderSupport!!.adjustCombatSupport(attackerEWResult)
+    }
 
     fun isAirBeingUsed() : Boolean {
         if (attackerSupport == null || defenderSupport == null) {
@@ -216,7 +251,7 @@ fun parseCombatSupport(str : String) : CombatSupport {
 
 }
 
-class CombatSupport(val artilleryPoints: Int, private var airPoints : Int, var helicopterPoints : List<Int>, val targetInCASZone : Boolean, val isAttacker : Boolean, private var ewPoints: Int?, private var ewRollModifier: Int?) {
+class CombatSupport(private var artilleryPoints: Int, private var airPoints : Int, private var helicopterPoints : MutableList<Int>, val targetInCASZone : Boolean, val isAttacker : Boolean, private var ewPoints: Int?, private var ewRollModifier: Int?) {
 
     fun getHelicopterCount() : Int {
         var counter = 0
@@ -231,6 +266,30 @@ class CombatSupport(val artilleryPoints: Int, private var airPoints : Int, var h
 
     fun getAirPoints() : Int {
         return airPoints
+    }
+
+    fun adjustCombatSupport(enemyEwResult : Tables.EWResult) {
+        val modifier = if (isAttacker) {
+            // If adjusting attacker's combat support, we're talking about defender EW result and vice versa
+            enemyEwResult.combatModifier.second
+        } else {
+            enemyEwResult.combatModifier.first
+        }
+
+        for (effect in enemyEwResult.effects) {
+            when (effect) {
+                EwEffectEnum.ENEMY_ARTILLERY_HALVED -> {
+                    this.artilleryPoints = artilleryPoints/2 // This rounds it down
+                }
+                EwEffectEnum.ENEMY_AVIATION_HALVED -> {
+                    this.airPoints = airPoints/2 // This rounds it down
+                    for (i in 0 until this.helicopterPoints.size)
+                        this.helicopterPoints[i] = this.helicopterPoints[i]/2 // This rounds it down
+                }
+                else -> {}
+            }
+        }
+
     }
 
     fun setEW(newEwPoints : Int, rollModifier : Int) {
@@ -260,7 +319,7 @@ class CombatSupport(val artilleryPoints: Int, private var airPoints : Int, var h
         }
         helicopterPoints = helicopterPoints.mapIndexed { index, value ->
             if (index == shotDownHelicopterIndex) 0 else value
-        }
+        } as MutableList<Int>
     }
 
     fun toStateString() : String {

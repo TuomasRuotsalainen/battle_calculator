@@ -14,9 +14,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Electronic warfare resolution"
+        android:text="Combat support resolution"
 
-        app:layout_constraintBottom_toTopOf="@+id/aa_rules"
+        app:layout_constraintBottom_toTopOf="@+id/body"
         app:layout_constraintEnd_toEndOf="parent"
 
         app:layout_constraintStart_toStartOf="parent"
@@ -26,11 +26,11 @@
         />
 
     <TextView
-        android:id="@+id/aa_rules"
+        android:id="@+id/body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Current combat modifier (attacker:defender)\n3:5\n\n Combat support allocation after AA fire (attacker:defender)\n12:10\n\nEW points allocation (attacker:defender)\n1:2"
+        android:text="Current combat differential\n-2\n\n Combat support allocation after AA fire (attacker:defender)\n12:10\n\nEW points allocation (attacker:defender)\n1:2"
 
         app:layout_constraintBottom_toTopOf="@+id/apply"
         app:layout_constraintEnd_toEndOf="parent"
@@ -44,6 +44,19 @@
 
 
 
+    <Button
+        android:id="@+id/explain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Explain current modifiers"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/body"
+        app:layout_constraintBottom_toBottomOf="@+id/apply"
+
+        />
 
     <Button
         android:id="@+id/apply"
@@ -54,7 +67,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
 
-        app:layout_constraintTop_toBottomOf="@+id/aa_rules"
+        app:layout_constraintTop_toBottomOf="@+id/explain"
         app:layout_constraintBottom_toBottomOf="parent"
 
         />
