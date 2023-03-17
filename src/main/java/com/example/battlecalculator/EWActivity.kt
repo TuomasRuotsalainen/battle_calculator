@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.*
 import kotlin.Unit
@@ -45,6 +46,7 @@ class EWActivity : AppCompatActivity() {
             }
 
             fun proceed() {
+                Log.d("DEBUG", "Proceeding stage. Current one: $current")
                 current = when (current) {
                     STAGE_PROMPT_EW -> STAGE_DISPLAY_EW_PROMPT_CS
                     STAGE_DISPLAY_EW_PROMPT_CS -> STAGE_DISPLAY_CS_PROMPT_BATTLE
@@ -52,6 +54,8 @@ class EWActivity : AppCompatActivity() {
                     STAGE_DISPLAY_CS_PROMPT_BATTLE -> STAGE_DISPLAY_BATTLE_RESULTS
                     else -> throw Exception("Unknown stage")
                 }
+
+                Log.d("DEBUG", "New one: $current")
             }
 
             fun noEwNeeded() {
@@ -104,6 +108,7 @@ class EWActivity : AppCompatActivity() {
         var defenderCs : Int? = null
 
         fun updateTextBody(stage : Stage) {
+            Log.d("DEBUG", "Updating text body. Current stage: ${stage.get()}")
             val currentDifferential = calculator.calculateCurrentCombatDifferential(gameState)
             val attackerCombatSupport = gameState.combatSupport!!.getAttackerCombatSupport()
             val defenderCombatSupport = gameState.combatSupport!!.getDefenderCombatSupport()
@@ -161,6 +166,7 @@ class EWActivity : AppCompatActivity() {
         val combatSupportCalc = Tables.CombatSupport()
 
         applyButton.setOnClickListener {
+            Log.d("DEBUG", "Button clicked! Stage: ${stage.get()}")
             if (stage.get() == STAGE_PROMPT_EW) {
                 gameState.activeFixedModifiers.applyEW(attackerEwResult!!, defenderEwResult!!)
                 gameState.combatSupport!!.applyEwResults(attackerEwResult, defenderEwResult)
@@ -171,13 +177,18 @@ class EWActivity : AppCompatActivity() {
                 attackerCs = combatSupportCalc.calculateForAttacker(gameState.combatSupport!!.getAttackerCombatSupport()!!.getTotalSupport(), attackerCsRoll)
                 defenderCs = combatSupportCalc.calculateForDefender(gameState.combatSupport!!.getDefenderCombatSupport()!!.getTotalSupport(), defenderCsRoll)
 
+                applyButton.text = "Calculate combat results"
+
             } else if (stage.get() == STAGE_DISPLAY_CS_PROMPT_BATTLE) {
                 val groundCombat = Tables.GroundCombat()
                 groundCombatResult = groundCombat.getResult(combatRoll, calculator.calculateCurrentCombatDifferential(gameState) + attackerCs!! + defenderCs!!)
+
+                applyButton.text = "TODO what happens now?"
             }
 
-            updateTextBody(stage)
             stage.proceed()
+            updateTextBody(stage)
+
         }
 
     }

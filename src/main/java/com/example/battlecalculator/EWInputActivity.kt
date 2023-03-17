@@ -102,7 +102,11 @@ class EWInputActivity : AppCompatActivity() {
             }
 
             val hqAttrition = getIntFromTextField(hqAttritionInput)
-            val ewPointsInUse = getIntFromTextField(ewPointInput)
+            var ewPointsInUse = getIntFromTextField(ewPointInput)
+            if (ewPointsInUse > 6) {
+                ewPointInput.setText("6")
+                ewPointsInUse = 6
+            }
 
             if (hqAttrition > 0) {
                 modifier += hqAttrition*hqAttritionModifier
