@@ -3,7 +3,9 @@ package com.example.battlecalculator
 import android.content.Intent
 import android.provider.ContactsContract.Data
 import android.util.Log
+import androidx.core.os.persistableBundleOf
 import com.example.battlecalculator.BuildConfig.DEBUG
+import com.example.battlecalculator.Helpers.General.strToBool
 
 
 /*
@@ -14,13 +16,14 @@ zulu time = 03:00, state = 1, attacking unit id = 12J, unit ids in target hex 13
 
 */
 
-fun GameState() : GameState {
-    val stateStr = "Z=0300;S=1;AU=null;DU=null;AT=null;HEX=null;ACT=NATO;FIXED=null;ADJ_AT=null;ADJ_DEF=null;COM_SUP=null"
+fun GameState(conditions: Conditions) : GameState {
+    val conditionString = conditions.toStateString()
+    val stateStr = "CON=$conditionString;AU=null;DU=null;AT=null;HEX=null;ACT=NATO;FIXED=null;ADJ_AT=null;ADJ_DEF=null;COM_SUP=null"
     return GameState(stateStr)
 }
 
 fun getMockGameState(): GameState {
-    val stateStr = "Z=0300;S=1;AU=74-ASL;DU=34-RDEF,74g-DEF,;AT=HASTY;HEX=null;ACT=NATO;FIXED=ATTACKER_HALF_ENGAGED,PACT_DEFENDING_REAR;ADJ_AT=1;ADJ_DEF=1;COM_SUP=DEF-2-2,3,0-2-true&AT-0-0,0,0-5-false"
+    val stateStr = "CON=H03-false-true-false-false;S=1;AU=74-ASL;DU=34-RDEF,74g-DEF,;AT=HASTY;HEX=null;ACT=NATO;FIXED=ATTACKER_HALF_ENGAGED,PACT_DEFENDING_REAR;ADJ_AT=1;ADJ_DEF=1;COM_SUP=DEF-2-2,3,0-2-true&AT-0-0,0,0-5-false"
     return GameState(stateStr)
 }
 
@@ -31,8 +34,10 @@ fun getGameState(intent: Intent) : GameState {
 
 class GameState(stateString : String) {
 
+
+
     private enum class DataIDs {
-        AU, DU, AT, HEX, ACT, FIXED, ADJ_AT, ADJ_DEF, COM_SUP
+        AU, DU, AT, HEX, ACT, FIXED, ADJ_AT, ADJ_DEF, COM_SUP, CON
     }
 
     fun areSappersHit(result : Tables.GroundCombatResult) : Boolean {
@@ -52,6 +57,7 @@ class GameState(stateString : String) {
     private val dataMap = getDataMap(stateString)
     val oob = OrderOfBattle()
 
+    var conditions : Conditions = createConditions(dataMap[DataIDs.CON.toString()]!!)
     var attackingUnit : UnitState? = getAttackUnitStates()
     var attackType : AttackTypeEnum? = getAttackTypeEnum()
     var riverCrossingType : RiverCrossingTypeEnum? = getRiverCrossingTypeEnum()
@@ -62,6 +68,10 @@ class GameState(stateString : String) {
     var adjacentDefenderCount : Int? = getAdjacentDefenderUnits()
     var adjacentAttackerCount : Int? = getAdjacentAttackerUnits()
     var combatSupport : CombatSupportSelection? = getCombatSupportSelection()
+
+    fun updateConditions(newConditions: Conditions) {
+        conditions = newConditions
+    }
 
     fun getDefendingUnitStateWithoutPosture() : UnitState? {
         for (defendingUnitState in defendingUnits) {
@@ -90,6 +100,7 @@ class GameState(stateString : String) {
     }
 
     fun getStateString(): String {
+        val conditionsStr = conditions.toStateString()
         val attackingUnitStr = getAttackUnitStr()
         val defendingUnitsStr = getDefUnitsStr()
         val attackTypeStr = getAttackTypeStr()
@@ -100,7 +111,7 @@ class GameState(stateString : String) {
         val adjacentAttackerCountStr = getAdjacentAttackerCountStr()
         val combatSupportSelectionStr = getCombatSupportSelectionStr()
 
-        return "Z=0300;S=1;AU=$attackingUnitStr;DU=$defendingUnitsStr;AT=$attackTypeStr;HEX=$hexTerrainStr;ACT=$allianceStr;FIXED=$activeFixedModifiersStr;ADJ_DEF=$adjacentDefenderCountStr;ADJ_AT=$adjacentAttackerCountStr;COM_SUP=$combatSupportSelectionStr"
+        return "CON=$conditionsStr;AU=$attackingUnitStr;DU=$defendingUnitsStr;AT=$attackTypeStr;HEX=$hexTerrainStr;ACT=$allianceStr;FIXED=$activeFixedModifiersStr;ADJ_DEF=$adjacentDefenderCountStr;ADJ_AT=$adjacentAttackerCountStr;COM_SUP=$combatSupportSelectionStr"
     }
 
     fun setDefendingUnit(unitState : UnitState) {
@@ -470,3 +481,54 @@ class UnitState(unitInput : Unit?, postureInput: PostureEnum?, attrition: Int?, 
     }
 
 }
+
+fun strToHour(str : String) : HourEnum {
+    val hour = when (str) {
+        "H00" -> HourEnum.H00
+        "H03" -> HourEnum.H03
+        "H06" -> HourEnum.H06
+        "H09" -> HourEnum.H09
+        "H12" -> HourEnum.H12
+        "H15" -> HourEnum.H15
+        "H18" -> HourEnum.H18
+        "H21" -> HourEnum.H21
+        else -> throw Exception("Unrecognized hour: $str")
+    }
+
+    return hour
+}
+
+fun createConditions(str : String) : Conditions {
+    val components = str.split("-")
+    if (components.size != 5) {
+        throw Exception("Conditions size is not 5")
+    }
+
+    val hour = strToHour(components[0])
+
+    val fog = strToBool(components[1])
+    val precipitation = strToBool(components[2])
+    val pactUsesChem = strToBool(components[3])
+    val natoUsesChem = strToBool(components[4])
+
+    return Conditions(pactUsesChem, natoUsesChem, hour, fog, precipitation)
+
+}
+
+class Conditions(
+    private val pactUsesChem : Boolean, private val natoUsesChem : Boolean,
+    private val hourEnum: HourEnum, private val fog : Boolean, private val precipitation : Boolean) {
+
+    fun toStateString() : String {
+        return "${hourEnum}-$fog-$precipitation-$pactUsesChem-$natoUsesChem"
+    }
+
+    fun toReadableString() : String {
+        return "HOUR: $hourEnum FOG: $fog Precipitation: $precipitation PACT uses chem: $pactUsesChem NATO uses chem: $natoUsesChem"
+    }
+
+    private fun isClear(fog : Boolean, precipitation : Boolean) : Boolean {
+        return (!fog && !precipitation)
+    }
+}
+

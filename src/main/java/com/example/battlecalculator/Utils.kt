@@ -43,6 +43,16 @@ class Helpers {
                 override fun afterTextChanged(s: Editable?) {}
             })
 
+        fun strToBool(str : String) : Boolean {
+            return if (str == "true") {
+                true
+            } else if (str == "false") {
+                false
+            } else {
+                throw Exception("Could convert string $str to Boolean")
+            }
+        }
+
     }
 }
 

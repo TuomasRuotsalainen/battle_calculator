@@ -10,10 +10,23 @@
         android:id="@+id/faction_selection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/groundAttackButton"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/chem_usage"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:id="@+id/active_player"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Active player"
+            tools:layout_editor_absoluteX="176dp"
+            tools:layout_editor_absoluteY="16dp" />
 
         <RadioButton
             android:id="@+id/faction_selection_nato"
@@ -36,16 +49,192 @@
 
     </RadioGroup>
 
+    <LinearLayout
+        android:id="@+id/chem_usage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/faction_selection"
+        app:layout_constraintBottom_toTopOf="@+id/weather_selection"
+
+        >
+
+        <CheckBox
+            android:id="@+id/nato_uses_chem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="NATO uses\nchemical weapons"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="60dp" />
+
+        <CheckBox
+            android:id="@+id/pact_uses_chem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="PACT uses\nchemical weapons"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="12dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/weather_selection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/chem_usage"
+        app:layout_constraintBottom_toTopOf="@+id/time_selection"
+
+        >
+
+        <CheckBox
+            android:id="@+id/fog_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Fog"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="12dp" />
+
+        <CheckBox
+            android:id="@+id/precipitation_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Precipitation"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="60dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/time_selection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:orientation="vertical"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/weather_selection"
+        app:layout_constraintBottom_toTopOf="@+id/groundAttackButton"
+
+        >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <RadioButton
+                android:id="@+id/time00"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="H00"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="60dp" />
+
+            <RadioButton
+                android:id="@+id/time03"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="H03"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="12dp" />
+
+            <RadioButton
+                android:id="@+id/time06"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="H06"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="60dp" />
+
+            <RadioButton
+                android:id="@+id/time09"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="H09"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="60dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <RadioButton
+                android:id="@+id/time12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="H12"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="12dp" />
+
+            <RadioButton
+                android:id="@+id/time15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="H15"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="60dp" />
+
+            <RadioButton
+                android:id="@+id/time18"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="H18"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="60dp" />
+
+            <RadioButton
+                android:id="@+id/time21"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="H21"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="60dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/groundAttackButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
         android:text="Ground Combat"
+
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
+        app:layout_constraintTop_toBottomOf="@+id/time_selection"
+        app:layout_constraintBottom_toTopOf="@+id/artillerBomabrdmentButton"
+
+        />
 
     <Button
         android:id="@+id/artillerBomabrdmentButton"
@@ -53,9 +242,12 @@
         android:layout_height="wrap_content"
         android:text="Artillery bombardment"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/groundAttackButton" />
+
+        app:layout_constraintTop_toBottomOf="@+id/groundAttackButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
 
 
 

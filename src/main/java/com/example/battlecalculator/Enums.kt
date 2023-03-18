@@ -39,3 +39,7 @@ enum class EngagementStateEnum {
 enum class EwEffectEnum {
     ENEMY_AVIATION_HALVED, ENEMY_ARTILLERY_HALVED, ENEMY_COMMAND_DISRUPTED
 }
+
+enum class HourEnum {
+    H00, H03, H06, H09, H12, H15, H18, H21
+}
