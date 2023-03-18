@@ -19,11 +19,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        var gameState = getGameStateIfExists(intent)
+
         val natoSelection = findViewById<RadioButton>(R.id.faction_selection_nato)
         val pactSelection = findViewById<RadioButton>(R.id.faction_selection_pact)
-        natoSelection.isChecked = true
-
-
 
         val pactChemSel = findViewById<CheckBox>(R.id.pact_uses_chem)
         val natoChemSel = findViewById<CheckBox>(R.id.nato_uses_chem)
@@ -40,23 +39,68 @@ class MainActivity : AppCompatActivity() {
         val h18 = findViewById<RadioButton>(R.id.time18)
         val h21 = findViewById<RadioButton>(R.id.time21)
 
-        h00.isChecked = true
         var currentHour : HourEnum = HourEnum.H00
 
         val timeViews = listOf(h00, h03, h06, h09, h12, h15, h18, h21)
         val otherViews = listOf(natoChemSel, pactChemSel, fog, precipitation)
+
+        fun setAllFields() {
+            if (gameState == null) {
+                natoSelection.isChecked = true
+                h00.isChecked = true
+            } else {
+
+                if (gameState!!.activeAlliance == Alliances.NATO) {
+                    natoSelection.isChecked = true
+                } else {
+                    pactSelection.isChecked = true
+                }
+
+                val currentConditions = gameState!!.conditions
+
+                pactChemSel.isChecked = currentConditions.pactUsesChem
+                natoChemSel.isChecked = currentConditions.natoUsesChem
+
+                precipitation.isChecked = currentConditions.precipitation
+                fog.isChecked = currentConditions.fog
+
+                when (currentConditions.hourEnum) {
+                    HourEnum.H00 -> h00.isChecked = true
+                    HourEnum.H03 -> h03.isChecked = true
+                    HourEnum.H06 -> h06.isChecked = true
+                    HourEnum.H09 -> h09.isChecked = true
+                    HourEnum.H12 -> h12.isChecked = true
+                    HourEnum.H15 -> h15.isChecked = true
+                    HourEnum.H18 -> h18.isChecked = true
+                    HourEnum.H21 -> h21.isChecked = true
+                }
+            }
+        }
+
+        setAllFields()
 
         fun createConditions() : Conditions {
             return Conditions(pactChemSel.isChecked, natoChemSel.isChecked, currentHour, fog.isChecked, precipitation.isChecked)
         }
 
         val initialConditions = createConditions()
-        val state = GameState(initialConditions)
+
+        if (gameState == null) {
+            gameState = GameState(initialConditions)
+        }
 
 
         fun updateConditions() {
-            val conditions = createConditions()
-            state.updateConditions(conditions)
+            var conditions = createConditions()
+            if (!conditions.isValid()) {
+                fog.isChecked = false
+                conditions = createConditions()
+                if (!conditions.isValid()) {
+                    throw Exception("Unable to create valid conditions")
+                }
+            }
+
+            gameState.updateConditions(conditions)
             Log.d("Debug", "New conditions: ${conditions.toReadableString()}")
         }
 
@@ -80,11 +124,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         natoSelection.setOnClickListener {
-            state.activeAlliance = Alliances.NATO
+            gameState.activeAlliance = Alliances.NATO
         }
 
         pactSelection.setOnClickListener {
-            state.activeAlliance = Alliances.PACT
+            gameState.activeAlliance = Alliances.PACT
         }
 
         val groundAttackButton = findViewById<Button>(R.id.groundAttackButton)
@@ -94,7 +138,7 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.ATTACKER.toString())
 
         groundAttackButton.setOnClickListener{
-            intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), state.getStateString())
+            intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
 
             startActivity(intent)
             finish()

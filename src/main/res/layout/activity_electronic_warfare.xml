@@ -4,6 +4,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
@@ -32,7 +33,7 @@
         android:gravity="center"
         android:text="Current combat differential\n-2\n\n Combat support allocation after AA fire (attacker:defender)\n12:10\n\nEW points allocation (attacker:defender)\n1:2"
 
-        app:layout_constraintBottom_toTopOf="@+id/apply"
+        app:layout_constraintBottom_toTopOf="@+id/explain"
         app:layout_constraintEnd_toEndOf="parent"
 
         app:layout_constraintStart_toStartOf="parent"
@@ -54,15 +55,17 @@
         app:layout_constraintEnd_toEndOf="parent"
 
         app:layout_constraintTop_toBottomOf="@+id/body"
-        app:layout_constraintBottom_toBottomOf="@+id/apply"
+        app:layout_constraintBottom_toBottomOf="@+id/button_container"
 
         />
 
-    <Button
-        android:id="@+id/apply"
+
+    <LinearLayout
+
+        android:id="@+id/button_container"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Generate EW results"
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -70,7 +73,28 @@
         app:layout_constraintTop_toBottomOf="@+id/explain"
         app:layout_constraintBottom_toBottomOf="parent"
 
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        >
+
+    <Button
+        android:id="@+id/apply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Generate EW\n results"
+        android:layout_marginEnd="8dp" />
         />
+
+    <Button
+        android:id="@+id/no_retreat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Do not \n retreat"
+        android:layout_marginEnd="8dp" />
+
+        />
+
+    </LinearLayout>
 
 
 

@@ -1,5 +1,6 @@
 package com.example.battlecalculator
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
@@ -11,13 +12,18 @@ import androidx.appcompat.app.AppCompatActivity
 import android.widget.*
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.content.res.ResourcesCompat
+import java.util.concurrent.CountDownLatch
 import kotlin.Unit
 
 class Utils {
     companion object IntentTools {
         fun getStringFromIntent(intent: Intent, id : String) : String {
-            return intent.getStringExtra(id)
+            return getStringFromIntentIfExists(intent, id)
                 ?: throw Exception("Gamestate intent string is null for id $id")
+        }
+
+        fun getStringFromIntentIfExists(intent: Intent, id : String) : String? {
+            return intent.getStringExtra(id)
         }
     }
 
@@ -51,6 +57,20 @@ class Helpers {
             } else {
                 throw Exception("Could convert string $str to Boolean")
             }
+        }
+
+        fun showInfoDialog(context : Context?, message : String, callback: () -> Unit) {
+
+            val builder = AlertDialog.Builder(context)
+            builder.setMessage(message)
+            builder.setPositiveButton("Understood") { dialog, _ ->
+                // Close the popup
+                dialog.dismiss()
+                callback()
+            }
+
+            val dialog = builder.create()
+            dialog.show()
         }
 
     }

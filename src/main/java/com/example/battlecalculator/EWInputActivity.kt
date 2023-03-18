@@ -222,8 +222,6 @@ class EWInputActivity : AppCompatActivity() {
                 finish()
             }
 
-            // TODO above: make sure that user is unable to input breaking values
-
         }
 
     }

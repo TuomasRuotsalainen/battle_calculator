@@ -32,9 +32,14 @@ fun getGameState(intent: Intent) : GameState {
     return GameState(gameStateString)
 }
 
+fun getGameStateIfExists(intent : Intent) : GameState? {
+    val gameStateString = Utils.getStringFromIntentIfExists(intent, IntentExtraIDs.GAMESTATE.toString())
+        ?: return null
+
+    return GameState(gameStateString)
+}
+
 class GameState(stateString : String) {
-
-
 
     private enum class DataIDs {
         AU, DU, AT, HEX, ACT, FIXED, ADJ_AT, ADJ_DEF, COM_SUP, CON
@@ -516,11 +521,23 @@ fun createConditions(str : String) : Conditions {
 }
 
 class Conditions(
-    private val pactUsesChem : Boolean, private val natoUsesChem : Boolean,
-    private val hourEnum: HourEnum, private val fog : Boolean, private val precipitation : Boolean) {
+    val pactUsesChem : Boolean, val natoUsesChem : Boolean,
+    val hourEnum: HourEnum, val fog : Boolean, val precipitation : Boolean) {
 
     fun toStateString() : String {
         return "${hourEnum}-$fog-$precipitation-$pactUsesChem-$natoUsesChem"
+    }
+
+    fun isValid(): Boolean {
+        if (!fog) {
+            return true
+        }
+
+        if (hourEnum == HourEnum.H06 || hourEnum == HourEnum.H09) {
+            return true
+        }
+
+        return false
     }
 
     fun toReadableString() : String {

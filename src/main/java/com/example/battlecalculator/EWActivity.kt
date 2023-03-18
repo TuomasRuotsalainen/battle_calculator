@@ -9,7 +9,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
+import com.example.battlecalculator.Helpers.General.showInfoDialog
 import kotlin.Unit
 
 class EWActivity : AppCompatActivity() {
@@ -18,7 +21,7 @@ class EWActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_electronic_warfare)
 
-        var gameState = getGameState(intent)
+        val gameState = getGameState(intent)
 
         if (gameState.combatSupport == null) {
             throw Exception("Combat support is null")
@@ -71,9 +74,6 @@ class EWActivity : AppCompatActivity() {
 
         val ewTable = Tables.EW()
 
-        //val ewResultsNeeded = gameState.combatSupport!!.ewInUse()
-        //var ewResultsCompleted = false
-
         var attackerEwResult : Tables.EWResult? = null
         var defenderEwResult : Tables.EWResult? = null
 
@@ -107,6 +107,16 @@ class EWActivity : AppCompatActivity() {
         var attackerCs : Int? = null
         var defenderCs : Int? = null
 
+        val btnLayout = findViewById<LinearLayout>(R.id.button_container)
+
+        val noRetreatBtn = findViewById<Button>(R.id.no_retreat)
+
+        var defenderSufferedAttrition = false
+
+        btnLayout.removeViewAt(1)
+
+        var finalResults : String? = null
+
         fun updateTextBody(stage : Stage) {
             Log.d("DEBUG", "Updating text body. Current stage: ${stage.get()}")
             val currentDifferential = calculator.calculateCurrentCombatDifferential(gameState)
@@ -136,10 +146,17 @@ class EWActivity : AppCompatActivity() {
                 }"
             } else if (stage.get() == STAGE_DISPLAY_BATTLE_RESULTS) {
                 text += "Ground combat die roll: ${combatRoll.getResultWithoutModifiers()}\n\nCombat result:\n"
-                text += "Attrition to attacker: ${groundCombatResult!!.attackerAttrition}\n" +
-                        "Attrition to defender: ${groundCombatResult!!.attackerAttrition}\n"
+
+                finalResults = ""
+                finalResults += "Attrition to the attacking unit: ${groundCombatResult!!.attackerAttrition}\n" +
+                        "Attrition to all defending units: ${groundCombatResult!!.defenderAttrition}\n"
                 if (gameState.areSappersHit(groundCombatResult!!)) {
-                    text += "Sappers eliminated"
+                    finalResults += "Sappers eliminated"
+                }
+                text += finalResults
+
+                if (groundCombatResult!!.defenderAttrition > 0) {
+                    defenderSufferedAttrition = true
                 }
             } else {
                 throw Exception("Unrecognized stage ${stage.get()}")
@@ -165,6 +182,29 @@ class EWActivity : AppCompatActivity() {
 
         val combatSupportCalc = Tables.CombatSupport()
 
+        fun addExitButton() {
+            btnLayout.addView(noRetreatBtn)
+            noRetreatBtn.setOnClickListener {
+                var dialogText = "Apply the following results now:\n\n" + finalResults!!
+                if (defenderSufferedAttrition) {
+                    dialogText += "\n\n If every defending unit is destroyed, the rest at the hex have to retreat."
+                    dialogText += "\n\nMark all defending units as ENGAGED"
+                } else {
+                    dialogText += "\n\nMark all defending units at least as HALF-ENGAGED"
+                }
+                showInfoDialog(this, dialogText) {
+                    val freshGameState = GameState(gameState.conditions)
+
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), freshGameState.getStateString())
+                    startActivity(intent)
+                    finish()
+                }
+
+
+            }
+        }
+
         applyButton.setOnClickListener {
             Log.d("DEBUG", "Button clicked! Stage: ${stage.get()}")
             if (stage.get() == STAGE_PROMPT_EW) {
@@ -183,7 +223,11 @@ class EWActivity : AppCompatActivity() {
                 val groundCombat = Tables.GroundCombat()
                 groundCombatResult = groundCombat.getResult(combatRoll, calculator.calculateCurrentCombatDifferential(gameState) + attackerCs!! + defenderCs!!)
 
-                applyButton.text = "TODO what happens now?"
+                applyButton.text = "Attempt to\n retreat"
+
+                addExitButton()
+            } else if (stage.get() == STAGE_DISPLAY_BATTLE_RESULTS) {
+                // TODO start disengagement activity
             }
 
             stage.proceed()
