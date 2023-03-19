@@ -409,6 +409,10 @@ class DieRoll() {
         return result
     }
 
+    fun setTo5() {
+        result = 5
+    }
+
     fun getResultWithoutModifiers() : Int {
         return result
     }

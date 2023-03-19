@@ -32,7 +32,13 @@ class Utils {
 class Helpers {
     companion object General {
         fun getIntFromTextField(editText: EditText) : Int {
-            return editText.text.toString().toIntOrNull() ?: throw Exception("Encountered null text field with value ${editText.text}")
+            val number = editText.text.toString().toIntOrNull()
+            if (number == null) {
+                editText.setText("0")
+                return 0
+            }
+
+            return number
         }
 
         fun addTextFieldListener(editText: EditText, onTextChanged: (String) -> Unit): Unit =

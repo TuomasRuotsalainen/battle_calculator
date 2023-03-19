@@ -42,7 +42,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".DisengagementActivity"
+            android:name=".RetreatBeforeCombatActivity"
             android:exported="true">
 
             <meta-data
@@ -98,7 +98,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".EWActivity"
+            android:name=".CombatResolutionActivity"
             android:exported="true">
 
             <meta-data
@@ -107,6 +107,14 @@
         </activity>
         <activity
             android:name=".EWInputActivity"
+            android:exported="true">
+
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".DisengagementActivity"
             android:exported="true">
 
             <meta-data

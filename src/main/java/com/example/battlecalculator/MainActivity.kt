@@ -139,6 +139,7 @@ class MainActivity : AppCompatActivity() {
 
         groundAttackButton.setOnClickListener{
             intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+            Log.d("DEBUG", "Gamestate string: ${gameState.getStateString()}")
 
             startActivity(intent)
             finish()

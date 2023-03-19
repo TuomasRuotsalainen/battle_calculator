@@ -23,7 +23,7 @@ fun GameState(conditions: Conditions) : GameState {
 }
 
 fun getMockGameState(): GameState {
-    val stateStr = "CON=H03-false-true-false-false;S=1;AU=74-ASL;DU=34-RDEF,74g-DEF,;AT=HASTY;HEX=null;ACT=NATO;FIXED=ATTACKER_HALF_ENGAGED,PACT_DEFENDING_REAR;ADJ_AT=1;ADJ_DEF=1;COM_SUP=DEF-2-2,3,0-2-true&AT-0-0,0,0-5-false"
+    val stateStr = "CON=H03-false-true-false-false;S=1;AU=74-ASL-false;DU=34-RDEF-false,74g-DEF-false;AT=HASTY;HEX=null;ACT=NATO;FIXED=ATTACKER_HALF_ENGAGED,PACT_DEFENDING_REAR;ADJ_AT=1;ADJ_DEF=1;COM_SUP=DEF-2-2,3,0-2-true&AT-0-0,0,0-5-false"
     return GameState(stateStr)
 }
 
@@ -45,20 +45,6 @@ class GameState(stateString : String) {
         AU, DU, AT, HEX, ACT, FIXED, ADJ_AT, ADJ_DEF, COM_SUP, CON
     }
 
-    fun areSappersHit(result : Tables.GroundCombatResult) : Boolean {
-        if (result.attackerSapperEliminated) {
-            if (activeAlliance == Alliances.PACT) {
-                return true
-            }
-        } else if (result.defenderSapperEliminated) {
-            if (activeAlliance == Alliances.NATO) {
-                return true
-            }
-        }
-
-        return false
-    }
-
     private val dataMap = getDataMap(stateString)
     val oob = OrderOfBattle()
 
@@ -73,6 +59,30 @@ class GameState(stateString : String) {
     var adjacentDefenderCount : Int? = getAdjacentDefenderUnits()
     var adjacentAttackerCount : Int? = getAdjacentAttackerUnits()
     var combatSupport : CombatSupportSelection? = getCombatSupportSelection()
+
+    fun areSappersHit(result : Tables.GroundCombatResult) : Boolean {
+        if (result.attackerSapperEliminated) {
+            if (activeAlliance == Alliances.PACT) {
+                return true
+            }
+        } else if (result.defenderSapperEliminated) {
+            if (activeAlliance == Alliances.NATO) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    fun getDisengagingDefender() : UnitState? {
+        for (defendingUnit in defendingUnits) {
+            if (defendingUnit.disengagementOrdered) {
+                return defendingUnit
+            }
+        }
+
+        return null
+    }
 
     fun updateConditions(newConditions: Conditions) {
         conditions = newConditions
@@ -149,11 +159,15 @@ class GameState(stateString : String) {
             }
         }
 
+        if (defUnitStr == "") {
+            defUnitStr = "null"
+        }
+
         return defUnitStr
     }
 
     private fun getAttackUnitStr() : String {
-        val unitState = attackingUnit ?: return ""
+        val unitState = attackingUnit ?: return "null"
         return unitState.getStateString()
     }
 
@@ -367,7 +381,11 @@ class GameState(stateString : String) {
         val auUnitStr = dataMap[DataIDs.AU.toString()]
             ?: throw Exception("Attacking unit cell not defined")
 
-        if(auUnitStr != "null") {
+        if (auUnitStr == "") {
+            throw Exception("aaUnitStr is empty")
+        }
+
+        if (auUnitStr != "null") {
             return strToUnitState(auUnitStr)
         }
 
@@ -399,6 +417,10 @@ class GameState(stateString : String) {
         var attrition : Int? = null
         var commandState : CommandStateEnum? = null
         var engagementState : EngagementStateEnum? = null
+        var disengagementOrdered : Boolean = false
+        var attritionFromCombat : Int = 0
+
+        val nullVal = "null"
 
         if (properties.isNotEmpty()) {
             val unitID = properties[0]
@@ -407,45 +429,53 @@ class GameState(stateString : String) {
             }
         }
 
-        if (properties.size > 1) {
-            val postureStr = properties[1]
-            if (postureStr != "") {
-                posture = getPostureFromString(postureStr)
-            }
+        if (properties.size != 7) {
+            throw Exception("Properties size of unit string $str is not 7")
         }
 
-        if (properties.size > 2) {
-            val attritionStr = properties[2]
-            if (attritionStr != "") {
-                attrition = attritionStr.toInt()
-            }
+        val postureStr = properties[1]
+        if (postureStr != nullVal) {
+            posture = getPostureFromString(postureStr)
         }
 
-        if (properties.size > 3) {
-            val commandStateStr = properties[3]
-            if (commandStateStr != "") {
-                commandState = getCommandStateFromString(commandStateStr)
-            }
+        val attritionStr = properties[2]
+        if (attritionStr != nullVal) {
+            attrition = attritionStr.toInt()
         }
 
-        if (properties.size > 4) {
-            val engagementStateStr = properties[4]
-            if (engagementStateStr != "") {
-                engagementState = getEngagementStateFromString(engagementStateStr)
-            }
+        val commandStateStr = properties[3]
+        if (commandStateStr != nullVal) {
+            commandState = getCommandStateFromString(commandStateStr)
         }
 
-        return UnitState(unit, posture, attrition, commandState, engagementState)
+        val engagementStateStr = properties[4]
+        if (engagementStateStr != nullVal) {
+            engagementState = getEngagementStateFromString(engagementStateStr)
+        }
+
+        val disengagementOrderedStr = properties[5]
+        if (disengagementOrderedStr != nullVal) {
+            disengagementOrdered = strToBool(disengagementOrderedStr)
+        }
+
+        val attritionFromCombatStr = properties[6]
+        if (attritionFromCombatStr != nullVal) {
+            attritionFromCombat = attritionFromCombatStr.toInt()
+        }
+
+        return UnitState(unit, posture, attrition, commandState, engagementState, disengagementOrdered, attritionFromCombat)
 
     }
 }
 
-class UnitState(unitInput : Unit?, postureInput: PostureEnum?, attrition: Int?, commandStateEnum: CommandStateEnum?, engagementStateEnum : EngagementStateEnum?) {
+class UnitState(unitInput : Unit?, postureInput: PostureEnum?, attrition: Int?, commandStateEnum: CommandStateEnum?, engagementStateEnum : EngagementStateEnum?, disengagementOrdered : Boolean, attritionFromCombat : Int) {
     val unit = unitInput
     var posture = postureInput
     var attrition = attrition
     var commandState = commandStateEnum
     var engagementState = engagementStateEnum
+    var disengagementOrdered = disengagementOrdered
+    var attritionFromCombat = attritionFromCombat
 
     fun isInfantryOutInTheOpen() : Boolean {
         if (unit?.eatsArmourInCity() == true || unit?.type == UnitTypeEnum.RECON) {
@@ -457,7 +487,14 @@ class UnitState(unitInput : Unit?, postureInput: PostureEnum?, attrition: Int?, 
         return false
     }
 
+    fun orderDisengagementAttempt() {
+        disengagementOrdered = true
+    }
+
     fun getStateString() : String {
+
+        val nullVal = "-null"
+
         var unitStr = ""
 
         if (unit == null) {
@@ -466,21 +503,33 @@ class UnitState(unitInput : Unit?, postureInput: PostureEnum?, attrition: Int?, 
 
         unitStr += unit.name
 
-        if (posture != null) {
-            unitStr += "-$posture"
+        unitStr += if (posture != null) {
+            "-$posture"
+        } else {
+            nullVal
         }
 
-        if (attrition != null) {
-            unitStr += "-$attrition"
+        unitStr += if (attrition != null) {
+            "-$attrition"
+        } else {
+            nullVal
         }
 
-        if (commandState != null) {
-            unitStr += "-$commandState"
+        unitStr += if (commandState != null) {
+            "-$commandState"
+        } else {
+            nullVal
         }
 
-        if (engagementState != null) {
-            unitStr += "-$engagementState"
+        unitStr += if (engagementState != null) {
+            "-$engagementState"
+         }else {
+            nullVal
         }
+
+        unitStr += "-$disengagementOrdered"
+
+        unitStr += "-$attritionFromCombat"
 
         return unitStr
     }
@@ -542,6 +591,10 @@ class Conditions(
 
     fun toReadableString() : String {
         return "HOUR: $hourEnum FOG: $fog Precipitation: $precipitation PACT uses chem: $pactUsesChem NATO uses chem: $natoUsesChem"
+    }
+
+    fun isNight() : Boolean {
+        return (hourEnum == HourEnum.H00 || hourEnum == HourEnum.H03 || hourEnum == HourEnum.H21)
     }
 
     private fun isClear(fog : Boolean, precipitation : Boolean) : Boolean {

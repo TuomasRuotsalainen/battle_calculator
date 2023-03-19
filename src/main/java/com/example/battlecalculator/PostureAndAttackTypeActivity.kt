@@ -229,7 +229,7 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
                     startActivity(nextIntent)
                     finish()
                 } else {
-                    val nextIntent = Intent(this, DisengagementActivity::class.java)
+                    val nextIntent = Intent(this, RetreatBeforeCombatActivity::class.java)
                     nextIntent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
                     startActivity(nextIntent)
                     finish()

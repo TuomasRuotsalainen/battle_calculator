@@ -4,140 +4,346 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/postureSelHeader2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-
-    <RadioGroup
-        android:id="@+id/retreat_before_combat_radio_group"
+    <LinearLayout
+        android:id="@+id/unitInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.618">
 
-        <RadioButton
-            android:id="@+id/retreat_before_combat_radio_zero"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/adjacent_units"
+
+        android:gravity="center"
+
+        >
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_margin="10dp"
+            android:text="Disengaging unit"/>
+
+        <ImageView
+            android:id="@+id/currentUnitView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_margin="10dp"
+            app:srcCompat="@drawable/unit_73_smaller" />
+
+        <ImageView
+            android:id="@+id/posture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_margin="10dp"
+            app:srcCompat="@drawable/defense_smaller" />
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:id="@+id/adjacent_units"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintTop_toBottomOf="@+id/unitInfo"
+        app:layout_constraintBottom_toTopOf="@+id/checkBoxes"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:text="Infantry\nMotorized (worst odds)"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="12dp" />
+            android:gravity="center"
 
-        <RadioButton
-            android:id="@+id/retreat_before_combat_radio_one"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_margin="10dp"
+                android:text="Adjacent hexes with enemy Combat units\n(not including attacker)" />
+
+            <EditText
+                android:id="@+id/adjacent_enemies_input"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="2"
+                android:hint="0"
+                android:inputType="number"
+
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:text="Armor\nMechanized (average odds)"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="60dp" />
+            android:gravity="center"
+
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_margin="10dp"
+                android:text="Adjacent hexes with friendly Combat units" />
+
+            <EditText
+                android:id="@+id/adjacent_friendlies_input"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="2"
+                android:hint="0"
+                android:inputType="number"
+
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 
-        <RadioButton
-            android:id="@+id/retreat_before_combat_radio_two"
+
+    <LinearLayout
+
+        android:id="@+id/checkBoxes"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintTop_toBottomOf="@+id/adjacent_units"
+        app:layout_constraintBottom_toTopOf="@+id/combat_support"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        android:gravity="center"
+        android:orientation="horizontal"
+        >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="20dp">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_margin="10dp"
+                android:text="Disengaging unit" />
+
+
+            <CheckBox
+                android:id="@+id/rado_unit_engaged"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:text="Engaged, Delayed or\nin transition"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="12dp" />
+
+            <CheckBox
+                android:id="@+id/rado_unit_half_engaged"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="Half-Engaged"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="12dp" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_margin="10dp"
+                android:text="Adjacent enemy Combat units" />
+
+            <CheckBox
+                android:id="@+id/radio_no_bloking_enemies"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="No blocking units"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="60dp" />
+
+            <CheckBox
+                android:id="@+id/radio_behind_minor_river"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="All behind a minor river"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="60dp" />
+
+            <CheckBox
+                android:id="@+id/radio_behind_major_river"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="All behind a major river"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="60dp"/>
+
+            <CheckBox
+                android:id="@+id/radio_enemy_engaged"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="All Half-Engaged or Engaged"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="12dp" />
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/combat_support"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintTop_toBottomOf="@+id/checkBoxes"
+        app:layout_constraintBottom_toTopOf="@+id/total"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:text="Recon (best odds)"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="60dp" />
+            android:gravity="center"
 
+            >
 
-    </RadioGroup>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_margin="10dp"
+                android:text="Assigned Combat support points (max 3)\nPut attrition to artillery if used" />
 
-    <RadioGroup
-        android:id="@+id/postureRadio"
+            <EditText
+                android:id="@+id/assigned_combat_support"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="2"
+                android:hint="0"
+                android:inputType="number"
+
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:gravity="center"
+
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_margin="10dp"
+                android:text="Transit AA against helicopter (if used)" />
+
+            <EditText
+                android:id="@+id/transit_aa_input"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="2"
+                android:hint="0"
+                android:inputType="number"
+
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/total"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.407"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView">
+        android:layout_margin="10dp"
 
+        app:layout_constraintTop_toBottomOf="@+id/combat_support"
+        app:layout_constraintBottom_toTopOf="@+id/explain"
 
-        <!--style="@style/GreenText"-->
-
-
-    </RadioGroup>
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="367dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="20dp"
-        android:text="Defender: disengaging unit's info"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="70dp"
-        android:layout_height="27dp"
-        android:text="Posture"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintBottom_toTopOf="@+id/radio_posture_full_assault"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        android:text="Mean result: Success, attrition +1"/>
 
     <Button
-        android:id="@+id/combat1_apply"
+        android:id="@+id/explain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Apply"
-        app:layout_constraintBottom_toTopOf="@+id/textView4"
+        android:text="Explain estimate"
+
+        app:layout_constraintTop_toBottomOf="@+id/total"
+        app:layout_constraintBottom_toTopOf="@+id/apply"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <RadioButton
-        android:id="@+id/radio_posture_full_assault"
+    <Button
+        android:id="@+id/apply"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/recon_screen_smaller"
-        android:drawablePadding="@dimen/posture_padding"
-        android:text="Recon\nScreen"
+        android:text="Attempt disengagement"
+
+        app:layout_constraintTop_toBottomOf="@+id/explain"
+        app:layout_constraintBottom_toBottomOf="parent"
+
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="174dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/textView8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Unit type"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintBottom_toTopOf="@+id/retreat_before_combat_radio_group"
-        app:layout_constraintTop_toBottomOf="@+id/radio_posture_full_assault"
-        tools:layout_editor_absoluteX="155dp" />
 
-    <TextView
-        android:id="@+id/textView9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="172dp"
-        tools:layout_editor_absoluteY="577dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,24 +2,17 @@ package com.example.battlecalculator
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
-import android.view.View
-import android.view.ViewGroup
 import android.widget.*
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.battlecalculator.Helpers.General.showInfoDialog
-import kotlin.Unit
 
-class EWActivity : AppCompatActivity() {
+class CombatResolutionActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_electronic_warfare)
+        setContentView(R.layout.activity_combat_resolution)
 
         val gameState = getGameState(intent)
 
@@ -42,6 +35,9 @@ class EWActivity : AppCompatActivity() {
         // Display final combat results!
         val STAGE_DISPLAY_BATTLE_RESULTS = "STAGE_DISPLAY_BATTLE_RESULTS"
 
+        // Display going to next ativity
+        val STAGE_NEXT_ACTIVITY = "STAGE_NEXT_ACTIVITY"
+
         class Stage() {
             private var current : String = STAGE_PROMPT_EW
             fun get() : String {
@@ -55,6 +51,7 @@ class EWActivity : AppCompatActivity() {
                     STAGE_DISPLAY_EW_PROMPT_CS -> STAGE_DISPLAY_CS_PROMPT_BATTLE
                     STAGE_PROMPT_CS -> STAGE_DISPLAY_CS_PROMPT_BATTLE
                     STAGE_DISPLAY_CS_PROMPT_BATTLE -> STAGE_DISPLAY_BATTLE_RESULTS
+                    STAGE_DISPLAY_BATTLE_RESULTS -> STAGE_NEXT_ACTIVITY
                     else -> throw Exception("Unknown stage")
                 }
 
@@ -158,6 +155,8 @@ class EWActivity : AppCompatActivity() {
                 if (groundCombatResult!!.defenderAttrition > 0) {
                     defenderSufferedAttrition = true
                 }
+            } else if (stage.get() == STAGE_NEXT_ACTIVITY) {
+                text = "This shouldn't show"
             } else {
                 throw Exception("Unrecognized stage ${stage.get()}")
             }
@@ -227,7 +226,20 @@ class EWActivity : AppCompatActivity() {
 
                 addExitButton()
             } else if (stage.get() == STAGE_DISPLAY_BATTLE_RESULTS) {
-                // TODO start disengagement activity
+
+                val newUnits : MutableList<UnitState> = mutableListOf()
+                for (unit in gameState.defendingUnits) {
+                    unit.orderDisengagementAttempt()
+
+                    newUnits.add(unit)
+                }
+
+                gameState.defendingUnits = newUnits
+
+                val intent = Intent(this, DisengagementActivity::class.java)
+                intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+                startActivity(intent)
+                finish()
             }
 
             stage.proceed()

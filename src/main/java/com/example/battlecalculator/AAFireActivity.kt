@@ -280,7 +280,7 @@ class AAFireActivity : AppCompatActivity() {
 
                 Log.d("DEBUG", "Switching to EWActivity")
 
-                val intent = Intent(this, EWActivity::class.java)
+                val intent = Intent(this, CombatResolutionActivity::class.java)
                 intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
 
                 startActivity(intent)
