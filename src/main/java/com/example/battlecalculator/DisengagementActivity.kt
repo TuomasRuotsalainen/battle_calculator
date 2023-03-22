@@ -8,6 +8,7 @@ import android.widget.*
 import com.example.battlecalculator.Helpers.General.addTextFieldListener
 import com.example.battlecalculator.Helpers.General.getIntFromTextField
 import com.example.battlecalculator.Helpers.General.showInfoDialog
+import com.example.battlecalculator.Images.Tools.setImageViewForUnit
 
 enum class DisengagementModifiers {
     UNIT_ENGAGED, UNIT_HALF_ENGAGED, NO_BLOCKING_ENEMIES, ENEMIES_BEHIND_MINOR, ENEMIES_BEHIND_MAJOR, ENEMIES_ENGAGED,
@@ -25,6 +26,8 @@ class DisengagementActivity : AppCompatActivity() {
         resultOptions[DisengagemenResult.F1] = Pair(false, 1)
         resultOptions[DisengagemenResult.S1] = Pair(true, 1)
         resultOptions[DisengagemenResult.S0] = Pair(true, 0)
+
+
 
         fun toString(disengagemenResult: DisengagemenResult) : String {
             val result = resultOptions[disengagemenResult]
@@ -51,6 +54,13 @@ class DisengagementActivity : AppCompatActivity() {
             Log.d("DEBUG", "state string: ${gameState.getStateString()}")
             throw Exception("Disengaging unit is null")
         }
+
+        val currentUnitView = findViewById<ImageView>(R.id.currentUnitView)
+        val currentPostureView = findViewById<ImageView>(R.id.posture)
+
+
+        setImageViewForUnit(currentUnitView, disengagingUnit, false, this, applicationContext, applicationInfo)
+        setImageViewForUnit(currentPostureView, disengagingUnit, true, this, applicationContext, applicationInfo)
 
         val adjacentEnemyCombatUnitsField = findViewById<EditText>(R.id.adjacent_enemies_input)
         val adjacentFriendlyCombatUnitsField = findViewById<EditText>(R.id.adjacent_friendlies_input)
@@ -123,18 +133,18 @@ class DisengagementActivity : AppCompatActivity() {
             }
 
             text += "\nTotal modifier: $cumulativeModifier"
+            text += "\n\nBigger modifier improves disengagement odds"
 
             explanationText = text
             totalModifier = cumulativeModifier
 
-            val dieRoll = DieRoll()
-            dieRoll.setTo5()
+            val meanDieRoll = DiceRollResult(5)
 
             val posture = disengagingUnit!!.posture
                 ?: throw Exception("Units posture is null. Unit string: ${disengagingUnit.getStateString()}")
 
             val unitType = disengagingUnit.unit!!.type
-            estimationResult = tables.getResult(posture, unitType, dieRoll, totalModifier)
+            estimationResult = tables.getResult(posture, unitType, meanDieRoll, totalModifier)
 
             text += "\n\n${toString(estimationResult)}"
         }
@@ -243,26 +253,66 @@ class DisengagementActivity : AppCompatActivity() {
         val explainButton = findViewById<Button>(R.id.explain)
 
         explainButton.setOnClickListener() {
-            showInfoDialog(this, explanationText) {}
+            showInfoDialog(this, explanationText, "Understood", null, {})
         }
 
+        val movement = Movement()
         val applyBtn = findViewById<Button>(R.id.apply)
+
+        fun startNextActivity() {
+            gameState.setDisengagementDone(disengagingUnit)
+            val intent = if (gameState.getDisengagingDefender() != null) {
+                Intent(this, DisengagementActivity::class.java)
+            } else {
+                Intent(this, MainActivity::class.java)
+            }
+            intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+            startActivity(intent)
+            finish()
+        }
+
+        // If any sentient being ever tries to read this, I'm truly sorry
         applyBtn.setOnClickListener {
-            val dieRoll = DieRoll()
-            val result = tables.getResult(disengagingUnit!!.posture!!, disengagingUnit.unit!!.type, dieRoll, totalModifier)
-            showInfoDialog(this, toString(result)) {
-                val totalAttrition = disengagingUnit.attritionFromCombat + resultOptions[result]!!.second
+            val dice = Dice()
+            val diceResult = dice.roll()
+            val result = tables.getResult(disengagingUnit!!.posture!!, disengagingUnit.unit!!.type, diceResult, totalModifier)
+            showInfoDialog(this, toString(result), "Understood", null, {
+                var totalAttrition = disengagingUnit.attritionFromCombat + resultOptions[result]!!.second
 
                 if (!resultOptions[result]!!.first) {
                     // Unsuccessful disengagement, set total attrition to defender
-                    showInfoDialog(this, "This unit can't retreat\n\n1.Mark the unit as Engaged\n2. Apply $totalAttrition attrition points (attrition from combat and disengagement attempt)") {}
+                    showInfoDialog(this, "This unit can't retreat\n\n1.Mark the unit as Engaged\n2. Apply $totalAttrition attrition points (attrition from combat and disengagement attempt)", "Understood", null, {
+                        startNextActivity()
+                    })
                 } else {
-                    showInfoDialog(this, "This unit can retreat\n\n1.Mark the unit as Half-Engaged (if not already Engaged)\n2. Apply ${totalAttrition-1} attrition points (attrition from combat and disengagement attempt - 1)") {
-                        // TODO start retreat activity!
-                        showInfoDialog(this, "retreat activity starts!") {}
+                    if (totalAttrition > 0) {
+                        totalAttrition -= 1
                     }
+                    showInfoDialog(this, "This unit can retreat\n\n1.Mark the unit as Half-Engaged (if not already Engaged)\n2. Apply $totalAttrition attrition points (attrition from combat and disengagement attempt - 1)", "Normal retreat", "Hasty crossing over a minor river", {
+                        //showInfoDialog(this, "retreat activity starts!") {}
+                        startNextActivity()
+                    }, {
+                        val unitType = disengagingUnit.unit.type
+                        val movementType = getMovementType(unitType)
+                        val posture = disengagingUnit.posture!!
+                        val movementMode = Tables.TerrainCombatTable.MovementMode().get(posture)
+                        val maxAttritionRange = movement.getAttritionRangeForHastyCrossing(movementType,movementMode)
+                        val attritionRoll = dice.roll()
+
+                        if (attritionRoll.get() > maxAttritionRange) {
+                            showInfoDialog(this, "River crossing roll: ${attritionRoll.get()}. You can retreat the unit over the minor river without suffering additional attrition.", "Understood", null, {
+                                startNextActivity()
+                            })
+                        } else {
+                            // One more attrition
+                            showInfoDialog(this, "River crossing roll: ${attritionRoll.get()}. You can retreat the unit over the minor river, but it suffers one additional attrition.", "Understood", null, {
+                                startNextActivity()
+                            })
+                        }
+
+                    })
                 }
-            }
+            })
         }
     }
 

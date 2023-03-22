@@ -26,14 +26,6 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".GroundCombatActivity"
-            android:exported="true">
-
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".PostureAndAttackTypeActivity"
             android:exported="true">
 
@@ -59,14 +51,6 @@
         </activity>
         <activity
             android:name=".UnitSelectionActivity"
-            android:exported="true">
-
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".Combat1Activity"
             android:exported="true">
 
             <meta-data

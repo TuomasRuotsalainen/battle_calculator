@@ -123,7 +123,7 @@ class AAFireActivity : AppCompatActivity() {
                         throw Exception("No results for AA against fixed wing, but fixed wing in use")
                     }
 
-                    fixed!!.setResult("Die roll result: ${fixedResult.getDieRoll().getResultWithoutModifiers()}. ${this.name} air points aborted: ${fixedResult.getAbortedAirPoints()}air points shot down: ${fixedResult.getShotDownAirPoints()}", false)
+                    fixed!!.setResult("Die roll result: ${fixedResult.getDieRoll().get()}. ${this.name} air points aborted: ${fixedResult.getAbortedAirPoints()}air points shot down: ${fixedResult.getShotDownAirPoints()}", false)
                     this.fixedResult = fixedResult
                 }
 
@@ -136,7 +136,7 @@ class AAFireActivity : AppCompatActivity() {
                     for (rotaryRow in rotary) {
                         val attrition = rotaryResults[idx].getAttritionToHelicopters()
                         val enableCheckBox = attrition > 0
-                        rotaryRow.setResult("Die roll result: ${rotaryResults[idx].getDieRoll().getResultWithoutModifiers()}. ${this.name} rotary wing ${idx+1} suffered $attrition attrition.", enableCheckBox)
+                        rotaryRow.setResult("Die roll result: ${rotaryResults[idx].getDieRoll().get()}. ${this.name} rotary wing ${idx+1} suffered $attrition attrition.", enableCheckBox)
                         idx += 1
 
                     }
@@ -227,8 +227,8 @@ class AAFireActivity : AppCompatActivity() {
                         return null
                     }
 
-                    val die = DieRoll()
-                    return aaFire.getResult(die, aaValue)
+                    val dice = Dice()
+                    return aaFire.getResult(dice.roll(), aaValue)
                 }
 
                 fun executeAaAndSetResults(aaSettings: AASettings) {

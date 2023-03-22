@@ -24,11 +24,16 @@ class MainActivity : AppCompatActivity() {
         val natoSelection = findViewById<RadioButton>(R.id.faction_selection_nato)
         val pactSelection = findViewById<RadioButton>(R.id.faction_selection_pact)
 
-        val pactChemSel = findViewById<CheckBox>(R.id.pact_uses_chem)
-        val natoChemSel = findViewById<CheckBox>(R.id.nato_uses_chem)
+        val pactReleasesChem = findViewById<CheckBox>(R.id.pact_uses_chem)
 
         val fog = findViewById<CheckBox>(R.id.fog_box)
         val precipitation = findViewById<CheckBox>(R.id.precipitation_box)
+
+        val d0 = findViewById<RadioButton>(R.id.day0)
+        val d1 = findViewById<RadioButton>(R.id.day1)
+        val d2 = findViewById<RadioButton>(R.id.day2)
+        val d3 = findViewById<RadioButton>(R.id.day3)
+        val d4 = findViewById<RadioButton>(R.id.day4)
 
         val h00 = findViewById<RadioButton>(R.id.time00)
         val h03 = findViewById<RadioButton>(R.id.time03)
@@ -40,14 +45,22 @@ class MainActivity : AppCompatActivity() {
         val h21 = findViewById<RadioButton>(R.id.time21)
 
         var currentHour : HourEnum = HourEnum.H00
+        var currentDay : DayEnum = DayEnum.D0
 
         val timeViews = listOf(h00, h03, h06, h09, h12, h15, h18, h21)
-        val otherViews = listOf(natoChemSel, pactChemSel, fog, precipitation)
+        val dayViews = listOf(d0, d1, d2, d3, d4)
+        val otherViews = listOf(pactReleasesChem, fog, precipitation)
+
+        var chemUsageStartedDay : DayEnum? = null
+        var chemUsageStartedHour : HourEnum? = null
+
+        var chemUsageStartedBefore = false
 
         fun setAllFields() {
             if (gameState == null) {
                 natoSelection.isChecked = true
                 h00.isChecked = true
+                d0.isChecked = true
             } else {
 
                 if (gameState!!.activeAlliance == Alliances.NATO) {
@@ -58,8 +71,14 @@ class MainActivity : AppCompatActivity() {
 
                 val currentConditions = gameState!!.conditions
 
-                pactChemSel.isChecked = currentConditions.pactUsesChem
-                natoChemSel.isChecked = currentConditions.natoUsesChem
+                chemUsageStartedDay = currentConditions.chemUsageStartDay
+                chemUsageStartedHour = currentConditions.chemUsageStartHour
+
+                pactReleasesChem.isChecked = currentConditions.doesPactUseChem()
+                if (pactReleasesChem.isChecked) {
+                    pactReleasesChem.isEnabled = false
+                    chemUsageStartedBefore = true
+                }
 
                 precipitation.isChecked = currentConditions.precipitation
                 fog.isChecked = currentConditions.fog
@@ -74,13 +93,21 @@ class MainActivity : AppCompatActivity() {
                     HourEnum.H18 -> h18.isChecked = true
                     HourEnum.H21 -> h21.isChecked = true
                 }
+
+                when (currentConditions.dayEnum) {
+                    DayEnum.D0 -> d0.isChecked = true
+                    DayEnum.D1 -> d1.isChecked = true
+                    DayEnum.D2 -> d2.isChecked = true
+                    DayEnum.D3 -> d3.isChecked = true
+                    DayEnum.D4 -> d4.isChecked = true
+                }
             }
         }
 
         setAllFields()
 
         fun createConditions() : Conditions {
-            return Conditions(pactChemSel.isChecked, natoChemSel.isChecked, currentHour, fog.isChecked, precipitation.isChecked)
+            return Conditions(currentDay, currentHour, fog.isChecked, precipitation.isChecked, chemUsageStartedDay, chemUsageStartedHour)
         }
 
         val initialConditions = createConditions()
@@ -91,6 +118,14 @@ class MainActivity : AppCompatActivity() {
 
 
         fun updateConditions() {
+            if (pactReleasesChem.isChecked && !chemUsageStartedBefore) {
+                chemUsageStartedDay = currentDay
+                chemUsageStartedHour = currentHour
+            } else if (!chemUsageStartedBefore) {
+                chemUsageStartedDay = null
+                chemUsageStartedHour = null
+            }
+
             var conditions = createConditions()
             if (!conditions.isValid()) {
                 fog.isChecked = false
@@ -112,6 +147,19 @@ class MainActivity : AppCompatActivity() {
 
                 timeView.isChecked = true
                 currentHour = strToHour(timeView.text.toString())
+
+                updateConditions()
+            }
+        }
+
+        for (dayView in dayViews) {
+            dayView.setOnClickListener {
+                for (otherView in dayViews) {
+                    otherView.isChecked = false
+                }
+
+                dayView.isChecked = true
+                currentDay = strToDay(dayView.text.toString())
 
                 updateConditions()
             }

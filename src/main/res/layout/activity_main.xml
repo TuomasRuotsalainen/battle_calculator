@@ -63,20 +63,11 @@
         >
 
         <CheckBox
-            android:id="@+id/nato_uses_chem"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:text="NATO uses\nchemical weapons"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="60dp" />
-
-        <CheckBox
             android:id="@+id/pact_uses_chem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:text="PACT uses\nchemical weapons"
+            android:text="PACT releases\nchemical weapons"
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="12dp" />
 
@@ -91,7 +82,7 @@
         app:layout_constraintStart_toStartOf="parent"
 
         app:layout_constraintTop_toBottomOf="@+id/chem_usage"
-        app:layout_constraintBottom_toTopOf="@+id/time_selection"
+        app:layout_constraintBottom_toTopOf="@+id/day_selection"
 
         >
 
@@ -116,7 +107,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/time_selection"
+        android:id="@+id/day_selection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
@@ -126,6 +117,79 @@
         app:layout_constraintStart_toStartOf="parent"
 
         app:layout_constraintTop_toBottomOf="@+id/weather_selection"
+        app:layout_constraintBottom_toTopOf="@+id/time_selection"
+
+        >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <RadioButton
+                android:id="@+id/day0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="D0"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="60dp" />
+
+            <RadioButton
+                android:id="@+id/day1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="D1"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="12dp" />
+
+            <RadioButton
+                android:id="@+id/day2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="D2"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="60dp" />
+
+            <RadioButton
+                android:id="@+id/day3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="D3"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="60dp" />
+
+            <RadioButton
+                android:id="@+id/day4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="D4"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="60dp" />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/time_selection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:orientation="vertical"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/day_selection"
         app:layout_constraintBottom_toTopOf="@+id/groundAttackButton"
 
         >

@@ -8,6 +8,10 @@ enum class MovementModeEnum {
     COLUM, TACTICAL, DEPLOYED
 }
 
+enum class MovementTypeEnum {
+    MECHANIZED, MOTORIZED, FOOT
+}
+
 enum class UnitTypeEnum {
     INFANTRY, MOTORIZED, TOWED_ARTILLERY, HELICOPTER, ARMOR, MECHANIZED, OTHER_ARTILLERY, RECON, HQ
 }
@@ -42,6 +46,10 @@ enum class EwEffectEnum {
 
 enum class HourEnum {
     H00, H03, H06, H09, H12, H15, H18, H21
+}
+
+enum class DayEnum {
+    D0, D1, D2, D3, D4
 }
 
 enum class DisengagemenResult {

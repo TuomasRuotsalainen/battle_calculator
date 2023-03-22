@@ -76,13 +76,14 @@ class CombatResolutionActivity : AppCompatActivity() {
 
         var groundCombatResult : Tables.GroundCombatResult? = null
 
-        val defenderRoll = DieRoll()
-        val attackerRoll = DieRoll()
+        val dice = Dice()
+        val defenderRoll = dice.roll()
+        val attackerRoll = dice.roll()
 
-        val defenderCsRoll = DieRoll()
-        val attackerCsRoll = DieRoll()
+        val defenderCsRoll = dice.roll()
+        val attackerCsRoll = dice.roll()
 
-        val combatRoll = DieRoll()
+        val combatRoll = dice.roll()
 
         val stage = Stage()
         val stage2Apply = "Calculate and apply final combat support"
@@ -92,8 +93,8 @@ class CombatResolutionActivity : AppCompatActivity() {
             stage.noEwNeeded()
             applyButton.text = stage2Apply
         } else {
-            attackerEwResult = ewTable.getResultForModifiedRoll(attackerRoll.getResultWithoutModifiers() + attackerEWModifier!!, attackerEWPoints!!)
-            defenderEwResult = ewTable.getResultForModifiedRoll(defenderRoll.getResultWithoutModifiers() + defenderEWModifier!!, defenderEWPoints!!)
+            attackerEwResult = ewTable.getResultForModifiedRoll(attackerRoll.get() + attackerEWModifier!!, attackerEWPoints!!)
+            defenderEwResult = ewTable.getResultForModifiedRoll(defenderRoll.get() + defenderEWModifier!!, defenderEWPoints!!)
         }
 
 
@@ -127,23 +128,21 @@ class CombatResolutionActivity : AppCompatActivity() {
                 text += combatDifAfterAA
                 text += "EW points allocation (attacker:defender) ${attackerCombatSupport.getEWPoints()}:${defenderCombatSupport.getEWPoints()}"
             } else if (stage.get() == STAGE_DISPLAY_EW_PROMPT_CS) {
-                text += "EW roll results: Attacker: ${attackerRoll.getResultWithoutModifiers()}, Defender: ${defenderRoll.getResultWithoutModifiers()}\n\n"
+                text += "EW roll results: Attacker: ${attackerRoll.get()}, Defender: ${defenderRoll.get()}\n\n"
                 text += "Attacker EW effects: ${attackerEwResult!!.getResultAsText(true)}\nDefender EW effects: ${defenderEwResult!!.getResultAsText(false)}"
             } else if (stage.get() == STAGE_PROMPT_CS) {
                 text += combatDifAfterAA
                 // No special actions needed here
             } else if (stage.get() == STAGE_DISPLAY_CS_PROMPT_BATTLE) {
                 text =
-                    "Attacker combat support die: ${attackerCsRoll.getResultWithoutModifiers()}. Final combat support modifier: $attackerCs\n"
-                text += "Defender combat support die: ${defenderCsRoll.getResultWithoutModifiers()}. Final combat support modifier: $defenderCs\n\n"
+                    "Attacker combat support die: ${attackerCsRoll.get()}. Final combat support modifier: $attackerCs\n"
+                text += "Defender combat support die: ${defenderCsRoll.get()}. Final combat support modifier: $defenderCs\n\n"
                 text += "Final combat differential: ${
                     calculator.calculateCurrentCombatDifferential(
                         gameState
                     ) + attackerCs!! + defenderCs!!
                 }"
             } else if (stage.get() == STAGE_DISPLAY_BATTLE_RESULTS) {
-                text += "Ground combat die roll: ${combatRoll.getResultWithoutModifiers()}\n\nCombat result:\n"
-
                 finalResults = ""
                 finalResults += "Attrition to the attacking unit: ${groundCombatResult!!.attackerAttrition}\n" +
                         "Attrition to all defending units: ${groundCombatResult!!.defenderAttrition}\n"
@@ -191,14 +190,14 @@ class CombatResolutionActivity : AppCompatActivity() {
                 } else {
                     dialogText += "\n\nMark all defending units at least as HALF-ENGAGED"
                 }
-                showInfoDialog(this, dialogText) {
+                showInfoDialog(this, dialogText, "Understood",null, {
                     val freshGameState = GameState(gameState.conditions)
 
                     val intent = Intent(this, MainActivity::class.java)
                     intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), freshGameState.getStateString())
                     startActivity(intent)
                     finish()
-                }
+                })
 
 
             }

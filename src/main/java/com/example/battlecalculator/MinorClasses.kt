@@ -2,6 +2,7 @@ package com.example.battlecalculator
 
 import android.util.Log
 import kotlin.collections.HashMap
+import kotlin.random.Random
 
 enum class AttackTypeEnum {
     HASTY, PREPARED
@@ -32,6 +33,21 @@ class AttackType() {
 
         // Hasty assaults are more difficult
         return -2
+    }
+}
+
+// https://boardgamegeek.com/image/5942891/hanbarca
+fun getMovementType(unitTypeEnum: UnitTypeEnum) : MovementTypeEnum {
+    return when (unitTypeEnum) {
+        UnitTypeEnum.INFANTRY -> MovementTypeEnum.FOOT
+        UnitTypeEnum.MOTORIZED -> MovementTypeEnum.MOTORIZED
+        UnitTypeEnum.TOWED_ARTILLERY -> MovementTypeEnum.MECHANIZED
+        UnitTypeEnum.HELICOPTER -> MovementTypeEnum.MECHANIZED
+        UnitTypeEnum.ARMOR -> MovementTypeEnum.MECHANIZED
+        UnitTypeEnum.MECHANIZED -> MovementTypeEnum.MECHANIZED
+        UnitTypeEnum.OTHER_ARTILLERY -> MovementTypeEnum.MECHANIZED
+        UnitTypeEnum.RECON -> MovementTypeEnum.MECHANIZED
+        UnitTypeEnum.HQ -> MovementTypeEnum.MECHANIZED
     }
 }
 
@@ -402,23 +418,28 @@ class CombatSupport(private var artilleryPoints: Int, private var airPoints : In
     }
 }
 
-class DieRoll() {
-    private var result : Int = roll()
+class Dice() {
+    val seed = System.currentTimeMillis()
+    val random = Random(seed)
 
-    fun getResultWithModifiers() : Int {
-        return result
+    fun roll() : DiceRollResult {
+        val result = (1..10).random(random)
+        return DiceRollResult(result)
+    }
+}
+
+class DiceRollResult(result : Int) {
+    private var validResult : Int = validate(result)
+
+    private fun validate(result: Int) : Int {
+        if (result in 1..10) {
+            return result
+        } else {
+            throw IllegalArgumentException("Value must be between 1 and 10")
+        }
     }
 
-    fun setTo5() {
-        result = 5
-    }
-
-    fun getResultWithoutModifiers() : Int {
-        return result
-    }
-
-    // This will give results from 1 to 10
-    private fun roll(): Int {
-        return (1..10).random()
+    fun get(): Int {
+        return validResult
     }
 }

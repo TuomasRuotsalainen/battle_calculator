@@ -14,7 +14,7 @@ class Tables {
 
         private val disengagementTable = getDisengagementTable()
 
-        fun getResult(posture: PostureEnum, unitType: UnitTypeEnum, dieRoll: DieRoll, modifier : Int): DisengagemenResult {
+        fun getResult(posture: PostureEnum, unitType: UnitTypeEnum, dieRoll: DiceRollResult, modifier : Int): DisengagemenResult {
 
             val column = disengagementTable[posture]
             val cell = column?.get(unitType)!!
@@ -22,7 +22,7 @@ class Tables {
             val s0Lower = cell.s0lowerLimit
             val f1Upper = cell.f1upperLimit
 
-            val totalValue = dieRoll.getResultWithoutModifiers() + modifier
+            val totalValue = dieRoll.get() + modifier
 
             return if (s0Lower <= totalValue) {
                 DisengagemenResult.S0
@@ -154,7 +154,7 @@ class Tables {
         private val obstacleContents : HashMap<ObstacleEnum, TerrainCombatTableRow> = populateObstacleTable()
 
         private enum class ObstacleEnum {
-            MINOR_HASTY, MINOR_PREPARED, MINOR_BRIDGED, MAJOR_PREPARED, MAJOR_BRIDGED
+            MINOR_HASTY, MINOR_PREPARED, MINOR_BRIDGED, MAJOR_PREPARED, MAJOR_BRIDGED, RIBBON
         }
 
         fun getCombatModifier(hexTerrain: HexTerrain, riverCrossingTypeEnum: RiverCrossingTypeEnum, defenderPostureEnums: List<PostureEnum>): Int {
@@ -390,7 +390,7 @@ class Tables {
 
         private val map : HashMap<Int, Row> = populateMap()
 
-        class Result(private val dieRoll : DieRoll, private val abortedAirPoints : Int, private val shotDownAirPoints : Int, private val attritionToHelicopters : Int) {
+        class Result(private val dieRoll : DiceRollResult, private val abortedAirPoints : Int, private val shotDownAirPoints : Int, private val attritionToHelicopters : Int) {
             fun getAbortedAirPoints() : Int {
                 return abortedAirPoints
             }
@@ -403,13 +403,13 @@ class Tables {
                 return attritionToHelicopters
             }
 
-            fun getDieRoll() : DieRoll {
+            fun getDieRoll() : DiceRollResult {
                 return dieRoll
             }
         }
 
-        fun getResult(die : DieRoll, aaFireValue : Int): Result {
-            val row = map[die.getResultWithModifiers()-1]!!
+        fun getResult(die : DiceRollResult, aaFireValue : Int): Result {
+            val row = map[die.get()-1]!!
             val cell = row.getResult(aaFireValue) ?: return Result(die, 0,0,0)
             return Result(dieRoll = die, abortedAirPoints = cell.A, shotDownAirPoints = cell.S, attritionToHelicopters = cell.S + cell.A)
         }
@@ -631,15 +631,15 @@ class Tables {
         private val attackerTable = initAttackerTable()
         private val defenderTable = initDefenderTable()
 
-        fun calculateForAttacker(combatSupportPoints : Int, dieRoll: DieRoll) : Int {
+        fun calculateForAttacker(combatSupportPoints : Int, dieRoll: DiceRollResult) : Int {
             return calculate(combatSupportPoints, dieRoll, true)
         }
 
-        fun calculateForDefender(combatSupportPoints : Int, dieRoll: DieRoll) : Int {
+        fun calculateForDefender(combatSupportPoints : Int, dieRoll: DiceRollResult) : Int {
             return calculate(combatSupportPoints, dieRoll, false)
         }
 
-        private fun calculate(combatSupportPoints : Int, dieRoll: DieRoll, isAttacker: Boolean) : Int {
+        private fun calculate(combatSupportPoints : Int, dieRoll: DiceRollResult, isAttacker: Boolean) : Int {
             if (combatSupportPoints < 0) {
                 throw Exception("Combat support can't be smaller than 0")
             }
@@ -651,9 +651,10 @@ class Tables {
             }
 
             val row = if (isAttacker) {
-                attackerTable[dieRoll.getResultWithoutModifiers()]
+                // Die roll from 1 to 10, table from 0 to 9
+                attackerTable[dieRoll.get()+1]
             } else {
-                defenderTable[dieRoll.getResultWithoutModifiers()]
+                defenderTable[dieRoll.get()+1]
             }
 
             return when (validatedPoints) {
@@ -713,7 +714,7 @@ class Tables {
         // table needs to be searched Pair<y,x>
         private val table = initTable()
 
-        fun getResult(dieRoll : DieRoll, combatDifferential : Int) : GroundCombatResult {
+        fun getResult(dieRoll : DiceRollResult, combatDifferential : Int) : GroundCombatResult {
             val finalDiff = if (combatDifferential > 9) {
                 9
             } else if (combatDifferential < -5) {
@@ -722,7 +723,7 @@ class Tables {
                 combatDifferential
             }
 
-            val result = table[Pair(dieRoll.getResultWithoutModifiers(), finalDiff)]
+            val result = table[Pair(dieRoll.get(), finalDiff)]
 
             return result!!
         }

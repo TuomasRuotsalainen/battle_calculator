@@ -84,6 +84,16 @@ class GameState(stateString : String) {
         return null
     }
 
+    fun setDisengagementDone(unitState : UnitState) {
+        val newList : MutableList<UnitState> = mutableListOf()
+        for (defendingUnit in defendingUnits) {
+            if (defendingUnit.unit!!.name != unitState.unit!!.name) {
+                newList.add(defendingUnit)
+            }
+        }
+        this.defendingUnits = newList
+    }
+
     fun updateConditions(newConditions: Conditions) {
         conditions = newConditions
     }
@@ -552,29 +562,68 @@ fun strToHour(str : String) : HourEnum {
     return hour
 }
 
-fun createConditions(str : String) : Conditions {
-    val components = str.split("-")
-    if (components.size != 5) {
-        throw Exception("Conditions size is not 5")
+fun strToDay(str : String) : DayEnum {
+    val hour = when (str) {
+        "D0" -> DayEnum.D0
+        "D1" -> DayEnum.D1
+        "D2" -> DayEnum.D2
+        "D3" -> DayEnum.D3
+        "D4" -> DayEnum.D4
+        else -> throw Exception("Unrecognized day: $str")
     }
 
-    val hour = strToHour(components[0])
+    return hour
+}
 
-    val fog = strToBool(components[1])
-    val precipitation = strToBool(components[2])
-    val pactUsesChem = strToBool(components[3])
-    val natoUsesChem = strToBool(components[4])
+fun createConditions(str : String) : Conditions {
+    val components = str.split("-")
+    if (components.size != 6) {
+        throw Exception("Conditions size is not 7")
+    }
 
-    return Conditions(pactUsesChem, natoUsesChem, hour, fog, precipitation)
+    val day = strToDay(components[0])
+    val hour = strToHour(components[1])
+
+    val fog = strToBool(components[2])
+    val precipitation = strToBool(components[3])
+
+    val chemUsageStartDayStr = components[4]
+    val chemUsageStartHourStr = components[5]
+
+    val chemUsageStartDay : DayEnum?
+    val chemUsageStartHour : HourEnum?
+    if (chemUsageStartDayStr == "null" || chemUsageStartHourStr == "null") {
+        chemUsageStartDay = null
+        chemUsageStartHour = null
+    } else {
+        chemUsageStartDay = strToDay(chemUsageStartDayStr)
+        chemUsageStartHour = strToHour(chemUsageStartHourStr)
+    }
+
+    return Conditions(day, hour, fog, precipitation, chemUsageStartDay, chemUsageStartHour)
 
 }
 
 class Conditions(
-    val pactUsesChem : Boolean, val natoUsesChem : Boolean,
-    val hourEnum: HourEnum, val fog : Boolean, val precipitation : Boolean) {
+    val dayEnum: DayEnum, val hourEnum: HourEnum, val fog : Boolean, val precipitation : Boolean,
+    val chemUsageStartDay : DayEnum?, val chemUsageStartHour: HourEnum?) {
+
+    fun doesPactUseChem() : Boolean {
+        if (chemUsageStartDay != null && chemUsageStartHour != null) {
+            return true
+        }
+
+        return false
+    }
+
+    fun doesNatoUseChem() : Boolean {
+        val waitTimeInTurnsAfterPactRelease = 25
+        // TODO finish the corner case when NATO can actually USE chem weapons
+        return false
+    }
 
     fun toStateString() : String {
-        return "${hourEnum}-$fog-$precipitation-$pactUsesChem-$natoUsesChem"
+        return "$dayEnum-${hourEnum}-$fog-$precipitation-$chemUsageStartDay-$chemUsageStartHour"
     }
 
     fun isValid(): Boolean {
@@ -590,7 +639,7 @@ class Conditions(
     }
 
     fun toReadableString() : String {
-        return "HOUR: $hourEnum FOG: $fog Precipitation: $precipitation PACT uses chem: $pactUsesChem NATO uses chem: $natoUsesChem"
+        return "DAY: $dayEnum HOUR: $hourEnum FOG: $fog Precipitation: $precipitation, Chem usage started DAY: $chemUsageStartDay HOUR: $chemUsageStartHour"
     }
 
     fun isNight() : Boolean {

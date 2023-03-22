@@ -31,7 +31,7 @@ class Utils {
 
 class Helpers {
     companion object General {
-        fun getIntFromTextField(editText: EditText) : Int {
+        fun getIntFromTextField(editText: EditText): Int {
             val number = editText.text.toString().toIntOrNull()
             if (number == null) {
                 editText.setText("0")
@@ -43,10 +43,16 @@ class Helpers {
 
         fun addTextFieldListener(editText: EditText, onTextChanged: (String) -> Unit): Unit =
             editText.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    if(editText.text.toString() == "") {
+                    if (editText.text.toString() == "") {
                         editText.setText("0")
                     }
                     onTextChanged(s.toString())
@@ -55,7 +61,7 @@ class Helpers {
                 override fun afterTextChanged(s: Editable?) {}
             })
 
-        fun strToBool(str : String) : Boolean {
+        fun strToBool(str: String): Boolean {
             return if (str == "true") {
                 true
             } else if (str == "false") {
@@ -65,20 +71,43 @@ class Helpers {
             }
         }
 
-        fun showInfoDialog(context : Context?, message : String, callback: () -> Unit) {
+        fun showInfoDialog(
+            context: Context?,
+            message: String, buttonText: String, negativeButtonText: String? = null,
+            primaryCallback: () -> Unit, negativeCallback: (() -> Unit)? = null
+        ) {
 
             val builder = AlertDialog.Builder(context)
             builder.setMessage(message)
-            builder.setPositiveButton("Understood") { dialog, _ ->
+            builder.setPositiveButton(buttonText) { dialog, _ ->
                 // Close the popup
                 dialog.dismiss()
-                callback()
+                primaryCallback()
             }
-
+            if (negativeCallback != null) {
+                builder.setNegativeButton(negativeButtonText) { dialog, _ ->
+                    // Close the popup
+                    dialog.dismiss()
+                    negativeCallback()
+                }
+            }
             val dialog = builder.create()
             dialog.show()
         }
 
+        fun getTurnDifference(
+            earlierDayEnum: DayEnum, earlierHourEnum: HourEnum,
+            laterDayEnum: DayEnum, laterHourEnum: HourEnum
+        ): Int {
+            val earlierTurn = earlierDayEnum.ordinal * HourEnum.values().size + earlierHourEnum.ordinal
+            val laterTurn = laterDayEnum.ordinal * HourEnum.values().size + laterHourEnum.ordinal
+
+            return when {
+                earlierTurn == laterTurn -> 0
+                laterTurn > earlierTurn -> laterTurn - earlierTurn
+                else -> (DayEnum.values().size * HourEnum.values().size) - earlierTurn + laterTurn
+            }
+        }
     }
 }
 
@@ -90,6 +119,42 @@ class Images {
             }
 
             return "unit_" + unitName + "_smaller"
+        }
+
+        fun setImageViewForUnit(imageView: ImageView, unitState: UnitState, isPosture : Boolean, activity: AppCompatActivity, context: Context, applicationInfo: ApplicationInfo) {
+            val imageName = if (isPosture) {
+                getPostureFileName(unitState)
+            } else {
+                getImageFileName(unitState.unit!!.name)
+            }
+            val currentUnitDrawable =
+                getDrawable(imageName, activity, context, applicationInfo)
+                    ?: throw Exception("Unable to get drawable for $imageName")
+
+            imageView.setImageDrawable(currentUnitDrawable)
+        }
+
+        fun getPostureFileName(unitState: UnitState): String {
+            if (unitState.posture == null) {
+                throw Exception("Tried to convert empty posture to image file name")
+            }
+
+            return when (unitState.posture) {
+                PostureEnum.SCRN -> "screen_smaller"
+                PostureEnum.DEF -> "defense_smaller"
+                PostureEnum.RDEF -> "rigid_defense_smaller"
+                PostureEnum.ASL -> "assault_smaller"
+                PostureEnum.FASL -> "full_assault_smaller"
+                PostureEnum.TAC -> "tactical_smaller"
+                PostureEnum.REFT -> "refit_smaller"
+                PostureEnum.MASL -> "march_assault_smaller"
+                PostureEnum.ROAD -> "road_smaller"
+                PostureEnum.REC -> "recon_smaller"
+                PostureEnum.MOV -> "road_smaller"
+                PostureEnum.ADEF -> "area_defense_smaller"
+                else -> throw Exception("Unrecognized posture: ${unitState.posture}")
+            }
+
         }
 
         fun getDrawable(ImageName: String, activity: AppCompatActivity, context: Context, applicationInfo: ApplicationInfo): Drawable? {
