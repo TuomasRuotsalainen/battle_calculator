@@ -121,20 +121,20 @@ class Images {
             return "unit_" + unitName + "_smaller"
         }
 
-        fun setImageViewForUnit(imageView: ImageView, unitState: UnitState, isPosture : Boolean, activity: AppCompatActivity, context: Context, applicationInfo: ApplicationInfo) {
+        fun setImageViewForUnit(imageView: ImageView, unitState: UnitState, isPosture : Boolean, activity: AppCompatActivity, context: Context) {
             val imageName = if (isPosture) {
                 getPostureFileName(unitState)
             } else {
                 getImageFileName(unitState.unit!!.name)
             }
             val currentUnitDrawable =
-                getDrawable(imageName, activity, context, applicationInfo)
+                getDrawable(imageName, activity, context, context.applicationInfo)
                     ?: throw Exception("Unable to get drawable for $imageName")
 
             imageView.setImageDrawable(currentUnitDrawable)
         }
 
-        fun getPostureFileName(unitState: UnitState): String {
+        private fun getPostureFileName(unitState: UnitState): String {
             if (unitState.posture == null) {
                 throw Exception("Tried to convert empty posture to image file name")
             }

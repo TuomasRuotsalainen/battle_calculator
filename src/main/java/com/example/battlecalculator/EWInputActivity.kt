@@ -216,7 +216,12 @@ class EWInputActivity : AppCompatActivity() {
                 combatSupport!!.setEW(getIntFromTextField(ewPointInput), currentModifier)
                 gameState.combatSupport!!.setDefenderCombatSupport(combatSupport)
 
-                val intent = Intent(this, AAFireActivity::class.java)
+                val intent = if (gameState.combatSupport!!.isAirBeingUsed()) {
+                    Intent(this, AAFireActivity::class.java)
+                } else {
+                    Intent(this, CombatResolutionActivity::class.java)
+                }
+
                 intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
                 startActivity(intent)
                 finish()

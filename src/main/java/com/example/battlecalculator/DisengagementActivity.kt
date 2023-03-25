@@ -59,8 +59,8 @@ class DisengagementActivity : AppCompatActivity() {
         val currentPostureView = findViewById<ImageView>(R.id.posture)
 
 
-        setImageViewForUnit(currentUnitView, disengagingUnit, false, this, applicationContext, applicationInfo)
-        setImageViewForUnit(currentPostureView, disengagingUnit, true, this, applicationContext, applicationInfo)
+        setImageViewForUnit(currentUnitView, disengagingUnit, false, this, applicationContext)
+        setImageViewForUnit(currentPostureView, disengagingUnit, true, this, applicationContext)
 
         val adjacentEnemyCombatUnitsField = findViewById<EditText>(R.id.adjacent_enemies_input)
         val adjacentFriendlyCombatUnitsField = findViewById<EditText>(R.id.adjacent_friendlies_input)
@@ -263,6 +263,9 @@ class DisengagementActivity : AppCompatActivity() {
             gameState.setDisengagementDone(disengagingUnit)
             val intent = if (gameState.getDisengagingDefender() != null) {
                 Intent(this, DisengagementActivity::class.java)
+            } else if (gameState.defendingUnits.size > 0) {
+                // In this case we handled disengagement before combat
+                Intent(this, FixedCombatModifierSelectionActivity::class.java)
             } else {
                 Intent(this, MainActivity::class.java)
             }
@@ -275,7 +278,7 @@ class DisengagementActivity : AppCompatActivity() {
         applyBtn.setOnClickListener {
             val dice = Dice()
             val diceResult = dice.roll()
-            val result = tables.getResult(disengagingUnit!!.posture!!, disengagingUnit.unit!!.type, diceResult, totalModifier)
+            val result = tables.getResult(disengagingUnit.posture!!, disengagingUnit.unit!!.type, diceResult, totalModifier)
             showInfoDialog(this, toString(result), "Understood", null, {
                 var totalAttrition = disengagingUnit.attritionFromCombat + resultOptions[result]!!.second
 

@@ -70,7 +70,12 @@ class TargetTerrainSelectionActivity : AppCompatActivity() {
 
         val applyButton = findViewById<Button>(R.id.terrain_apply)
 
-        val intent = Intent(this, FixedCombatModifierSelectionActivity::class.java)
+        val intent = if (gameState.getDisengagingDefender() != null) {
+            Intent(this, DisengagementActivity::class.java)
+        } else {
+            Intent(this, FixedCombatModifierSelectionActivity::class.java)
+        }
+
         applyButton.setOnClickListener{
 
             val terrainList = mutableListOf<TerrainEnum>()

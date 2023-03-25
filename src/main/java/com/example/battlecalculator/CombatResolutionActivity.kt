@@ -117,7 +117,7 @@ class CombatResolutionActivity : AppCompatActivity() {
 
         fun updateTextBody(stage : Stage) {
             Log.d("DEBUG", "Updating text body. Current stage: ${stage.get()}")
-            val currentDifferential = calculator.calculateCurrentCombatDifferential(gameState)
+            val currentDifferential : Int = calculator.calculateCurrentCombatDifferential(gameState).first
             val attackerCombatSupport = gameState.combatSupport!!.getAttackerCombatSupport()
             val defenderCombatSupport = gameState.combatSupport!!.getDefenderCombatSupport()
 
@@ -140,7 +140,7 @@ class CombatResolutionActivity : AppCompatActivity() {
                 text += "Final combat differential: ${
                     calculator.calculateCurrentCombatDifferential(
                         gameState
-                    ) + attackerCs!! + defenderCs!!
+                    ).first + attackerCs!! + defenderCs!!
                 }"
             } else if (stage.get() == STAGE_DISPLAY_BATTLE_RESULTS) {
                 finalResults = ""
@@ -167,9 +167,10 @@ class CombatResolutionActivity : AppCompatActivity() {
 
         val explainBtn = findViewById<Button>(R.id.explain)
         explainBtn.setOnClickListener {
+            val differential = calculator.calculateCurrentCombatDifferential(gameState)
+
             val builder = AlertDialog.Builder(this)
-            builder.setMessage("""Current combat modifiers:
-                |TODO""".trimMargin())
+            builder.setMessage(differential.second)
             builder.setPositiveButton("Understood") { dialog, _ ->
                 // Close the popup
                 dialog.dismiss()
@@ -219,7 +220,7 @@ class CombatResolutionActivity : AppCompatActivity() {
 
             } else if (stage.get() == STAGE_DISPLAY_CS_PROMPT_BATTLE) {
                 val groundCombat = Tables.GroundCombat()
-                groundCombatResult = groundCombat.getResult(combatRoll, calculator.calculateCurrentCombatDifferential(gameState) + attackerCs!! + defenderCs!!)
+                groundCombatResult = groundCombat.getResult(combatRoll, calculator.calculateCurrentCombatDifferential(gameState).first + attackerCs!! + defenderCs!!)
 
                 applyButton.text = "Attempt to\n retreat"
 

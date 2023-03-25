@@ -20,7 +20,8 @@ class Calculator() {
         return unit.defense + (-postures.getPosture(posture).defense)
     }
 
-    fun calculateCurrentCombatDifferential(state: GameState): Int {
+    fun calculateCurrentCombatDifferential(state: GameState): Pair<Int,String> {
+        var explanation = ""
         if (state.attackingUnit == null || state.defendingUnits.size == 0) {
             throw Exception("Attacking or defending units not defined")
         }
@@ -31,15 +32,19 @@ class Calculator() {
 
         return calculateInitialDifferential(state)
 
-
     }
 
-    private fun calculateInitialDifferential(state : GameState): Int {
+    private fun calculateInitialDifferential(state : GameState): Pair<Int, String> {
+        var explanation = ""
+
         val attacker: UnitState = state.attackingUnit!!
         val defenders = state.defendingUnits
 
         val attackerCombatStrength =
             calculateCombatStrength(attacker, defenders, state.hexTerrain!!, true)
+
+        explanation += "Attacker combat strength $attackerCombatStrength (considering defender type and terrain)\n"
+
         var defenderCombatStrength = 0
         for (defender in defenders) {
             defenderCombatStrength = +calculateCombatStrength(
@@ -49,6 +54,8 @@ class Calculator() {
                 false
             )
         }
+
+        explanation += "Defender combat strength: $defenderCombatStrength (considering attacker type and terrain)\n"
 
         val postures = Postures()
 
@@ -61,6 +68,8 @@ class Calculator() {
             throw Exception("Tried to use bad posture for attacking: ${attacker.posture.toString()}")
         }
 
+        explanation += "Attacker posture: $attackerPostureModifier, defender posture: $defenderPostureModifier\n"
+
         val totalCombatDifferential = defenderCombatStrength - attackerCombatStrength
         val combatDifferentialAfterPostures =
             totalCombatDifferential + attackerPostureModifier + defenderPostureModifier
@@ -68,18 +77,23 @@ class Calculator() {
         val attackTypeEnum = state.attackType!!
         val attackTypeModifier = AttackType().getCombatModifier(attackTypeEnum)
 
+        explanation += "Attack type: $attackTypeModifier\n"
+
         if (state.hexTerrain == null) {
             throw Exception("Hexterrain is null when calculating results")
         }
 
         val terrainCombatModifier = Tables.TerrainCombatTable().getCombatModifier(state.hexTerrain!!, state.riverCrossingType!!, defenderPostures)
+        explanation += terrainCombatModifier.second
 
         val fixedModifiers = calculateFixedModifiers(state)
+        explanation += fixedModifiers.second
 
-        return combatDifferentialAfterPostures + attackTypeModifier + terrainCombatModifier + fixedModifiers
+        return Pair(combatDifferentialAfterPostures + attackTypeModifier + terrainCombatModifier.first + fixedModifiers.first, explanation)
     }
 
-    private fun calculateFixedModifiers(state : GameState): Int {
+    private fun calculateFixedModifiers(state : GameState): Pair<Int, String> {
+        var explanation = ""
         var cadreModifier = 0
         var defensiveWorksModifier = 0
         var attritionModifier = 0
@@ -106,6 +120,9 @@ class Calculator() {
 
         if (state.hexTerrain != null) {
             defensiveWorksModifier = state.hexTerrain!!.getDefensiveWorksCombatModifier()
+            if (defensiveWorksModifier > 0) {
+                explanation += "Defensive works: $defensiveWorksModifier\n"
+            }
         }
 
         val attackerAttrition = state.attackingUnit!!.attrition!!
@@ -115,13 +132,18 @@ class Calculator() {
         }
 
         attritionModifier = defenderTotalAttrition - attackerAttrition
+        if (attritionModifier > 0) {
+            explanation += "Attrition difference: $attritionModifier\n"
+        }
 
         val fixedModifiers = FixedModifiers()
 
         var fixedModifierCounter = 0
         for (fixedModifier in FixedModifierEnum.values()) {
             if (state.activeFixedModifiers.contains(fixedModifier)) {
-                fixedModifierCounter += fixedModifiers.getModifier(fixedModifier)
+                val modifier = fixedModifiers.getModifier(fixedModifier)
+                fixedModifierCounter += modifier
+                explanation += "${fixedModifier.name}: $modifier\n"
             }
         }
 
@@ -134,11 +156,15 @@ class Calculator() {
             adjacencyModifier += state.adjacentDefenderCount!! * -1
         }
 
+        explanation += "Adjacent units total: $adjacencyModifier\n"
 
-        return cadreModifier + defensiveWorksModifier + attritionModifier + adjacencyModifier + fixedModifierCounter
+        explanation += "Cadre difference: $cadreModifier\n"
+        val total = cadreModifier + defensiveWorksModifier + attritionModifier + adjacencyModifier + fixedModifierCounter
+
+        return Pair(total, explanation)
     }
 
-    private fun calculateCommandStateDifferential(unitInQuestion : UnitState, isAttacker : Boolean): Int {
+    private fun calculateCommandStateDifferential(unitInQuestion : UnitState, isAttacker : Boolean, gameState: GameState): Int {
         if (unitInQuestion.unit == null) {
             throw Exception("calculateCommandStateDifferential: unit is null")
         }

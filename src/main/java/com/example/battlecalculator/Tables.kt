@@ -1,5 +1,6 @@
 package com.example.battlecalculator
 
+import kotlin.math.exp
 
 
 class Tables {
@@ -157,7 +158,7 @@ class Tables {
             MINOR_HASTY, MINOR_PREPARED, MINOR_BRIDGED, MAJOR_PREPARED, MAJOR_BRIDGED, RIBBON
         }
 
-        fun getCombatModifier(hexTerrain: HexTerrain, riverCrossingTypeEnum: RiverCrossingTypeEnum, defenderPostureEnums: List<PostureEnum>): Int {
+        fun getCombatModifier(hexTerrain: HexTerrain, riverCrossingTypeEnum: RiverCrossingTypeEnum, defenderPostureEnums: List<PostureEnum>): Pair<Int, String> {
             val features = hexTerrain.features
 
             val terrainEnums : MutableList<TerrainEnum> = mutableListOf()
@@ -169,18 +170,21 @@ class Tables {
 
             val terrainCombatModifier = getTerrainModifier(terrainEnums, defenderPostureEnums)
             val obstacleCombatModifier = getObstacleModifier(terrainEnums, defenderPostureEnums, riverCrossingTypeEnum)
-            return terrainCombatModifier + obstacleCombatModifier
+
+            val explanation = terrainCombatModifier.second + obstacleCombatModifier.second
+            val totalModifier = terrainCombatModifier.first + obstacleCombatModifier.first
+            return Pair(totalModifier, explanation)
         }
 
         private fun getObstacleModifier(
             terrainEnums: List<TerrainEnum>,
             defenderPostureEnums: List<PostureEnum>,
             riverCrossingTypeEnum: RiverCrossingTypeEnum
-        ): Int {
+        ): Pair<Int, String> {
 
             if (!terrainEnums.contains(TerrainEnum.MAJORRIVER) && !terrainEnums.contains(TerrainEnum.MINORRIVER)) {
                 // No obstacles
-                return 0
+                return Pair(0, "No obstacles")
             }
 
             if (riverCrossingTypeEnum == RiverCrossingTypeEnum.NONE) {
@@ -220,14 +224,17 @@ class Tables {
             val obstacleRow = obstacleContents[currentObstacle]
                 ?: throw Exception("No obstacle found for $currentObstacle")
 
-            return obstacleRow.getModifier(weakestMovementMode)
+            val modifier = obstacleRow.getModifier(weakestMovementMode)
+            val explanation = "Obstacle: $currentObstacle, modifier for $weakestMovementMode: $modifier\n"
+
+            return Pair(modifier, explanation)
 
         }
 
         private fun getTerrainModifier(
             terrainEnums: List<TerrainEnum>,
             defenderPostureEnums: List<PostureEnum>
-        ): Int {
+        ): Pair<Int, String> {
             val weakestMovementMode = MovementMode().getWeakestMovementMode(defenderPostureEnums)
 
             val terrainFeatures: List<TerrainEnum> =
@@ -237,7 +244,10 @@ class Tables {
             val activeTerrainFeatures = terrainEnums.intersect(terrainFeatures)
             val bestTerrainForDefense = findBestTerrainForDefense(activeTerrainFeatures, weakestMovementMode)
 
-            return terrainContents[bestTerrainForDefense]!!.getModifier(weakestMovementMode)
+            val modifier = terrainContents[bestTerrainForDefense]!!.getModifier(weakestMovementMode)
+            val explanation = "Best terrain for defense: $bestTerrainForDefense using $weakestMovementMode. Modifier: $modifier\n"
+
+            return Pair(modifier, explanation)
         }
 
         private fun findBestTerrainForDefense(enums : Set<TerrainEnum>, movementModeEnum: MovementModeEnum): TerrainEnum {
@@ -652,9 +662,9 @@ class Tables {
 
             val row = if (isAttacker) {
                 // Die roll from 1 to 10, table from 0 to 9
-                attackerTable[dieRoll.get()+1]
+                attackerTable[dieRoll.get()-1]
             } else {
-                defenderTable[dieRoll.get()+1]
+                defenderTable[dieRoll.get()-1]
             }
 
             return when (validatedPoints) {

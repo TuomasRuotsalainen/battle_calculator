@@ -4,10 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.RadioButton
-import android.widget.RadioGroup
-import android.widget.SeekBar
+import android.widget.*
 
 class RetreatBeforeCombatActivity : AppCompatActivity() {
 
@@ -16,54 +13,81 @@ class RetreatBeforeCombatActivity : AppCompatActivity() {
         setContentView(R.layout.activity_retreat_before_combat)
 
         var gameState = getGameState(intent)
-        Log.d("TUOMAS STATE", gameState.getStateString())
 
         val disengagementApplyButton = findViewById<Button>(R.id.combat1_apply)
 
-        val noRetreatsButton = findViewById<RadioButton>(R.id.retreat_before_combat_radio_zero)
+        val noRetreatsButton = findViewById<CheckBox>(R.id.retreat_before_combat_radio_zero)
         noRetreatsButton.isChecked = true
 
+        val unit1Checkbox = findViewById<CheckBox>(R.id.retreating_unit_1_radio)
+        val unit1Layout = findViewById<LinearLayout>(R.id.retreating_unit_1)
+        val unit1Image = findViewById<ImageView>(R.id.retreating_unit_1_image)
+        val unit1Posture = findViewById<ImageView>(R.id.retreating_unit_1_posture)
+
+        val unit2Checkbox = findViewById<CheckBox>(R.id.retreating_unit_2_radio)
+        val unit2Layout = findViewById<LinearLayout>(R.id.retreating_unit_2)
+        val unit2Image = findViewById<ImageView>(R.id.retreating_unit_2_image)
+        val unit2Posture = findViewById<ImageView>(R.id.retreating_unit_2_posture)
+
+        val defendingUnits = gameState.defendingUnits
+
+        if (defendingUnits.size == 1) {
+            unit2Layout.removeAllViews()
+            Images.setImageViewForUnit(unit1Image, defendingUnits[0], false, this, applicationContext)
+            Images.setImageViewForUnit(unit1Posture, defendingUnits[0], true, this, applicationContext)
+        } else {
+            Images.setImageViewForUnit(unit1Image, defendingUnits[0], false, this, applicationContext)
+            Images.setImageViewForUnit(unit1Posture, defendingUnits[0], true, this, applicationContext)
+
+            Images.setImageViewForUnit(unit2Image, defendingUnits[1], false, this, applicationContext)
+            Images.setImageViewForUnit(unit2Posture, defendingUnits[1], true, this, applicationContext)
+        }
 
 
-        val intent = Intent(this, TargetTerrainSelectionActivity::class.java)
+        unit2Checkbox.setOnClickListener {
+            noRetreatsButton.isChecked = false
+        }
+
+        unit1Checkbox.setOnClickListener {
+            noRetreatsButton.isChecked = false
+        }
+
+        noRetreatsButton.setOnClickListener {
+            unit1Checkbox.isChecked = false
+            unit2Checkbox.isChecked = false
+        }
+
+        var intent : Intent
         disengagementApplyButton.setOnClickListener{
-            when (checkRadioButton()) {
-                R.id.retreat_before_combat_radio_zero -> {
-                    intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
-                    startActivity(intent)
-                    finish()
-                    // No retreats, go to combat
+            if (!noRetreatsButton.isChecked) {
+                if (unit1Checkbox.isChecked) {
+                    defendingUnits[0].orderDisengagementAttempt()
                 }
-                R.id.retreat_before_combat_radio_one -> {
-                    throw Exception("NOT IMPLEMENTED")
-                    // One retreat
+
+                if (unit2Checkbox.isChecked) {
+                    defendingUnits[1].orderDisengagementAttempt()
                 }
-                else -> {
-                    // Two retreats
-                    throw Exception("NOT IMPLEMENTED")
-                }
+
+                gameState.defendingUnits = mutableListOf(defendingUnits[0], defendingUnits[1])
+
             }
 
+            // No disengagements
+            intent = Intent(this, TargetTerrainSelectionActivity::class.java)
+            intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+            startActivity(intent)
+            finish()
 
         }
     }
 
-    private fun checkRadioButton(): Int {
-        val radioGroup: RadioGroup = findViewById(R.id.retreat_before_combat_radio_group)
-        val checkedId = radioGroup.checkedRadioButtonId
-        val checkedRadioButton = findViewById<RadioButton>(checkedId)
-
-        return checkedRadioButton.id
-
-    }
-
-    private fun checkSeekBars(): Pair<Int, Int> {
-        val attackStrengthSeekBar: SeekBar = findViewById(R.id.attackStrengthSeekBar)
-        val defenseStrengthSeekBar: SeekBar = findViewById(R.id.defenseStrengthSeekBar)
-
-        val attackStrength = attackStrengthSeekBar.progress
-        val defenseStrength = defenseStrengthSeekBar.progress
-
-        return Pair(attackStrength, defenseStrength)
-    }
 }
+
+/*
+    val newUnits : MutableList<UnitState> = mutableListOf()
+    for (unit in gameState.defendingUnits) {
+        unit.orderDisengagementAttempt()
+
+        newUnits.add(unit)
+    }
+*/
