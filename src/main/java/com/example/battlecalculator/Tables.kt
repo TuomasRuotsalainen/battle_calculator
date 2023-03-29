@@ -184,7 +184,7 @@ class Tables {
 
             if (!terrainEnums.contains(TerrainEnum.MAJORRIVER) && !terrainEnums.contains(TerrainEnum.MINORRIVER)) {
                 // No obstacles
-                return Pair(0, "No obstacles")
+                return Pair(0, "No obstacles\n")
             }
 
             if (riverCrossingTypeEnum == RiverCrossingTypeEnum.NONE) {

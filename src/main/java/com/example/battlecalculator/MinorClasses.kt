@@ -74,6 +74,7 @@ class ActiveFixedModifiers(list : MutableList<FixedModifierEnum>) {
         map[modifier] = false
     }
 
+    // EW Effects 24.4.2 E3
     fun applyEW(attackerEWResult: Tables.EWResult, defenderEWResult: Tables.EWResult) {
         if (attackerEWResult.effects.contains(EwEffectEnum.ENEMY_COMMAND_DISRUPTED)) {
             this.add(FixedModifierEnum.DEFENDER_OUT_OF_COMMAND)
@@ -127,7 +128,7 @@ class FixedModifiers() {
         map[FixedModifierEnum.DEFENDER_FRONT_LINE_COMMAND] = -2
         map[FixedModifierEnum.PACT_ATTACKING_REAR] = -3
         map[FixedModifierEnum.PACT_DEFENDING_REAR] = 3
-        map[FixedModifierEnum.ATTACKER_HALF_ENGAGED] = 2
+        map[FixedModifierEnum.ATTACKER_HALF_ENGAGED] = -2
         map[FixedModifierEnum.ATTACKER_OUT_OF_COMMAND] = -4
         map[FixedModifierEnum.ATTACKER_OUT_OF_COMMAND_SCREEN_REC] = -2
         map[FixedModifierEnum.ATTACKER_FRONT_LINE_COMMAND] = 2
@@ -143,13 +144,31 @@ class CombatSupportSelection() {
     private var attackerSupport : CombatSupport? = null
     private var defenderSupport : CombatSupport? = null
 
+    private var attackerEwModifier : Int? = null
+    private var defenderEwModifier : Int? = null
+
+    fun getEwModifiers(): Pair<Int?, Int?> {
+        return Pair(attackerEwModifier, defenderEwModifier)
+    }
+
     fun ewInUse() : Boolean {
         return (attackerSupport!!.getEWPoints()!! > 0) || (defenderSupport!!.getEWPoints()!! > 0)
     }
 
     fun applyEwResults(attackerEWResult: Tables.EWResult, defenderEWResult: Tables.EWResult) {
+        this.attackerEwModifier = applyEwModifier(attackerEWResult, true)
+        this.defenderEwModifier = applyEwModifier(defenderEWResult, false)
+
         this.attackerSupport!!.adjustCombatSupport(defenderEWResult)
         this.defenderSupport!!.adjustCombatSupport(attackerEWResult)
+    }
+
+    private fun applyEwModifier(ewResult: Tables.EWResult, isAttacker: Boolean): Int {
+        return if (isAttacker) {
+            ewResult.combatModifier.first
+        } else {
+            ewResult.combatModifier.second
+        }
     }
 
     fun isAirBeingUsed() : Boolean {
@@ -269,6 +288,8 @@ fun parseCombatSupport(str : String) : CombatSupport {
 
 class CombatSupport(private var artilleryPoints: Int, private var airPoints : Int, private var helicopterPoints : MutableList<Int>, val targetInCASZone : Boolean, val isAttacker : Boolean, private var ewPoints: Int?, private var ewRollModifier: Int?) {
 
+    //private var reductionByEnemyEW : Int? = null
+
     fun getHelicopterCount() : Int {
         var counter = 0
         for (heliPoint in helicopterPoints) {
@@ -284,13 +305,17 @@ class CombatSupport(private var artilleryPoints: Int, private var airPoints : In
         return airPoints
     }
 
+    // Electronic warfare 15.6.9
+    // EW Effects 24.4.2 E1 E2 E3
     fun adjustCombatSupport(enemyEwResult : Tables.EWResult) {
-        val modifier = if (isAttacker) {
+        /*val modifier = if (isAttacker) {
             // If adjusting attacker's combat support, we're talking about defender EW result and vice versa
-            enemyEwResult.combatModifier.second
-        } else {
-            enemyEwResult.combatModifier.first
-        }
+                enemyEwResult.combatModifier.second
+            } else {
+                enemyEwResult.combatModifier.first
+            }
+
+        reductionByEnemyEW = modifier*/
 
         for (effect in enemyEwResult.effects) {
             when (effect) {

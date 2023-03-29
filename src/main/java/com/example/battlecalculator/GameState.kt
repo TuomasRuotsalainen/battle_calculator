@@ -646,8 +646,8 @@ class Conditions(
         return (hourEnum == HourEnum.H00 || hourEnum == HourEnum.H03 || hourEnum == HourEnum.H21)
     }
 
-    private fun isClear(fog : Boolean, precipitation : Boolean) : Boolean {
-        return (!fog && !precipitation)
+    fun isClear() : Boolean {
+        return (!this.fog && !this.precipitation)
     }
 }
 

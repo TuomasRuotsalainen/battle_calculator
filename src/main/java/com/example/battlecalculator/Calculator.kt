@@ -74,22 +74,18 @@ class Calculator() {
         val combatDifferentialAfterPostures =
             totalCombatDifferential + attackerPostureModifier + defenderPostureModifier
 
-        val attackTypeEnum = state.attackType!!
-        val attackTypeModifier = AttackType().getCombatModifier(attackTypeEnum)
-
-        explanation += "Attack type: $attackTypeModifier\n"
-
         if (state.hexTerrain == null) {
             throw Exception("Hexterrain is null when calculating results")
         }
 
+        // 15.6.5 Terrain
         val terrainCombatModifier = Tables.TerrainCombatTable().getCombatModifier(state.hexTerrain!!, state.riverCrossingType!!, defenderPostures)
         explanation += terrainCombatModifier.second
 
         val fixedModifiers = calculateFixedModifiers(state)
         explanation += fixedModifiers.second
 
-        return Pair(combatDifferentialAfterPostures + attackTypeModifier + terrainCombatModifier.first + fixedModifiers.first, explanation)
+        return Pair(combatDifferentialAfterPostures + terrainCombatModifier.first + fixedModifiers.first, explanation)
     }
 
     private fun calculateFixedModifiers(state : GameState): Pair<Int, String> {
@@ -100,6 +96,12 @@ class Calculator() {
 
         val attacker: UnitState = state.attackingUnit!!
 
+        // 15.6.2 Attack type
+        val attackTypeEnum = state.attackType!!
+        val attackTypeModifier = AttackType().getCombatModifier(attackTypeEnum)
+        explanation += "Attack type: $attackTypeModifier\n"
+
+        // 15.6.3 Cadre rating
         var defenderMinCadre : Int? = null
         for (defendingUnit in state.defendingUnits) {
             if (defenderMinCadre == null) {
@@ -113,11 +115,30 @@ class Calculator() {
         }
 
         if (defenderMinCadre != null) {
+            explanation += "Cadre difference: $cadreModifier\n"
             cadreModifier = defenderMinCadre - attacker.unit!!.cadre
         } else {
             throw Exception("Defender cadre is null")
         }
 
+        // 15.6.4 Nationality
+        // 15.6.8 Resting
+        // 15.6.12. Sappers (WP Only)
+        // 15.6.14 Engagement
+        // 15.6.15 Delay
+        val fixedModifiers = FixedModifiers()
+        var fixedModifierCounter = 0
+        for (fixedModifier in FixedModifierEnum.values()) {
+            if (state.activeFixedModifiers.contains(fixedModifier)) {
+                val modifier = fixedModifiers.getModifier(fixedModifier)
+                fixedModifierCounter += modifier
+                explanation += "${fixedModifier.name}: $modifier\n"
+            }
+        }
+
+        // Terrain is in other function
+
+        // 15.6.6 Defensive works
         if (state.hexTerrain != null) {
             defensiveWorksModifier = state.hexTerrain!!.getDefensiveWorksCombatModifier()
             if (defensiveWorksModifier > 0) {
@@ -125,6 +146,7 @@ class Calculator() {
             }
         }
 
+        // 15.6.7 Attrition
         val attackerAttrition = state.attackingUnit!!.attrition!!
         var defenderTotalAttrition = 0
         for (defender in state.defendingUnits) {
@@ -136,17 +158,29 @@ class Calculator() {
             explanation += "Attrition difference: $attritionModifier\n"
         }
 
-        val fixedModifiers = FixedModifiers()
+        // 15.6.9. Electronic warfare (only combat modifiers)
+        var ewModifier = 0
+        if (state.combatSupport != null) {
+            val ewModifiers = state.combatSupport!!.getEwModifiers()
+            var ewExplanation = ""
+            if (ewModifiers.first != null) {
+                ewExplanation += "Attacker EW: ${ewModifiers.first}"
+                ewModifier += ewModifiers.first!!
+            }
 
-        var fixedModifierCounter = 0
-        for (fixedModifier in FixedModifierEnum.values()) {
-            if (state.activeFixedModifiers.contains(fixedModifier)) {
-                val modifier = fixedModifiers.getModifier(fixedModifier)
-                fixedModifierCounter += modifier
-                explanation += "${fixedModifier.name}: $modifier\n"
+            if (ewModifiers.second != null) {
+                ewExplanation += "Defender EW: ${ewModifiers.second}"
+                ewModifier += ewModifiers.second!!
+            }
+
+            if (ewExplanation != "") {
+                explanation += ewExplanation + "\n"
             }
         }
 
+        // Combat support is calculated in CombatResolutionActivity
+
+        // 15.6.13 Adjacent Units
         var adjacencyModifier = 0
         if (state.adjacentAttackerCount != null) {
             adjacencyModifier += state.adjacentAttackerCount!! * 2
@@ -156,13 +190,39 @@ class Calculator() {
             adjacencyModifier += state.adjacentDefenderCount!! * -1
         }
 
+        // 15.6.16 Weather
+        var weatherModifier = 0
+        if (state.conditions.isNight()) {
+            if (state.activeAlliance == Alliances.NATO) {
+                val natoAttackingNight = 2
+                explanation += "NATO attacking at night: $natoAttackingNight\n"
+                weatherModifier += natoAttackingNight
+            } else {
+                val pactAttackingNight = -2
+                explanation += "PACT attacking at night: $pactAttackingNight\n"
+                weatherModifier += pactAttackingNight
+            }
+        }
+
+        if (!state.conditions.isClear()) {
+            if (state.activeAlliance == Alliances.NATO) {
+                val natoAttackingFogRain = 1
+                explanation += "NATO attacking during rain or fog: $natoAttackingFogRain\n"
+                weatherModifier += natoAttackingFogRain
+            } else {
+                val pactAttackingFogRain = -1
+                explanation += "PACT attacking during rain or fog: $pactAttackingFogRain\n"
+                weatherModifier += pactAttackingFogRain
+            }
+        }
+
         explanation += "Adjacent units total: $adjacencyModifier\n"
 
-        explanation += "Cadre difference: $cadreModifier\n"
-        val total = cadreModifier + defensiveWorksModifier + attritionModifier + adjacencyModifier + fixedModifierCounter
+        val total = cadreModifier + defensiveWorksModifier + attritionModifier + adjacencyModifier + fixedModifierCounter + attackTypeModifier + weatherModifier
 
         return Pair(total, explanation)
     }
+
 
     private fun calculateCommandStateDifferential(unitInQuestion : UnitState, isAttacker : Boolean, gameState: GameState): Int {
         if (unitInQuestion.unit == null) {

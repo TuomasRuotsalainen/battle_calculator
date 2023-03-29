@@ -116,7 +116,7 @@ class CombatResolutionActivity : AppCompatActivity() {
         var finalResults : String? = null
 
         fun updateTextBody(stage : Stage) {
-            Log.d("DEBUG", "Updating text body. Current stage: ${stage.get()}")
+
             val currentDifferential : Int = calculator.calculateCurrentCombatDifferential(gameState).first
             val attackerCombatSupport = gameState.combatSupport!!.getAttackerCombatSupport()
             val defenderCombatSupport = gameState.combatSupport!!.getDefenderCombatSupport()
@@ -138,9 +138,7 @@ class CombatResolutionActivity : AppCompatActivity() {
                     "Attacker combat support die: ${attackerCsRoll.get()}. Final combat support modifier: $attackerCs\n"
                 text += "Defender combat support die: ${defenderCsRoll.get()}. Final combat support modifier: $defenderCs\n\n"
                 text += "Final combat differential: ${
-                    calculator.calculateCurrentCombatDifferential(
-                        gameState
-                    ).first + attackerCs!! + defenderCs!!
+                    calculator.calculateCurrentCombatDifferential(gameState).first + attackerCs!! + defenderCs!!
                 }"
             } else if (stage.get() == STAGE_DISPLAY_BATTLE_RESULTS) {
                 finalResults = ""
@@ -168,9 +166,15 @@ class CombatResolutionActivity : AppCompatActivity() {
         val explainBtn = findViewById<Button>(R.id.explain)
         explainBtn.setOnClickListener {
             val differential = calculator.calculateCurrentCombatDifferential(gameState)
+            var message = differential.second
+
 
             val builder = AlertDialog.Builder(this)
-            builder.setMessage(differential.second)
+            if (attackerCs != null && defenderCs != null) {
+                message += "Attacker combat support: $attackerCs, defender combat support: $defenderCs"
+            }
+
+            builder.setMessage(message)
             builder.setPositiveButton("Understood") { dialog, _ ->
                 // Close the popup
                 dialog.dismiss()
@@ -205,7 +209,6 @@ class CombatResolutionActivity : AppCompatActivity() {
         }
 
         applyButton.setOnClickListener {
-            Log.d("DEBUG", "Button clicked! Stage: ${stage.get()}")
             if (stage.get() == STAGE_PROMPT_EW) {
                 gameState.activeFixedModifiers.applyEW(attackerEwResult!!, defenderEwResult!!)
                 gameState.combatSupport!!.applyEwResults(attackerEwResult, defenderEwResult)

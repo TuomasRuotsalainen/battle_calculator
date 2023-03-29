@@ -6,10 +6,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
+import com.example.battlecalculator.Helpers.General.addTextFieldListener
+import com.example.battlecalculator.Helpers.General.getIntFromTextField
 
 class PostureAndAttackTypeActivity : AppCompatActivity() {
 
@@ -33,8 +36,14 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
             throw Exception("Started a posture and attack type activity for defender when all defending units have a posture already")
         }
 
-        // TODO command and engagement selections not working
-        currentUnitState.attrition = 0 // TODO add proper setting for attrition
+        val attritionField = findViewById<EditText>(R.id.attrition_text_input)
+        attritionField.setText("0")
+        currentUnitState.attrition = 0
+
+        addTextFieldListener(attritionField) {
+            val newAttrition = getIntFromTextField(attritionField)
+            currentUnitState.attrition = newAttrition
+        }
 
         fun setCommandStateButtons() {
             val normal = findViewById<RadioButton>(R.id.radio_command_status_none)
@@ -221,11 +230,9 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
 
                 val nextDefender = gameState.getDefendingUnitStateWithoutPosture()
                 if (nextDefender != null) {
-                    Log.d("TUOMAS TAG:", "Lets go to defender selection")
                     val nextIntent = Intent(this, PostureAndAttackTypeActivity::class.java)
                     nextIntent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
                     nextIntent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.DEFENDER.toString())
-                    Log.d("TUOMAS TAG:", "Starting activity with intent $nextIntent")
                     startActivity(nextIntent)
                     finish()
                 } else {
@@ -254,6 +261,8 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
 
             val attackType = AttackType()
 
+            // TODO should we add attrition here as well?
+            // TODO should we add command state here as well?
             val initialDifferential = calculator.getInitialAttackDifferential(unit = unit, posture = posture.enum, attackTypeEnum = attack)
 
             "Initial attack differential:\n${unit.attack} (unit) + ${posture.attack} (posture) + ${

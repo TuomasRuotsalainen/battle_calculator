@@ -26,7 +26,6 @@
         android:text="Select fixed combat modifiers"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -52,6 +51,79 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
+        android:id="@+id/attackerOptionsLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/fixed_apply"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/defenderOptionsLayout"
+        app:layout_constraintTop_toBottomOf="@+id/textView">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="ATTACKER selection"/>
+
+        <CheckBox
+            android:id="@+id/attackerAdvanceAxis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PACT fighting outside\n Advance Axis"
+            />
+
+        <CheckBox
+            android:id="@+id/attackerSappers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PACT commits\n Sappers"
+            />
+
+        <CheckBox
+            android:id="@+id/attackerHalfEngaged"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Attacker Half-Engaged"
+            />
+
+        <CheckBox
+            android:id="@+id/attackerRecce"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Attacker commits\nan adjacent unit in\nrecce posture\n(add 1 attrition to the unit\nimmediately)"
+             />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        >
+
+        <EditText
+            android:id="@+id/adjacent_attackers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="2"
+            android:hint="0"
+            android:inputType="number"
+
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Adjacent combat units\nto the attacked hex" />
+
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+    <LinearLayout
         android:id="@+id/defenderOptionsLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -59,9 +131,13 @@
         app:layout_constraintTop_toBottomOf="@+id/textView"
         app:layout_constraintBottom_toTopOf="@+id/fixed_apply"
         app:layout_constraintEnd_toStartOf="@+id/attackerOptionsLayout"
-        app:layout_constraintHorizontal_bias="0.078"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="0.408">
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="DEFENDER selection"/>
 
         <CheckBox
             android:id="@+id/checkBoxNATOCountries"
@@ -77,52 +153,70 @@
             android:id="@+id/defenderResting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:text="Defender resting"
-            tools:layout_editor_absoluteX="19dp"
-            tools:layout_editor_absoluteY="226dp" />
+            android:text="Defender Resting" />
+
+
+        <CheckBox
+            android:id="@+id/defenderHalfEngaged"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Defender Half-Engaged" />
+
+        <CheckBox
+            android:id="@+id/defenderEngaged"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Defender Engaged" />
 
         <CheckBox
             android:id="@+id/defenderDelayed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:text="Defender delayed"
-            tools:layout_editor_absoluteX="181dp"
-            tools:layout_editor_absoluteY="112dp" />
+            android:text="Defender Delayed" />
 
 
         <CheckBox
             android:id="@+id/defenderAdvanceAxis"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="PACT fighting outside\n Advance Axis"
-            tools:layout_editor_absoluteX="181dp"
-            tools:layout_editor_absoluteY="178dp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/attackerOptionsLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/fixed_apply"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/defenderOptionsLayout"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.297">
+            android:text="PACT fighting outside\n Advance Axis" />
 
         <CheckBox
-            android:id="@+id/attackerAdvanceAxis"
+            android:id="@+id/defenderSappers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="PACT fighting outside\n Advance Axis"
-            tools:layout_editor_absoluteX="181dp"
-            tools:layout_editor_absoluteY="178dp" />
+            android:text="PACT commits\n Sappers" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            >
+
+            <EditText
+                android:id="@+id/adjacent_defenders"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="2"
+                android:hint="0"
+                android:inputType="number"
+
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="Adjacent combat units\nto the attacked hex" />
+
+
+
+        </LinearLayout>
 
     </LinearLayout>
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
