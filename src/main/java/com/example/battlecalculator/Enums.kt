@@ -5,7 +5,7 @@ enum class PostureEnum {
 }
 
 enum class MovementModeEnum {
-    COLUM, TACTICAL, DEPLOYED
+    COLUM, TACTICAL, DEPLOYED, FIXED
 }
 
 enum class MovementTypeEnum {

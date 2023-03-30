@@ -60,6 +60,39 @@ class GameState(stateString : String) {
     var adjacentAttackerCount : Int? = getAdjacentAttackerUnits()
     var combatSupport : CombatSupportSelection? = getCombatSupportSelection()
 
+    // Boolean indicates whether all units that are out of command are in screen or rec posture
+    fun getCommandState(isAttacker : Boolean) : Pair<CommandStateEnum, Boolean> {
+        if (isAttacker) {
+            return Pair(attackingUnit!!.commandState!!, attackingUnit!!.isScreenOrRec())
+        }
+
+        var everyoneFrontLineCommand = true
+        var isOutOfCommandUnitInNormalPosture = false
+        var someoneOutOfCommand = false
+        for (defendingUnit in defendingUnits) {
+            if (defendingUnit.commandState == CommandStateEnum.OUT_OF_COMMAND) {
+                if (!isOutOfCommandUnitInNormalPosture) {
+                    isOutOfCommandUnitInNormalPosture = !defendingUnit.isScreenOrRec()
+                }
+                someoneOutOfCommand = true
+            }
+
+            if (defendingUnit.commandState != CommandStateEnum.FRONT_LINE_COMMAND) {
+                everyoneFrontLineCommand = false
+            }
+        }
+
+        if (someoneOutOfCommand) {
+            return Pair(CommandStateEnum.OUT_OF_COMMAND, !isOutOfCommandUnitInNormalPosture)
+        }
+
+        if (everyoneFrontLineCommand) {
+            return Pair(CommandStateEnum.FRONT_LINE_COMMAND, false)
+        }
+
+        return Pair(CommandStateEnum.NORMAL, false)
+    }
+
     fun areSappersHit(result : Tables.GroundCombatResult) : Boolean {
         if (result.attackerSapperEliminated) {
             if (activeAlliance == Alliances.PACT) {
@@ -426,7 +459,7 @@ class GameState(stateString : String) {
         var posture : PostureEnum? = null
         var attrition : Int? = null
         var commandState : CommandStateEnum? = null
-        var engagementState : EngagementStateEnum? = null
+        //var engagementState : EngagementStateEnum? = null
         var disengagementOrdered : Boolean = false
         var attritionFromCombat : Int = 0
 
@@ -439,8 +472,8 @@ class GameState(stateString : String) {
             }
         }
 
-        if (properties.size != 7) {
-            throw Exception("Properties size of unit string $str is not 7")
+        if (properties.size != 6) {
+            throw Exception("Properties size of unit string $str is not 6")
         }
 
         val postureStr = properties[1]
@@ -458,32 +491,33 @@ class GameState(stateString : String) {
             commandState = getCommandStateFromString(commandStateStr)
         }
 
+        /*
         val engagementStateStr = properties[4]
         if (engagementStateStr != nullVal) {
             engagementState = getEngagementStateFromString(engagementStateStr)
-        }
+        }*/
 
-        val disengagementOrderedStr = properties[5]
+        val disengagementOrderedStr = properties[4]
         if (disengagementOrderedStr != nullVal) {
             disengagementOrdered = strToBool(disengagementOrderedStr)
         }
 
-        val attritionFromCombatStr = properties[6]
+        val attritionFromCombatStr = properties[5]
         if (attritionFromCombatStr != nullVal) {
             attritionFromCombat = attritionFromCombatStr.toInt()
         }
 
-        return UnitState(unit, posture, attrition, commandState, engagementState, disengagementOrdered, attritionFromCombat)
+        return UnitState(unit, posture, attrition, commandState, disengagementOrdered, attritionFromCombat)
 
     }
 }
 
-class UnitState(unitInput : Unit?, postureInput: PostureEnum?, attrition: Int?, commandStateEnum: CommandStateEnum?, engagementStateEnum : EngagementStateEnum?, disengagementOrdered : Boolean, attritionFromCombat : Int) {
+class UnitState(unitInput : Unit?, postureInput: PostureEnum?, attrition: Int?, commandStateEnum: CommandStateEnum?, disengagementOrdered : Boolean, attritionFromCombat : Int) {
     val unit = unitInput
     var posture = postureInput
     var attrition = attrition
     var commandState = commandStateEnum
-    var engagementState = engagementStateEnum
+    //var engagementState = engagementStateEnum
     var disengagementOrdered = disengagementOrdered
     var attritionFromCombat = attritionFromCombat
 
@@ -495,6 +529,10 @@ class UnitState(unitInput : Unit?, postureInput: PostureEnum?, attrition: Int?, 
         }
 
         return false
+    }
+
+    fun isScreenOrRec() : Boolean {
+        return (posture == PostureEnum.SCRN || posture == PostureEnum.REC)
     }
 
     fun orderDisengagementAttempt() {
@@ -531,11 +569,12 @@ class UnitState(unitInput : Unit?, postureInput: PostureEnum?, attrition: Int?, 
             nullVal
         }
 
+        /*
         unitStr += if (engagementState != null) {
             "-$engagementState"
          }else {
             nullVal
-        }
+        }*/
 
         unitStr += "-$disengagementOrdered"
 
@@ -616,10 +655,24 @@ class Conditions(
         return false
     }
 
-    fun doesNatoUseChem() : Boolean {
+    fun getChemWarfareTurn() : Int? {
+        val startDay = chemUsageStartDay ?: return null
+        val startHour = chemUsageStartHour ?: return null
+
+        val dayDiff = DayEnum.values().indexOf(dayEnum) - DayEnum.values().indexOf(startDay)
+        val hourDiff = HourEnum.values().indexOf(hourEnum) - HourEnum.values().indexOf(startHour)
+
+        return when {
+            dayDiff > 0 -> dayDiff * 8 + hourDiff / 3 + 1
+            dayDiff == 0 && hourDiff >= 0 -> hourDiff / 3 + 1
+            else -> null
+        }
+    }
+
+    fun getChemWarfareTurnForNato() : Int? {
         val waitTimeInTurnsAfterPactRelease = 25
-        // TODO finish the corner case when NATO can actually USE chem weapons
-        return false
+        val pactChemTurn = getChemWarfareTurn() ?: return null
+        return pactChemTurn - waitTimeInTurnsAfterPactRelease
     }
 
     fun toStateString() : String {

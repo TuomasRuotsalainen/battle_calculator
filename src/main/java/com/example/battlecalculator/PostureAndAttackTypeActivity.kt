@@ -80,7 +80,7 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
 
         }
 
-        fun setEngagementStateButtons() {
+        /*fun setEngagementStateButtons() {
             val none = findViewById<RadioButton>(R.id.radio_engagement_status_none)
             val halfEngaged = findViewById<RadioButton>(R.id.radio_engagement_status_half_engaged)
             val engaged = findViewById<RadioButton>(R.id.radio_engagement_status_enganged)
@@ -115,7 +115,7 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
                 }
             }
 
-        }
+        }*/
 
         val headerText = findViewById<TextView>(R.id.postureSelHeader)
         if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
@@ -201,7 +201,7 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
         }
 
         setCommandStateButtons()
-        setEngagementStateButtons()
+        //setEngagementStateButtons()
 
         val textContent = getTextViewString(currentUnitState.unit, gameState.attackType!!, selectedPosture, calculator, unitSelectionType, currentUnitState.commandState!!)
         textView.text = textContent

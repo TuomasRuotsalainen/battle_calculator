@@ -75,10 +75,17 @@
             />
 
         <CheckBox
+            android:id="@+id/attackerHasSappers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PACT has assigned\n Sappers"
+            />
+
+        <CheckBox
             android:id="@+id/attackerSappers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="PACT commits\n Sappers"
+            android:text="PACT commits\nthe Sappers"
             />
 
         <CheckBox
@@ -183,10 +190,17 @@
             android:text="PACT fighting outside\n Advance Axis" />
 
         <CheckBox
+            android:id="@+id/defenderHasSappers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PACT has assigned\n Sappers"
+            />
+
+        <CheckBox
             android:id="@+id/defenderSappers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="PACT commits\n Sappers" />
+            android:text="PACT commits\nthe Sappers" />
 
         <LinearLayout
             android:layout_width="wrap_content"

@@ -126,6 +126,7 @@ class Calculator() {
         // 15.6.12. Sappers (WP Only)
         // 15.6.14 Engagement
         // 15.6.15 Delay
+        // 15.6.20 WP Advance Axis
         val fixedModifiers = FixedModifiers()
         var fixedModifierCounter = 0
         for (fixedModifier in FixedModifierEnum.values()) {
@@ -216,9 +217,91 @@ class Calculator() {
             }
         }
 
+        // 15.6.17 Chemical Warfare
+        val chemTurn = state.conditions.getChemWarfareTurn()
+        var chemModifier = 0
+        if (chemTurn != null) {
+            if (state.conditions.doesPactUseChem()) {
+                var modifier = when (chemTurn) {
+                    in 1..8 -> 3
+                    in 9..16 -> 2
+                    in 17.. 100 -> 1
+                    else -> throw Exception("Unrecognized turn")
+                }
+
+                if (state.activeAlliance == Alliances.NATO) {
+                    modifier = -modifier
+                }
+
+                explanation += "PACT using chemical weapons (turn $chemTurn): $modifier\n"
+                chemModifier += modifier
+            }
+
+            val natoChemTurn = state.conditions.getChemWarfareTurnForNato()
+            if (natoChemTurn != null) {
+                var modifier = when (natoChemTurn) {
+                    in 1..8 -> 2
+                    in 9..100 -> 1
+                    else -> throw Exception("Unrecognized turn")
+                }
+
+                if (state.activeAlliance == Alliances.PACT) {
+                    modifier = -modifier
+                }
+
+                explanation += "NATO using chemical weapons (turn $chemTurn): $modifier\n"
+                chemModifier += modifier
+            }
+
+        }
+
+        // 15.6.18 Out of Command
+        // 15.6.19 Front-Line command
+        val attackerCommandState = state.getCommandState(true)
+        val defenderCommandState = state.getCommandState(false)
+
+        val attackerCommandStateModifier = when (attackerCommandState.first) {
+            CommandStateEnum.NORMAL -> 0
+            CommandStateEnum.FRONT_LINE_COMMAND -> {
+                val modifier = fixedModifiers.getModifier(FixedModifierEnum.ATTACKER_FRONT_LINE_COMMAND)
+                explanation += "Attacker using front line command: $modifier\n"
+                modifier
+            }
+            CommandStateEnum.OUT_OF_COMMAND -> if (attackerCommandState.second) {
+                val modifier = fixedModifiers.getModifier(FixedModifierEnum.ATTACKER_OUT_OF_COMMAND_SCREEN_REC)
+                explanation += "Attacker screen/rec out of command: $modifier\n"
+                modifier
+            } else {
+                val modifier = fixedModifiers.getModifier(FixedModifierEnum.ATTACKER_OUT_OF_COMMAND)
+                explanation += "Attacker out of command: $modifier\n"
+                modifier
+            }
+        }
+
+        val defenderCommandStateModifier = when (defenderCommandState.first) {
+            CommandStateEnum.NORMAL -> 0
+            CommandStateEnum.FRONT_LINE_COMMAND -> {
+                val modifier = fixedModifiers.getModifier(FixedModifierEnum.DEFENDER_FRONT_LINE_COMMAND)
+                explanation += "Defender using front line command: $modifier\n"
+                modifier
+            }
+            CommandStateEnum.OUT_OF_COMMAND -> if (defenderCommandState.second) {
+                val modifier = fixedModifiers.getModifier(FixedModifierEnum.DEFENDER_OUT_OF_COMMAND_SCREEN_REC)
+                explanation += "Defender screen/rec out of command: $modifier\n"
+                modifier
+            } else {
+                val modifier = fixedModifiers.getModifier(FixedModifierEnum.DEFENDER_OUT_OF_COMMAND)
+                explanation += "Defender out of command: $modifier\n"
+                modifier
+            }
+        }
+
+        val totalCommandModifier = attackerCommandStateModifier + defenderCommandStateModifier
+
+
         explanation += "Adjacent units total: $adjacencyModifier\n"
 
-        val total = cadreModifier + defensiveWorksModifier + attritionModifier + adjacencyModifier + fixedModifierCounter + attackTypeModifier + weatherModifier
+        val total = cadreModifier + defensiveWorksModifier + attritionModifier + adjacencyModifier + fixedModifierCounter + attackTypeModifier + weatherModifier + chemModifier + totalCommandModifier
 
         return Pair(total, explanation)
     }

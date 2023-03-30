@@ -74,7 +74,7 @@ class UnitSelectionActivity : AppCompatActivity() {
 
                 val selectedUnitName = selectedUnits[0]
                 val selectedUnit = gameState.oob.unitIndex[selectedUnitName]
-                val unitState = UnitState(selectedUnit, null, null, null, null, false, 0)
+                val unitState = UnitState(selectedUnit, null, null, null, false, 0)
 
                 gameState.attackingUnit = unitState
 
@@ -89,7 +89,7 @@ class UnitSelectionActivity : AppCompatActivity() {
                     for (selectedUnit in selectedUnits) {
                         val unit = gameState.oob.unitIndex[selectedUnit]
                             ?: throw Exception("Couldn't find unit with name $selectedUnit when adding defending units")
-                        val unitState = UnitState(unit, null, null, null, null, false, 0)
+                        val unitState = UnitState(unit, null, null, null,  false, 0)
 
                         gameState.defendingUnits.add(unitState)
                     }

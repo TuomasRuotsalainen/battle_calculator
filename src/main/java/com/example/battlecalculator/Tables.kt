@@ -144,7 +144,13 @@ class Tables {
         }
 
         fun getModifier(movementModeEnum: MovementModeEnum): Int {
-            return contents[movementModeEnum]
+            val movementMode = if (movementModeEnum == MovementModeEnum.FIXED) {
+                MovementModeEnum.DEPLOYED
+            } else {
+                movementModeEnum
+            }
+
+            return contents[movementMode]
                 ?: throw Exception("Couldn't find modifier for $movementModeEnum")
         }
 
@@ -340,7 +346,7 @@ class Tables {
 
         fun get(posture: PostureEnum): MovementModeEnum {
             return data[posture]
-                ?: throw Exception("Couldn't find movement mode for posture ${posture.toString()}")
+                ?: throw Exception("Couldn't find movement mode for posture $posture")
         }
 
         fun getWeakestMovementMode(defenderPostureEnums : List<PostureEnum>) : MovementModeEnum {
@@ -388,6 +394,8 @@ class Tables {
             data[PostureEnum.RDEF] = MovementModeEnum.DEPLOYED
             data[PostureEnum.ASL] = MovementModeEnum.DEPLOYED
             data[PostureEnum.FASL] = MovementModeEnum.DEPLOYED
+
+            data[PostureEnum.REFT] = MovementModeEnum.FIXED
 
             return data
         }
