@@ -27,9 +27,11 @@ class FixedCombatModifierSelectionActivity : AppCompatActivity() {
         val defenderHalfEngaged = findViewById<CheckBox>(R.id.defenderHalfEngaged)
         val defenderEngaged = findViewById<CheckBox>(R.id.defenderEngaged)
         val defenderSappers = findViewById<CheckBox>(R.id.defenderSappers)
+        val defenderHasSappers = findViewById<CheckBox>(R.id.defenderHasSappers)
 
         val attackerAdvanceAxisView = findViewById<CheckBox>(R.id.attackerAdvanceAxis)
         val attackerSappers = findViewById<CheckBox>(R.id.attackerSappers)
+        val attackerHasSappers = findViewById<CheckBox>(R.id.attackerHasSappers)
         val attackerRecce = findViewById<CheckBox>(R.id.attackerRecce)
         val attackerHalfEngaged = findViewById<CheckBox>(R.id.attackerHalfEngaged)
 
@@ -54,7 +56,9 @@ class FixedCombatModifierSelectionActivity : AppCompatActivity() {
         buttonMap[defenderAdvanceAxisView] = FixedModifierEnum.PACT_DEFENDING_REAR
         buttonMap[natoDefendView] = FixedModifierEnum.NATO_DEFENDS_MULTI_COUNTRY
         buttonMap[defenderSappers] = FixedModifierEnum.DEFENDER_USES_SAPPERS
+        buttonMap[defenderHasSappers] = FixedModifierEnum.DEFENDER_HAS_SAPPERS
         buttonMap[attackerSappers] = FixedModifierEnum.ATTACKER_USES_SAPPERS
+        buttonMap[attackerHasSappers] = FixedModifierEnum.ATTACKER_HAS_SAPPERS
         buttonMap[attackerRecce] = FixedModifierEnum.ATTACKER_USES_REC
         buttonMap[attackerHalfEngaged] = FixedModifierEnum.ATTACKER_HALF_ENGAGED
 

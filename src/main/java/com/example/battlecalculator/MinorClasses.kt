@@ -134,7 +134,9 @@ class FixedModifiers() {
         map[FixedModifierEnum.ATTACKER_FRONT_LINE_COMMAND] = 2
         map[FixedModifierEnum.ATTACKER_USES_REC] = 2
         map[FixedModifierEnum.ATTACKER_USES_SAPPERS] = 2
+        map[FixedModifierEnum.ATTACKER_HAS_SAPPERS] = 0
         map[FixedModifierEnum.DEFENDER_USES_SAPPERS] = -1
+        map[FixedModifierEnum.DEFENDER_HAS_SAPPERS] = 0
 
         return map
     }

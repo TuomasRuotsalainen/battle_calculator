@@ -140,10 +140,16 @@ class Calculator() {
         // Terrain is in other function
 
         // 15.6.6 Defensive works
+        // TODO defensive works not working
         if (state.hexTerrain != null) {
             defensiveWorksModifier = state.hexTerrain!!.getDefensiveWorksCombatModifier()
             if (defensiveWorksModifier > 0) {
                 explanation += "Defensive works: $defensiveWorksModifier\n"
+                if (state.activeFixedModifiers.contains(FixedModifierEnum.ATTACKER_HAS_SAPPERS)) {
+                    val reductionValue = 2
+                    explanation += "Attacker's sappers defensive works reduction: $reductionValue\n"
+                    defensiveWorksModifier += reductionValue
+                }
             }
         }
 
