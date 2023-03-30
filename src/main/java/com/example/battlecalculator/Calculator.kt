@@ -140,10 +140,9 @@ class Calculator() {
         // Terrain is in other function
 
         // 15.6.6 Defensive works
-        // TODO defensive works not working
         if (state.hexTerrain != null) {
             defensiveWorksModifier = state.hexTerrain!!.getDefensiveWorksCombatModifier()
-            if (defensiveWorksModifier > 0) {
+            if (defensiveWorksModifier < 0) {
                 explanation += "Defensive works: $defensiveWorksModifier\n"
                 if (state.activeFixedModifiers.contains(FixedModifierEnum.ATTACKER_HAS_SAPPERS)) {
                     val reductionValue = 2
@@ -245,18 +244,20 @@ class Calculator() {
 
             val natoChemTurn = state.conditions.getChemWarfareTurnForNato()
             if (natoChemTurn != null) {
-                var modifier = when (natoChemTurn) {
-                    in 1..8 -> 2
-                    in 9..100 -> 1
-                    else -> throw Exception("Unrecognized turn")
-                }
+                if (natoChemTurn > 0) {
+                    var modifier = when (natoChemTurn) {
+                        in 1..8 -> 2
+                        in 9..100 -> 1
+                        else -> throw Exception("Unrecognized turn")
+                    }
 
-                if (state.activeAlliance == Alliances.PACT) {
-                    modifier = -modifier
-                }
+                    if (state.activeAlliance == Alliances.PACT) {
+                        modifier = -modifier
+                    }
 
-                explanation += "NATO using chemical weapons (turn $chemTurn): $modifier\n"
-                chemModifier += modifier
+                    explanation += "NATO using chemical weapons (turn $chemTurn): $modifier\n"
+                    chemModifier += modifier
+                }
             }
 
         }

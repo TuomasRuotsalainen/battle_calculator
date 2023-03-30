@@ -141,7 +141,7 @@ class CombatResolutionActivity : AppCompatActivity() {
                     calculator.calculateCurrentCombatDifferential(gameState).first + attackerCs!! + defenderCs!!
                 }"
             } else if (stage.get() == STAGE_DISPLAY_BATTLE_RESULTS) {
-                finalResults = ""
+                finalResults = "Combat roll: ${combatRoll.get()}\n\n"
                 finalResults += "Attrition to the attacking unit: ${groundCombatResult!!.attackerAttrition}\n" +
                         "Attrition to all defending units: ${groundCombatResult!!.defenderAttrition}\n"
                 if (gameState.areSappersHit(groundCombatResult!!)) {

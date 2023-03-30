@@ -60,6 +60,19 @@ class GameState(stateString : String) {
     var adjacentAttackerCount : Int? = getAdjacentAttackerUnits()
     var combatSupport : CombatSupportSelection? = getCombatSupportSelection()
 
+    fun reset() {
+        attackingUnit = null
+        attackType = null
+        riverCrossingType = null
+        defendingUnits = mutableListOf()
+        hexTerrain = null
+        activeFixedModifiers = ActiveFixedModifiers(mutableListOf())
+        adjacentAttackerCount = null
+        adjacentDefenderCount = null
+        combatSupport = null
+
+    }
+
     // Boolean indicates whether all units that are out of command are in screen or rec posture
     fun getCommandState(isAttacker : Boolean) : Pair<CommandStateEnum, Boolean> {
         if (isAttacker) {

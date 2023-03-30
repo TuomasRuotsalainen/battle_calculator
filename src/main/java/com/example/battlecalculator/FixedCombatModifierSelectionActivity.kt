@@ -42,9 +42,11 @@ class FixedCombatModifierSelectionActivity : AppCompatActivity() {
             defenderOptions.removeView(natoDefendView)
             attackerOptions.removeView(attackerAdvanceAxisView)
             attackerOptions.removeView(attackerSappers)
+            attackerOptions.removeView(attackerHasSappers)
         } else {
             defenderOptions.removeView(defenderAdvanceAxisView)
             defenderOptions.removeView(defenderSappers)
+            defenderOptions.removeView(defenderHasSappers)
         }
 
         val buttonMap : HashMap<CheckBox, FixedModifierEnum> = HashMap()
@@ -69,6 +71,15 @@ class FixedCombatModifierSelectionActivity : AppCompatActivity() {
 
         for ((key, modifier) in buttonMap ) {
             key.setOnClickListener {
+                when (key.id) {
+                    R.id.attackerHasSappers -> { if (!attackerHasSappers.isChecked) { attackerSappers.isChecked = false} }
+                    R.id.defenderHasSappers -> { if (!defenderHasSappers.isChecked) { defenderSappers.isChecked = false} }
+                    R.id.attackerSappers -> { if (!attackerHasSappers.isChecked) { attackerSappers.isChecked = false} }
+                    R.id.defenderSappers -> { if (!defenderHasSappers.isChecked) { defenderSappers.isChecked = false} }
+                    R.id.defenderHalfEngaged -> { if (defenderHalfEngaged.isChecked) { defenderEngaged.isChecked = false} }
+                    R.id.defenderEngaged -> { if (defenderEngaged.isChecked) { defenderHalfEngaged.isChecked = false} }
+                }
+
                 gameState.activeFixedModifiers.map[modifier] = key.isChecked
                 updateText()
             }

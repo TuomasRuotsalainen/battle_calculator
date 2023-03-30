@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         var gameState = getGameStateIfExists(intent)
+        gameState?.reset()
 
         val natoSelection = findViewById<RadioButton>(R.id.faction_selection_nato)
         val pactSelection = findViewById<RadioButton>(R.id.faction_selection_pact)
