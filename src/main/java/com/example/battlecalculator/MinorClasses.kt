@@ -116,6 +116,36 @@ class FixedModifiers() {
             ?: throw Exception("Couldn't find fixed modifier for enum $fixedModifierEnum")
     }
 
+    fun getCommandStateModifier(unitState: UnitState) : Int {
+        if (unitState.attackType == null) {
+            // Defender
+            return when (unitState.commandState) {
+                CommandStateEnum.NORMAL -> 0
+                CommandStateEnum.OUT_OF_COMMAND -> { if (unitState.isScreenOrRec()) {
+                        getModifier(FixedModifierEnum.DEFENDER_OUT_OF_COMMAND_SCREEN_REC)
+                    } else {
+                        getModifier(FixedModifierEnum.DEFENDER_OUT_OF_COMMAND)
+                    }
+                }
+                CommandStateEnum.FRONT_LINE_COMMAND -> getModifier(FixedModifierEnum.DEFENDER_FRONT_LINE_COMMAND)
+                else -> throw Exception("Weird commandstate")
+            }
+        } else {
+            // Attacker
+            return when (unitState.commandState) {
+                CommandStateEnum.NORMAL -> 0
+                CommandStateEnum.OUT_OF_COMMAND -> { if (unitState.isScreenOrRec()) {
+                    getModifier(FixedModifierEnum.ATTACKER_OUT_OF_COMMAND_SCREEN_REC)
+                } else {
+                    getModifier(FixedModifierEnum.ATTACKER_OUT_OF_COMMAND)
+                }
+                }
+                CommandStateEnum.FRONT_LINE_COMMAND -> getModifier(FixedModifierEnum.ATTACKER_FRONT_LINE_COMMAND)
+                else -> throw Exception("Weird commandstate")
+            }
+        }
+    }
+
     private fun initMap() : HashMap<FixedModifierEnum, Int> {
         val map = HashMap<FixedModifierEnum, Int>()
         map[FixedModifierEnum.NATO_DEFENDS_MULTI_COUNTRY] = 2

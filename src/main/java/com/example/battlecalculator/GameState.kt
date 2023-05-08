@@ -73,8 +73,9 @@ class GameState(stateString : String) {
 
     }
 
+
     // Boolean indicates whether all units that are out of command are in screen or rec posture
-    fun getCommandState(isAttacker : Boolean) : Pair<CommandStateEnum, Boolean> {
+    /*fun getCommandState(isAttacker : Boolean) : Pair<CommandStateEnum, Boolean> {
         if (isAttacker) {
             return Pair(attackingUnit!!.commandState!!, attackingUnit!!.isScreenOrRec())
         }
@@ -104,7 +105,7 @@ class GameState(stateString : String) {
         }
 
         return Pair(CommandStateEnum.NORMAL, false)
-    }
+    }*/
 
     fun areSappersHit(result : Tables.GroundCombatResult) : Boolean {
         if (result.attackerSapperEliminated) {
@@ -475,6 +476,7 @@ class GameState(stateString : String) {
         //var engagementState : EngagementStateEnum? = null
         var disengagementOrdered : Boolean = false
         var attritionFromCombat : Int = 0
+        var attackType : AttackTypeEnum? = null
 
         val nullVal = "null"
 
@@ -485,8 +487,8 @@ class GameState(stateString : String) {
             }
         }
 
-        if (properties.size != 6) {
-            throw Exception("Properties size of unit string $str is not 6")
+        if (properties.size != 7) {
+            throw Exception("Properties size of unit string $str is not 7")
         }
 
         val postureStr = properties[1]
@@ -520,12 +522,17 @@ class GameState(stateString : String) {
             attritionFromCombat = attritionFromCombatStr.toInt()
         }
 
-        return UnitState(unit, posture, attrition, commandState, disengagementOrdered, attritionFromCombat)
+        val attackTypeStr = properties[6]
+        if (attackTypeStr != nullVal) {
+            attackType = getAttackTypeFromString(attackTypeStr)
+        }
+
+        return UnitState(unit, posture, attrition, commandState, disengagementOrdered, attritionFromCombat, attackType)
 
     }
 }
 
-class UnitState(unitInput : Unit?, postureInput: PostureEnum?, attrition: Int?, commandStateEnum: CommandStateEnum?, disengagementOrdered : Boolean, attritionFromCombat : Int) {
+class UnitState(unitInput : Unit?, postureInput: PostureEnum?, attrition: Int?, commandStateEnum: CommandStateEnum?, disengagementOrdered : Boolean, attritionFromCombat : Int, attackTypeEnum: AttackTypeEnum?) {
     val unit = unitInput
     var posture = postureInput
     var attrition = attrition
@@ -533,6 +540,7 @@ class UnitState(unitInput : Unit?, postureInput: PostureEnum?, attrition: Int?, 
     //var engagementState = engagementStateEnum
     var disengagementOrdered = disengagementOrdered
     var attritionFromCombat = attritionFromCombat
+    var attackType = attackTypeEnum
 
     fun isInfantryOutInTheOpen() : Boolean {
         if (unit?.eatsArmourInCity() == true || unit?.type == UnitTypeEnum.RECON) {
@@ -592,6 +600,8 @@ class UnitState(unitInput : Unit?, postureInput: PostureEnum?, attrition: Int?, 
         unitStr += "-$disengagementOrdered"
 
         unitStr += "-$attritionFromCombat"
+
+        unitStr += "-$attackType"
 
         return unitStr
     }

@@ -1,24 +1,99 @@
 package com.example.battlecalculator
 
 class Calculator() {
-    fun getInitialAttackDifferential(unit : Unit, posture : PostureEnum, attackTypeEnum: AttackTypeEnum): Int? {
+
+    fun getInitialDifferential(unitState : UnitState): Pair<Int?, String> {
+        var explanation = "Initial combat differential:\n"
+
         val postures = Postures()
+        val fixedModifiers = FixedModifiers()
         // Note, that defender type influences this as well
-        val unitPosture = postures.getPosture(posture)
-        if (unitPosture.attack == null) {
-            return null
+        val unitPosture = postures.getPosture(unitState.posture!!)
+        if (unitPosture.attack == null && unitState.attackType != null) {
+            return Pair(null, "A unit can't attack with this posture!")
         }
 
-        val attackTypeDifferential = AttackType().getCombatModifier(attackTypeEnum)
+        val fightingValue : Int
+        val postureDifferential : Int
+        var mpExplanation = ""
+        var differential = 0
 
-        return unitPosture.attack + unit.attack + attackTypeDifferential
+        if (unitState.attackType == null) {
+            fightingValue = unitState.unit!!.defense
+            postureDifferential = unitPosture.defense
+        } else {
+            fightingValue = unitState.unit!!.attack
+            val attackTypeModifier = AttackType().getCombatModifier(unitState.attackType!!)
+            explanation += "$attackTypeModifier (attack type) "
+            postureDifferential = unitPosture.attack!!
+            differential += attackTypeModifier
+            mpExplanation = "\n\nMP cost: ${AttackType().getMPCost(unitPosture.enum, unitState.attackType!!)}"
+
+        }
+
+        val commandStateDifferential = fixedModifiers.getCommandStateModifier(unitState)
+
+        differential += fightingValue
+
+        explanation += "+ $postureDifferential (posture) + $fightingValue (unit)"
+        explanation += " - ${unitState.attrition} (attrition)"
+
+        differential += postureDifferential
+        differential -= unitState.attrition!!
+
+        if (commandStateDifferential != 0) {
+            differential += commandStateDifferential
+            explanation += "\n+ $commandStateDifferential (command state)"
+        }
+
+
+        explanation += "\n Total = $differential"
+
+        explanation += mpExplanation
+
+        return Pair(differential, explanation)
     }
 
-
+    /*
     fun getInitialDefenseDifferential(unit : Unit, posture : PostureEnum): Int {
         val postures = Postures()
         return unit.defense + (-postures.getPosture(posture).defense)
     }
+
+
+    fun calculateUnitsDifferential(unitState: UnitState, attackTypeEnum: AttackTypeEnum?, commandStateEnum: CommandStateEnum): Pair<Int, String> {
+
+        val posture = Postures().getPosture(unitState.posture!!)
+
+        var explanation = ""
+        val differential : Int?
+
+        if (attackTypeEnum != null) {
+            if (posture.attack == null) {
+                throw Exception("Unit with posture ${posture.enum} is not able to conduct attacks!")
+            }
+
+            val attackType = AttackType()
+
+            // TODO should we add command state here as well?
+            differential = this.getInitialDifferential(unitState.unit!!, unitState.posture!!, attackTypeEnum)
+
+            if (differential == null) {
+                throw Exception("Tried to calculate attack differential for posture ${posture}")
+            }
+
+            explanation = "Initial attack differential:\n${unitState.unit.attack} (unit) + ${posture.attack} (posture) + ${
+                attackType.getCombatModifier(
+                    attackTypeEnum
+                )
+            } (attack type)\n=$differential \n\nMP cost: ${attackType.getMPCost(posture.enum, attackTypeEnum)} (prepared assault)"
+        } else {
+            differential = this.getInitialDefenseDifferential(unitState.unit!!, posture.enum)
+            explanation = "Initial defense differential:\n${unitState.unit.defense} (unit) + ${posture.defense} (posture) \n=$differential"
+        }
+
+        return Pair(differential, explanation)
+    }*/
 
     fun calculateCurrentCombatDifferential(state: GameState): Pair<Int,String> {
         var explanation = ""
@@ -127,6 +202,8 @@ class Calculator() {
         // 15.6.14 Engagement
         // 15.6.15 Delay
         // 15.6.20 WP Advance Axis
+        // 15.6.18 Out of Command
+        // 15.6.19 Front-Line command
         val fixedModifiers = FixedModifiers()
         var fixedModifierCounter = 0
         for (fixedModifier in FixedModifierEnum.values()) {
@@ -264,7 +341,7 @@ class Calculator() {
 
         // 15.6.18 Out of Command
         // 15.6.19 Front-Line command
-        val attackerCommandState = state.getCommandState(true)
+        /*val attackerCommandState = state.getCommandState(true)
         val defenderCommandState = state.getCommandState(false)
 
         val attackerCommandStateModifier = when (attackerCommandState.first) {
@@ -304,32 +381,13 @@ class Calculator() {
         }
 
         val totalCommandModifier = attackerCommandStateModifier + defenderCommandStateModifier
-
+        */
 
         explanation += "Adjacent units total: $adjacencyModifier\n"
 
-        val total = cadreModifier + defensiveWorksModifier + attritionModifier + adjacencyModifier + fixedModifierCounter + attackTypeModifier + weatherModifier + chemModifier + totalCommandModifier
+        val total = cadreModifier + defensiveWorksModifier + attritionModifier + adjacencyModifier + fixedModifierCounter + attackTypeModifier + weatherModifier + chemModifier
 
         return Pair(total, explanation)
-    }
-
-
-    private fun calculateCommandStateDifferential(unitInQuestion : UnitState, isAttacker : Boolean, gameState: GameState): Int {
-        if (unitInQuestion.unit == null) {
-            throw Exception("calculateCommandStateDifferential: unit is null")
-        }
-
-        if (unitInQuestion.commandState == null) {
-            throw Exception("calculateCommandStateDifferential: commandState is null")
-        }
-
-        if (isAttacker) {
-
-        }
-
-        // TODO finish this
-
-        return 0
     }
 
     private fun calculateCombatStrength(unitInQuestion : UnitState, opposingUnits : List<UnitState>, terrain : HexTerrain, isAttacking : Boolean) : Int {

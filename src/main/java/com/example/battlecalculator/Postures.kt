@@ -116,6 +116,16 @@ fun getCommandStateFromString(str : String) : CommandStateEnum {
     throw Exception("Couldn't convert $str to command state enum")
 }
 
+fun getAttackTypeFromString(str : String) : AttackTypeEnum {
+    for (enum in AttackTypeEnum.values()) {
+        if (str == enum.toString()) {
+            return enum
+        }
+    }
+
+    throw Exception("Couldn't convert $str to attack type enum")
+}
+
 fun getEngagementStateFromString(str : String) : EngagementStateEnum {
     for (enum in EngagementStateEnum.values()) {
         if (str == enum.toString()) {

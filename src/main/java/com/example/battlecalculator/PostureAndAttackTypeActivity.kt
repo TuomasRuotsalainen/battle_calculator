@@ -45,6 +45,8 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
             currentUnitState.attrition = newAttrition
         }
 
+        val textView = findViewById<TextView>(R.id.combatDifferential)
+
         fun setCommandStateButtons() {
             val normal = findViewById<RadioButton>(R.id.radio_command_status_none)
             val frontLine = findViewById<RadioButton>(R.id.radio_command_status_front_line)
@@ -58,6 +60,8 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
                     frontLine.isChecked = false
                     outOfCommand.isChecked = false
                     currentUnitState.commandState = CommandStateEnum.NORMAL
+                    val textContent = getTextViewString(currentUnitState)
+                    textView.text = textContent
 
                 }
             }
@@ -67,6 +71,8 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
                     normal.isChecked = false
                     outOfCommand.isChecked = false
                     currentUnitState.commandState = CommandStateEnum.FRONT_LINE_COMMAND
+                    val textContent = getTextViewString(currentUnitState)
+                    textView.text = textContent
                 }
             }
 
@@ -75,6 +81,8 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
                     normal.isChecked = false
                     frontLine.isChecked = false
                     currentUnitState.commandState = CommandStateEnum.OUT_OF_COMMAND
+                    val textContent = getTextViewString(currentUnitState)
+                    textView.text = textContent
                 }
             }
 
@@ -138,9 +146,7 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
         currentUnitView.setImageDrawable(currentUnitDrawable)
 
         val postures = Postures()
-        val calculator = Calculator()
 
-        val textView = findViewById<TextView>(R.id.combatDifferential)
 
         var selectedPosture : PostureEnum
 
@@ -157,6 +163,7 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
 
         postureAssault.isChecked = true
         selectedPosture = PostureEnum.ASL
+        currentUnitState.posture = PostureEnum.ASL
 
         val postureRadios = listOf(
             postureAssault, postureMarchAssault, postureFullAssault, postureRecon, postureRefit,
@@ -167,7 +174,8 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
                 uncheckAllPostureRadios(postureRadios)
                 postureRadio.isChecked = true
                 selectedPosture = postures.getPostureEnumByStr(postureRadio.text.toString())
-                val textContent = getTextViewString(currentUnitState.unit, gameState.attackType!!, selectedPosture, calculator, unitSelectionType, currentUnitState.commandState!!)
+                currentUnitState.posture = selectedPosture
+                val textContent = getTextViewString(currentUnitState)
                 textView.text = textContent
 
             }
@@ -179,18 +187,19 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
 
             hasty.isChecked = true
             gameState.attackType = AttackTypeEnum.HASTY
+            currentUnitState.attackType = AttackTypeEnum.HASTY
 
             hasty.setOnClickListener {
                 prepared.isChecked = false
-                gameState.attackType = AttackTypeEnum.HASTY
-                val textContent = getTextViewString(currentUnitState.unit, gameState.attackType!!, selectedPosture, calculator, unitSelectionType, currentUnitState.commandState!!)
+                currentUnitState.attackType = AttackTypeEnum.HASTY
+                val textContent = getTextViewString(currentUnitState)
                 textView.text = textContent
             }
 
             prepared.setOnClickListener {
                 hasty.isChecked = false
-                gameState.attackType = AttackTypeEnum.PREPARED
-                val textContent = getTextViewString(currentUnitState.unit, gameState.attackType!!, selectedPosture, calculator, unitSelectionType, currentUnitState.commandState!!)
+                currentUnitState.attackType = AttackTypeEnum.PREPARED
+                val textContent = getTextViewString(currentUnitState)
                 textView.text = textContent
             }
 
@@ -203,7 +212,7 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
         setCommandStateButtons()
         //setEngagementStateButtons()
 
-        val textContent = getTextViewString(currentUnitState.unit, gameState.attackType!!, selectedPosture, calculator, unitSelectionType, currentUnitState.commandState!!)
+        val textContent = getTextViewString(currentUnitState)
         textView.text = textContent
 
         val applyButton = findViewById<Button>(R.id.groudcombatApply)
@@ -249,32 +258,10 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
 
     }
 
-    private fun getTextViewString(unit: Unit, attack: AttackTypeEnum, postureEnum: PostureEnum, calculator: Calculator, unitSelectionType: UnitSelectionTypes, commandStateEnum: CommandStateEnum): String {
-        // TODO implement this with calculator
 
-        val posture = Postures().getPosture(postureEnum)
+    private fun getTextViewString(unitState: UnitState): String {
 
-        return if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
-            if (posture.attack == null) {
-                return "Unit with posture ${posture.enum} is not able to conduct attacks!"
-            }
-
-            val attackType = AttackType()
-
-            // TODO should we add attrition here as well?
-            // TODO should we add command state here as well?
-            val initialDifferential = calculator.getInitialAttackDifferential(unit = unit, posture = posture.enum, attackTypeEnum = attack)
-
-            "Initial attack differential:\n${unit.attack} (unit) + ${posture.attack} (posture) + ${
-                attackType.getCombatModifier(
-                    attack
-                )
-            } (attack type)\n=$initialDifferential \n\nMP cost: ${attackType.getMPCost(posture.enum, attack)} (prepared assault)"
-        } else {
-            val initialDifferential = calculator.getInitialDefenseDifferential(unit, posture.enum)
-            "Initial defense differential:\n${unit.defense} (unit) + ${posture.defense} (posture) \n=$initialDifferential"
-        }
-
+        return Calculator().getInitialDifferential(unitState).second
     }
 
     private fun uncheckAllPostureRadios(postureRadios: List<RadioButton>) {
