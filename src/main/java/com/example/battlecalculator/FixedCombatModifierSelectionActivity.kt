@@ -15,6 +15,8 @@ class FixedCombatModifierSelectionActivity : AppCompatActivity() {
         setContentView(R.layout.activity_fixed_combat_modifiers)
 
         val gameState = getGameState(intent)
+        gameState.setCommandStateFixedModifiers()
+
         val calculator = Calculator()
 
         val defenderOptions = findViewById<LinearLayout>(R.id.defenderOptionsLayout)

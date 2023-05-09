@@ -6,24 +6,25 @@ import android.util.Log
 import androidx.core.os.persistableBundleOf
 import com.example.battlecalculator.BuildConfig.DEBUG
 import com.example.battlecalculator.Helpers.General.strToBool
+import kotlin.math.abs
 
 
 /*
 
 stateString example
-Z=0300;S=1,AU=12J-MASL;DU=13-DEF,14-ROAD,4-ROAD,AT=HASTY,HEX=PLAIN,FOREST,DEFENSE1,MINORRIVER;ACT=NATO;FIXED=ATTACKER_HALF_ENGAGED,PACT_DEFENDING_REAR
+Z=0300;S=1,AU=12J-MASL;DU=13-DEF,14-ROAD,4-ROAD,HEX=PLAIN,FOREST,DEFENSE1,MINORRIVER;ACT=NATO;FIXED=ATTACKER_HALF_ENGAGED,PACT_DEFENDING_REAR
 zulu time = 03:00, state = 1, attacking unit id = 12J, unit ids in target hex 13,14,4
 
 */
 
 fun GameState(conditions: Conditions) : GameState {
     val conditionString = conditions.toStateString()
-    val stateStr = "CON=$conditionString;AU=null;DU=null;AT=null;HEX=null;ACT=NATO;FIXED=null;ADJ_AT=null;ADJ_DEF=null;COM_SUP=null"
+    val stateStr = "CON=$conditionString;AU=null;DU=null;HEX=null;ACT=NATO;FIXED=null;ADJ_AT=null;ADJ_DEF=null;COM_SUP=null"
     return GameState(stateStr)
 }
 
 fun getMockGameState(): GameState {
-    val stateStr = "CON=H03-false-true-false-false;S=1;AU=74-ASL-false;DU=34-RDEF-false,74g-DEF-false;AT=HASTY;HEX=null;ACT=NATO;FIXED=ATTACKER_HALF_ENGAGED,PACT_DEFENDING_REAR;ADJ_AT=1;ADJ_DEF=1;COM_SUP=DEF-2-2,3,0-2-true&AT-0-0,0,0-5-false"
+    val stateStr = "CON=H03-false-true-false-false;S=1;AU=74-ASL-false;DU=34-RDEF-false,74g-DEF-false;HEX=null;ACT=NATO;FIXED=ATTACKER_HALF_ENGAGED,PACT_DEFENDING_REAR;ADJ_AT=1;ADJ_DEF=1;COM_SUP=DEF-2-2,3,0-2-true&AT-0-0,0,0-5-false"
     return GameState(stateStr)
 }
 
@@ -42,7 +43,7 @@ fun getGameStateIfExists(intent : Intent) : GameState? {
 class GameState(stateString : String) {
 
     private enum class DataIDs {
-        AU, DU, AT, HEX, ACT, FIXED, ADJ_AT, ADJ_DEF, COM_SUP, CON
+        AU, DU, HEX, ACT, FIXED, ADJ_AT, ADJ_DEF, COM_SUP, CON
     }
 
     private val dataMap = getDataMap(stateString)
@@ -50,7 +51,7 @@ class GameState(stateString : String) {
 
     var conditions : Conditions = createConditions(dataMap[DataIDs.CON.toString()]!!)
     var attackingUnit : UnitState? = getAttackUnitStates()
-    var attackType : AttackTypeEnum? = getAttackTypeEnum()
+    //var attackType : AttackTypeEnum? = getAttackTypeEnum()
     var riverCrossingType : RiverCrossingTypeEnum? = getRiverCrossingTypeEnum()
     var defendingUnits : MutableList<UnitState> = getDefUnitsStates()
     var hexTerrain : HexTerrain? = getHexTerrainState()
@@ -62,7 +63,7 @@ class GameState(stateString : String) {
 
     fun reset() {
         attackingUnit = null
-        attackType = null
+        //attackType = null
         riverCrossingType = null
         defendingUnits = mutableListOf()
         hexTerrain = null
@@ -71,6 +72,59 @@ class GameState(stateString : String) {
         adjacentDefenderCount = null
         combatSupport = null
 
+    }
+
+    fun setCommandStateFixedModifiers() {
+        activeFixedModifiers.remove(FixedModifierEnum.ATTACKER_FRONT_LINE_COMMAND)
+        activeFixedModifiers.remove(FixedModifierEnum.ATTACKER_OUT_OF_COMMAND)
+        activeFixedModifiers.remove(FixedModifierEnum.ATTACKER_OUT_OF_COMMAND_SCREEN_REC)
+        activeFixedModifiers.remove(FixedModifierEnum.DEFENDER_FRONT_LINE_COMMAND)
+        activeFixedModifiers.remove(FixedModifierEnum.DEFENDER_OUT_OF_COMMAND)
+        activeFixedModifiers.remove(FixedModifierEnum.DEFENDER_OUT_OF_COMMAND_SCREEN_REC)
+
+        if (attackingUnit!!.commandState == CommandStateEnum.OUT_OF_COMMAND) {
+            if (attackingUnit!!.isScreenOrRec()) {
+                activeFixedModifiers.add(FixedModifierEnum.ATTACKER_OUT_OF_COMMAND)
+            } else {
+                activeFixedModifiers.add(FixedModifierEnum.ATTACKER_OUT_OF_COMMAND_SCREEN_REC)
+            }
+        } else if (attackingUnit!!.commandState == CommandStateEnum.FRONT_LINE_COMMAND) {
+            activeFixedModifiers.add(FixedModifierEnum.ATTACKER_FRONT_LINE_COMMAND)
+        }
+
+        val fixedModifiers = FixedModifiers()
+
+        val activeDefenderCommandStates = mutableListOf<FixedModifierEnum?>()
+
+        for (defendingUnit in defendingUnits) {
+            val modifier = fixedModifiers.getCommandStateModifier(defendingUnit)
+            activeDefenderCommandStates.add(modifier.second)
+        }
+
+        var frontLineCommandCount = 0
+        var worstOutOfCommandSituation : FixedModifierEnum? = null
+
+        for (commandState in activeDefenderCommandStates) {
+            when (commandState) {
+                null -> {}
+                FixedModifierEnum.DEFENDER_FRONT_LINE_COMMAND -> frontLineCommandCount += 1
+                FixedModifierEnum.DEFENDER_OUT_OF_COMMAND -> {
+                    worstOutOfCommandSituation = FixedModifierEnum.DEFENDER_OUT_OF_COMMAND
+                }
+                FixedModifierEnum.DEFENDER_OUT_OF_COMMAND_SCREEN_REC -> {
+                    if (worstOutOfCommandSituation == null) {
+                        worstOutOfCommandSituation = FixedModifierEnum.DEFENDER_OUT_OF_COMMAND_SCREEN_REC
+                    }
+                }
+                else -> {}
+            }
+        }
+
+        if (worstOutOfCommandSituation == null && frontLineCommandCount == defendingUnits.size) {
+            activeFixedModifiers.add(FixedModifierEnum.DEFENDER_FRONT_LINE_COMMAND)
+        } else if (worstOutOfCommandSituation != null) {
+            activeFixedModifiers.add(worstOutOfCommandSituation)
+        }
     }
 
 
@@ -175,7 +229,7 @@ class GameState(stateString : String) {
         val conditionsStr = conditions.toStateString()
         val attackingUnitStr = getAttackUnitStr()
         val defendingUnitsStr = getDefUnitsStr()
-        val attackTypeStr = getAttackTypeStr()
+        //val attackTypeStr = getAttackTypeStr()
         val hexTerrainStr = getHexTerrainStateStr()
         val allianceStr = getAllianceStr()
         val activeFixedModifiersStr = getActiveFixedModifiersStr()
@@ -183,7 +237,7 @@ class GameState(stateString : String) {
         val adjacentAttackerCountStr = getAdjacentAttackerCountStr()
         val combatSupportSelectionStr = getCombatSupportSelectionStr()
 
-        return "CON=$conditionsStr;AU=$attackingUnitStr;DU=$defendingUnitsStr;AT=$attackTypeStr;HEX=$hexTerrainStr;ACT=$allianceStr;FIXED=$activeFixedModifiersStr;ADJ_DEF=$adjacentDefenderCountStr;ADJ_AT=$adjacentAttackerCountStr;COM_SUP=$combatSupportSelectionStr"
+        return "CON=$conditionsStr;AU=$attackingUnitStr;DU=$defendingUnitsStr;HEX=$hexTerrainStr;ACT=$allianceStr;FIXED=$activeFixedModifiersStr;ADJ_DEF=$adjacentDefenderCountStr;ADJ_AT=$adjacentAttackerCountStr;COM_SUP=$combatSupportSelectionStr"
     }
 
     fun setDefendingUnit(unitState : UnitState) {
@@ -385,6 +439,7 @@ class GameState(stateString : String) {
         return RiverCrossingTypeEnum.NONE
     }
 
+    /*
     private fun getAttackTypeEnum() : AttackTypeEnum? {
         val attackTypeStr = dataMap[DataIDs.AT.toString()]
             ?: throw Exception("Attack type AT is not defined")
@@ -401,15 +456,16 @@ class GameState(stateString : String) {
 
         throw Exception("Attack type $attackTypeStr not recognized")
 
-    }
+    }*/
 
+    /*
     private fun getAttackTypeStr() : String {
         if (attackType == null) {
             return "null"
         }
 
         return attackType.toString()
-    }
+    }*/
 
     private fun getAllianceStr() : String {
         return activeAlliance.toString()

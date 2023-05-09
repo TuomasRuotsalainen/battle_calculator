@@ -75,16 +75,28 @@ class ActiveFixedModifiers(list : MutableList<FixedModifierEnum>) {
     }
 
     // EW Effects 24.4.2 E3
-    fun applyEW(attackerEWResult: Tables.EWResult, defenderEWResult: Tables.EWResult) {
+    fun applyEW(attackerEWResult: Tables.EWResult, defenderEWResult: Tables.EWResult, gameState: GameState) {
         if (attackerEWResult.effects.contains(EwEffectEnum.ENEMY_COMMAND_DISRUPTED)) {
-            this.add(FixedModifierEnum.DEFENDER_OUT_OF_COMMAND)
-            this.add(FixedModifierEnum.DEFENDER_OUT_OF_COMMAND_SCREEN_REC)
+            for (defendingUnit in gameState.defendingUnits) {
+                if (!defendingUnit.isScreenOrRec()) {
+                    this.remove(FixedModifierEnum.DEFENDER_OUT_OF_COMMAND_SCREEN_REC)
+                    this.add(FixedModifierEnum.DEFENDER_OUT_OF_COMMAND)
+                    break
+                }
+
+                this.remove(FixedModifierEnum.DEFENDER_OUT_OF_COMMAND)
+                this.add(FixedModifierEnum.DEFENDER_OUT_OF_COMMAND_SCREEN_REC)
+            }
+
             this.remove(FixedModifierEnum.DEFENDER_FRONT_LINE_COMMAND)
         }
 
         if (defenderEWResult.effects.contains(EwEffectEnum.ENEMY_COMMAND_DISRUPTED)) {
-            this.add(FixedModifierEnum.ATTACKER_OUT_OF_COMMAND)
-            this.add(FixedModifierEnum.ATTACKER_OUT_OF_COMMAND_SCREEN_REC)
+            if (gameState.attackingUnit!!.isScreenOrRec()) {
+                this.add(FixedModifierEnum.ATTACKER_OUT_OF_COMMAND_SCREEN_REC)
+            } else {
+                this.add(FixedModifierEnum.ATTACKER_OUT_OF_COMMAND)
+            }
             this.remove(FixedModifierEnum.ATTACKER_FRONT_LINE_COMMAND)
         }
     }
@@ -111,36 +123,37 @@ class ActiveFixedModifiers(list : MutableList<FixedModifierEnum>) {
 class FixedModifiers() {
     val map : HashMap<FixedModifierEnum, Int> = initMap()
 
-    fun getModifier(fixedModifierEnum: FixedModifierEnum): Int {
-        return map[fixedModifierEnum]
+    fun getModifierPair(fixedModifierEnum: FixedModifierEnum): Pair<Int, FixedModifierEnum> {
+        val modifier = map[fixedModifierEnum]
             ?: throw Exception("Couldn't find fixed modifier for enum $fixedModifierEnum")
+        return Pair(modifier, fixedModifierEnum)
     }
 
-    fun getCommandStateModifier(unitState: UnitState) : Int {
+    fun getCommandStateModifier(unitState: UnitState) : Pair<Int, FixedModifierEnum?> {
         if (unitState.attackType == null) {
             // Defender
             return when (unitState.commandState) {
-                CommandStateEnum.NORMAL -> 0
+                CommandStateEnum.NORMAL -> Pair(0, null)
                 CommandStateEnum.OUT_OF_COMMAND -> { if (unitState.isScreenOrRec()) {
-                        getModifier(FixedModifierEnum.DEFENDER_OUT_OF_COMMAND_SCREEN_REC)
+                        getModifierPair(FixedModifierEnum.DEFENDER_OUT_OF_COMMAND_SCREEN_REC)
                     } else {
-                        getModifier(FixedModifierEnum.DEFENDER_OUT_OF_COMMAND)
+                        getModifierPair(FixedModifierEnum.DEFENDER_OUT_OF_COMMAND)
                     }
                 }
-                CommandStateEnum.FRONT_LINE_COMMAND -> getModifier(FixedModifierEnum.DEFENDER_FRONT_LINE_COMMAND)
+                CommandStateEnum.FRONT_LINE_COMMAND -> getModifierPair(FixedModifierEnum.DEFENDER_FRONT_LINE_COMMAND)
                 else -> throw Exception("Weird commandstate")
             }
         } else {
             // Attacker
             return when (unitState.commandState) {
-                CommandStateEnum.NORMAL -> 0
+                CommandStateEnum.NORMAL -> Pair(0, null)
                 CommandStateEnum.OUT_OF_COMMAND -> { if (unitState.isScreenOrRec()) {
-                    getModifier(FixedModifierEnum.ATTACKER_OUT_OF_COMMAND_SCREEN_REC)
+                    getModifierPair(FixedModifierEnum.ATTACKER_OUT_OF_COMMAND_SCREEN_REC)
                 } else {
-                    getModifier(FixedModifierEnum.ATTACKER_OUT_OF_COMMAND)
+                    getModifierPair(FixedModifierEnum.ATTACKER_OUT_OF_COMMAND)
                 }
                 }
-                CommandStateEnum.FRONT_LINE_COMMAND -> getModifier(FixedModifierEnum.ATTACKER_FRONT_LINE_COMMAND)
+                CommandStateEnum.FRONT_LINE_COMMAND -> getModifierPair(FixedModifierEnum.ATTACKER_FRONT_LINE_COMMAND)
                 else -> throw Exception("Weird commandstate")
             }
         }

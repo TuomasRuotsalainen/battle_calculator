@@ -36,6 +36,9 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
             throw Exception("Started a posture and attack type activity for defender when all defending units have a posture already")
         }
 
+        val textView = findViewById<TextView>(R.id.combatDifferential)
+
+
         val attritionField = findViewById<EditText>(R.id.attrition_text_input)
         attritionField.setText("0")
         currentUnitState.attrition = 0
@@ -43,9 +46,10 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
         addTextFieldListener(attritionField) {
             val newAttrition = getIntFromTextField(attritionField)
             currentUnitState.attrition = newAttrition
+            val textContent = getTextViewString(currentUnitState)
+            textView.text = textContent
         }
 
-        val textView = findViewById<TextView>(R.id.combatDifferential)
 
         fun setCommandStateButtons() {
             val normal = findViewById<RadioButton>(R.id.radio_command_status_none)
@@ -186,7 +190,7 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
             val prepared = findViewById<RadioButton>(R.id.radio_attaktype_prepared)
 
             hasty.isChecked = true
-            gameState.attackType = AttackTypeEnum.HASTY
+            //gameState.attackType = AttackTypeEnum.HASTY
             currentUnitState.attackType = AttackTypeEnum.HASTY
 
             hasty.setOnClickListener {

@@ -41,8 +41,8 @@ class Calculator() {
         differential += postureDifferential
         differential -= unitState.attrition!!
 
-        if (commandStateDifferential != 0) {
-            differential += commandStateDifferential
+        if (commandStateDifferential.first != 0) {
+            differential += commandStateDifferential.first
             explanation += "\n+ $commandStateDifferential (command state)"
         }
 
@@ -53,47 +53,6 @@ class Calculator() {
 
         return Pair(differential, explanation)
     }
-
-    /*
-    fun getInitialDefenseDifferential(unit : Unit, posture : PostureEnum): Int {
-        val postures = Postures()
-        return unit.defense + (-postures.getPosture(posture).defense)
-    }
-
-
-    fun calculateUnitsDifferential(unitState: UnitState, attackTypeEnum: AttackTypeEnum?, commandStateEnum: CommandStateEnum): Pair<Int, String> {
-
-        val posture = Postures().getPosture(unitState.posture!!)
-
-        var explanation = ""
-        val differential : Int?
-
-        if (attackTypeEnum != null) {
-            if (posture.attack == null) {
-                throw Exception("Unit with posture ${posture.enum} is not able to conduct attacks!")
-            }
-
-            val attackType = AttackType()
-
-            // TODO should we add command state here as well?
-            differential = this.getInitialDifferential(unitState.unit!!, unitState.posture!!, attackTypeEnum)
-
-            if (differential == null) {
-                throw Exception("Tried to calculate attack differential for posture ${posture}")
-            }
-
-            explanation = "Initial attack differential:\n${unitState.unit.attack} (unit) + ${posture.attack} (posture) + ${
-                attackType.getCombatModifier(
-                    attackTypeEnum
-                )
-            } (attack type)\n=$differential \n\nMP cost: ${attackType.getMPCost(posture.enum, attackTypeEnum)} (prepared assault)"
-        } else {
-            differential = this.getInitialDefenseDifferential(unitState.unit!!, posture.enum)
-            explanation = "Initial defense differential:\n${unitState.unit.defense} (unit) + ${posture.defense} (posture) \n=$differential"
-        }
-
-        return Pair(differential, explanation)
-    }*/
 
     fun calculateCurrentCombatDifferential(state: GameState): Pair<Int,String> {
         var explanation = ""
@@ -172,7 +131,7 @@ class Calculator() {
         val attacker: UnitState = state.attackingUnit!!
 
         // 15.6.2 Attack type
-        val attackTypeEnum = state.attackType!!
+        val attackTypeEnum = state.attackingUnit!!.attackType!!
         val attackTypeModifier = AttackType().getCombatModifier(attackTypeEnum)
         explanation += "Attack type: $attackTypeModifier\n"
 
@@ -208,9 +167,9 @@ class Calculator() {
         var fixedModifierCounter = 0
         for (fixedModifier in FixedModifierEnum.values()) {
             if (state.activeFixedModifiers.contains(fixedModifier)) {
-                val modifier = fixedModifiers.getModifier(fixedModifier)
-                fixedModifierCounter += modifier
-                explanation += "${fixedModifier.name}: $modifier\n"
+                val modifier = fixedModifiers.getModifierPair(fixedModifier)
+                fixedModifierCounter += modifier.first
+                explanation += "${fixedModifier.name}: ${modifier.first}\n"
             }
         }
 
