@@ -210,7 +210,7 @@ class CombatResolutionActivity : AppCompatActivity() {
 
         applyButton.setOnClickListener {
             if (stage.get() == STAGE_PROMPT_EW) {
-                gameState.activeFixedModifiers.applyEW(attackerEwResult!!, defenderEwResult!!)
+                gameState.activeFixedModifiers.applyEW(attackerEwResult!!, defenderEwResult!!, gameState)
                 gameState.combatSupport!!.applyEwResults(attackerEwResult, defenderEwResult)
 
                 applyButton.text = stage2Apply

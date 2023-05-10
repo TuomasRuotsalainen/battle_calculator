@@ -113,7 +113,7 @@ class Calculator() {
         }
 
         // 15.6.5 Terrain
-        val terrainCombatModifier = Tables.TerrainCombatTable().getCombatModifier(state.hexTerrain!!, state.riverCrossingType!!, defenderPostures)
+        val terrainCombatModifier = Tables.TerrainCombatTable().getCombatModifier(state.hexTerrain!!, state.attackingUnit!!.riverCrossingType, defenderPostures)
         explanation += terrainCombatModifier.second
 
         val fixedModifiers = calculateFixedModifiers(state)

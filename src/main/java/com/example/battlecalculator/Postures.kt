@@ -126,6 +126,16 @@ fun getAttackTypeFromString(str : String) : AttackTypeEnum {
     throw Exception("Couldn't convert $str to attack type enum")
 }
 
+fun getRiverCrossingTypeFromString(str : String) : RiverCrossingTypeEnum {
+    for (enum in RiverCrossingTypeEnum.values()) {
+        if (str == enum.toString()) {
+            return enum
+        }
+    }
+
+    throw Exception("Couldn't convert $str to river crossing type enum")
+}
+
 fun getEngagementStateFromString(str : String) : EngagementStateEnum {
     for (enum in EngagementStateEnum.values()) {
         if (str == enum.toString()) {

@@ -52,7 +52,6 @@ class GameState(stateString : String) {
     var conditions : Conditions = createConditions(dataMap[DataIDs.CON.toString()]!!)
     var attackingUnit : UnitState? = getAttackUnitStates()
     //var attackType : AttackTypeEnum? = getAttackTypeEnum()
-    var riverCrossingType : RiverCrossingTypeEnum? = getRiverCrossingTypeEnum()
     var defendingUnits : MutableList<UnitState> = getDefUnitsStates()
     var hexTerrain : HexTerrain? = getHexTerrainState()
     var activeAlliance : Alliances = getActiveFaction()
@@ -64,7 +63,6 @@ class GameState(stateString : String) {
     fun reset() {
         attackingUnit = null
         //attackType = null
-        riverCrossingType = null
         defendingUnits = mutableListOf()
         hexTerrain = null
         activeFixedModifiers = ActiveFixedModifiers(mutableListOf())
@@ -533,6 +531,7 @@ class GameState(stateString : String) {
         var disengagementOrdered : Boolean = false
         var attritionFromCombat : Int = 0
         var attackType : AttackTypeEnum? = null
+        var riverCrossingType : RiverCrossingTypeEnum
 
         val nullVal = "null"
 
@@ -543,8 +542,8 @@ class GameState(stateString : String) {
             }
         }
 
-        if (properties.size != 7) {
-            throw Exception("Properties size of unit string $str is not 7")
+        if (properties.size != 8) {
+            throw Exception("Properties size of unit string $str is not 8")
         }
 
         val postureStr = properties[1]
@@ -583,12 +582,24 @@ class GameState(stateString : String) {
             attackType = getAttackTypeFromString(attackTypeStr)
         }
 
-        return UnitState(unit, posture, attrition, commandState, disengagementOrdered, attritionFromCombat, attackType)
+        val riverCrossingTypeStr = properties[7]
+        riverCrossingType = getRiverCrossingTypeFromString(riverCrossingTypeStr)
+
+        return UnitState(unit, posture, attrition, commandState, disengagementOrdered, attritionFromCombat, attackType, riverCrossingType)
 
     }
 }
 
-class UnitState(unitInput : Unit?, postureInput: PostureEnum?, attrition: Int?, commandStateEnum: CommandStateEnum?, disengagementOrdered : Boolean, attritionFromCombat : Int, attackTypeEnum: AttackTypeEnum?) {
+class UnitState(
+    unitInput : Unit?,
+    postureInput: PostureEnum?,
+    attrition: Int?,
+    commandStateEnum: CommandStateEnum?,
+    disengagementOrdered : Boolean,
+    attritionFromCombat : Int,
+    attackTypeEnum: AttackTypeEnum?,
+    riverCrossingTypeEnum: RiverCrossingTypeEnum) {
+
     val unit = unitInput
     var posture = postureInput
     var attrition = attrition
@@ -597,6 +608,7 @@ class UnitState(unitInput : Unit?, postureInput: PostureEnum?, attrition: Int?, 
     var disengagementOrdered = disengagementOrdered
     var attritionFromCombat = attritionFromCombat
     var attackType = attackTypeEnum
+    var riverCrossingType = riverCrossingTypeEnum
 
     fun isInfantryOutInTheOpen() : Boolean {
         if (unit?.eatsArmourInCity() == true || unit?.type == UnitTypeEnum.RECON) {
@@ -658,6 +670,8 @@ class UnitState(unitInput : Unit?, postureInput: PostureEnum?, attrition: Int?, 
         unitStr += "-$attritionFromCombat"
 
         unitStr += "-$attackType"
+
+        unitStr += "-$riverCrossingType"
 
         return unitStr
     }

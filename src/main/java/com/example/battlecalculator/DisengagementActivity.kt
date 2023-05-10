@@ -274,6 +274,7 @@ class DisengagementActivity : AppCompatActivity() {
             finish()
         }
 
+        // TODO disengagement in current posture, retreat in the new "emergency" posture
         // If any sentient being ever tries to read this, I'm truly sorry
         applyBtn.setOnClickListener {
             val dice = Dice()

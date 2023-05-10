@@ -1,5 +1,6 @@
 package com.example.battlecalculator
 
+import android.util.Log
 import kotlin.math.exp
 
 
@@ -218,7 +219,7 @@ class Tables {
                 } else {
                     // Case major river
                     if (riverCrossingTypeEnum == RiverCrossingTypeEnum.PREPARED) {
-                        currentObstacle = ObstacleEnum.MINOR_PREPARED
+                        currentObstacle = ObstacleEnum.MAJOR_PREPARED
                     } else {
                         throw Exception("Attempting to cross major river without preparation")
                     }

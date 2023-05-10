@@ -274,15 +274,6 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
         }
     }
 
-    private fun getImage(ImageName: String): Drawable? {
-        val info = applicationInfo
-        var identifier = this.resources.getIdentifier(ImageName, "drawable", applicationInfo.packageName)
-        if (identifier == 0) {
-            identifier = this.resources.getIdentifier("swamp_smaller", "drawable", applicationInfo.packageName)
-        }
-
-        return getDrawable(identifier)
-    }
 }
 
 

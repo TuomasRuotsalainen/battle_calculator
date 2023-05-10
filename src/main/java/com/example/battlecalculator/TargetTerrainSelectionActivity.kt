@@ -5,10 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.util.Log.DEBUG
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.RadioButton
-import android.widget.RadioGroup
+import android.widget.*
 import java.util.logging.Logger
 
 class TargetTerrainSelectionActivity : AppCompatActivity() {
@@ -31,6 +28,57 @@ class TargetTerrainSelectionActivity : AppCompatActivity() {
         val defenseWorks3Check = findViewById<CheckBox>(R.id.checkBoxDefenseWorks3)
         val bridgeCheck = findViewById<CheckBox>(R.id.checkBoxBridgeExists)
 
+        val hastyCrossingButton = findViewById<RadioButton>(R.id.radio_river_crossing_hasty)
+        val preparedCrossingButton = findViewById<RadioButton>(R.id.radio_river_crossing_prepared)
+
+        val riverCrossingRadio = findViewById<RadioGroup>(R.id.crossingTypeRadio)
+
+        var riverCrossingTypeEnum : RiverCrossingTypeEnum = RiverCrossingTypeEnum.NONE
+
+        fun removeRiverCrossingSelection() {
+            hastyCrossingButton.isChecked = false
+            hastyCrossingButton.isEnabled = false
+            preparedCrossingButton.isChecked = false
+            preparedCrossingButton.isEnabled = false
+            riverCrossingTypeEnum = RiverCrossingTypeEnum.NONE
+        }
+
+        fun addRiverCrossingSelectionIfNeeded() {
+            if (bridgeCheck.isChecked) {
+                return
+            }
+
+            if (majorRiverCheck.isChecked) {
+                hastyCrossingButton.isChecked = false
+                hastyCrossingButton.isEnabled = false
+                preparedCrossingButton.isEnabled = true
+                preparedCrossingButton.isChecked = true
+                riverCrossingTypeEnum = RiverCrossingTypeEnum.PREPARED
+            } else {
+                hastyCrossingButton.isChecked = true
+                hastyCrossingButton.isEnabled = true
+                preparedCrossingButton.isEnabled = true
+                preparedCrossingButton.isChecked = false
+                riverCrossingTypeEnum = RiverCrossingTypeEnum.HASTY
+            }
+        }
+
+        hastyCrossingButton.setOnClickListener {
+            if (hastyCrossingButton.isChecked) {
+                riverCrossingTypeEnum = RiverCrossingTypeEnum.HASTY
+                preparedCrossingButton.isChecked = false
+            }
+        }
+
+        preparedCrossingButton.setOnClickListener {
+            if (preparedCrossingButton.isChecked) {
+                riverCrossingTypeEnum = RiverCrossingTypeEnum.PREPARED
+                hastyCrossingButton.isChecked = false
+            }
+        }
+
+        removeRiverCrossingSelection()
+
         plainCheck.isChecked = true
 
         defenseWorks3Check.setOnClickListener {
@@ -43,9 +91,11 @@ class TargetTerrainSelectionActivity : AppCompatActivity() {
 
         majorRiverCheck.setOnClickListener {
             if (!majorRiverCheck.isChecked && !minorRiverCheck.isChecked) {
+                removeRiverCrossingSelection()
                 bridgeCheck.isChecked = false
             }
             if (majorRiverCheck.isChecked) {
+                addRiverCrossingSelectionIfNeeded()
                 minorRiverCheck.isChecked = false
             }
 
@@ -53,17 +103,25 @@ class TargetTerrainSelectionActivity : AppCompatActivity() {
 
         minorRiverCheck.setOnClickListener {
             if (!majorRiverCheck.isChecked && !minorRiverCheck.isChecked) {
+                removeRiverCrossingSelection()
                 bridgeCheck.isChecked = false
             }
 
             if (minorRiverCheck.isChecked) {
                 majorRiverCheck.isChecked = false
+                addRiverCrossingSelectionIfNeeded()
             }
         }
 
         bridgeCheck.setOnClickListener {
             if (!majorRiverCheck.isChecked && !minorRiverCheck.isChecked) {
                 bridgeCheck.isChecked = false
+            }
+
+            if (bridgeCheck.isChecked) {
+                removeRiverCrossingSelection()
+            } else if(majorRiverCheck.isChecked || minorRiverCheck.isChecked) {
+                addRiverCrossingSelectionIfNeeded()
             }
         }
 
@@ -121,6 +179,8 @@ class TargetTerrainSelectionActivity : AppCompatActivity() {
             }
 
             gameState.hexTerrain = HexTerrain(terrainList)
+
+            gameState.attackingUnit!!.riverCrossingType = riverCrossingTypeEnum
 
             intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
             startActivity(intent)
