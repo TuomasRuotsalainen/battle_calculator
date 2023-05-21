@@ -42,12 +42,21 @@ class UnitSelectionActivity : AppCompatActivity() {
         val level3RadioGroup = findViewById<RadioGroup>(R.id.level_3_radio_group)
         val level4RadioGroup = findViewById<RadioGroup>(R.id.level_4_radio_group)
 
+        val supportUnitCountParent = findViewById<LinearLayout>(R.id.support_unit_count)
+        val supportUnitCountField = findViewById<EditText>(R.id.support_unit_field)
+
+        Helpers.addTextFieldListener(supportUnitCountField) {
+            val newSupportUnitCount = Helpers.getIntFromTextField(supportUnitCountField)
+            gameState.supportUnitCount = newSupportUnitCount
+        }
+
         val unitAdditionBtn = findViewById<Button>(R.id.add_unit)
         val selectedView = findViewById<LinearLayout>(R.id.selected_units)
         selectedView.removeAllViews()
 
         if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
             unitAdditionBtn.visibility = View.GONE
+            supportUnitCountParent.visibility = View.GONE
         } else {
             unitAdditionBtn.setOnClickListener{
                 val checkedBtn = findViewById<RadioButton>(level4RadioGroup.checkedRadioButtonId)

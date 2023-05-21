@@ -19,7 +19,7 @@ zulu time = 03:00, state = 1, attacking unit id = 12J, unit ids in target hex 13
 
 fun GameState(conditions: Conditions) : GameState {
     val conditionString = conditions.toStateString()
-    val stateStr = "CON=$conditionString;AU=null;DU=null;HEX=null;ACT=NATO;FIXED=null;ADJ_AT=null;ADJ_DEF=null;COM_SUP=null"
+    val stateStr = "CON=$conditionString;AU=null;DU=null;HEX=null;ACT=NATO;FIXED=null;ADJ_AT=null;ADJ_DEF=null;COM_SUP=null;SUP_CNT=null"
     return GameState(stateStr)
 }
 
@@ -43,7 +43,7 @@ fun getGameStateIfExists(intent : Intent) : GameState? {
 class GameState(stateString : String) {
 
     private enum class DataIDs {
-        AU, DU, HEX, ACT, FIXED, ADJ_AT, ADJ_DEF, COM_SUP, CON
+        AU, DU, HEX, ACT, FIXED, ADJ_AT, ADJ_DEF, COM_SUP, CON, SUP_CNT
     }
 
     private val dataMap = getDataMap(stateString)
@@ -59,6 +59,7 @@ class GameState(stateString : String) {
     var adjacentDefenderCount : Int? = getAdjacentDefenderUnits()
     var adjacentAttackerCount : Int? = getAdjacentAttackerUnits()
     var combatSupport : CombatSupportSelection? = getCombatSupportSelection()
+    var supportUnitCount : Int? = getSupportUnits()
 
     fun reset() {
         attackingUnit = null
@@ -69,6 +70,7 @@ class GameState(stateString : String) {
         adjacentAttackerCount = null
         adjacentDefenderCount = null
         combatSupport = null
+        supportUnitCount = null
 
     }
 
@@ -234,8 +236,9 @@ class GameState(stateString : String) {
         val adjacentDefenderCountStr = getAdjacentDefenderCountStr()
         val adjacentAttackerCountStr = getAdjacentAttackerCountStr()
         val combatSupportSelectionStr = getCombatSupportSelectionStr()
+        val supportUnitsStr = getSupportUnitsStr()
 
-        return "CON=$conditionsStr;AU=$attackingUnitStr;DU=$defendingUnitsStr;HEX=$hexTerrainStr;ACT=$allianceStr;FIXED=$activeFixedModifiersStr;ADJ_DEF=$adjacentDefenderCountStr;ADJ_AT=$adjacentAttackerCountStr;COM_SUP=$combatSupportSelectionStr"
+        return "CON=$conditionsStr;AU=$attackingUnitStr;DU=$defendingUnitsStr;HEX=$hexTerrainStr;ACT=$allianceStr;FIXED=$activeFixedModifiersStr;ADJ_DEF=$adjacentDefenderCountStr;ADJ_AT=$adjacentAttackerCountStr;COM_SUP=$combatSupportSelectionStr;SUP_CNT=$supportUnitsStr"
     }
 
     fun setDefendingUnit(unitState : UnitState) {
@@ -363,6 +366,11 @@ class GameState(stateString : String) {
         return adjacentAttackerUnitsStr.toIntOrNull()
     }
 
+    private fun getSupportUnits() : Int? {
+        val getSupportUnitCountStr = dataMap[DataIDs.SUP_CNT.toString()] ?: throw Exception("Fixed modifiers SUP_CNT not defined")
+        return getSupportUnitCountStr.toIntOrNull()
+    }
+
     private fun getAdjacentDefenderCountStr() : String {
         return if (adjacentDefenderCount == null) {
             "null"
@@ -385,6 +393,14 @@ class GameState(stateString : String) {
         }
 
         return combatSupport!!.toStateString()
+    }
+
+    private fun getSupportUnitsStr() : String {
+        if (supportUnitCount == null) {
+            return "null"
+        }
+
+        return supportUnitCount.toString()
     }
 
     private fun getAdjacentDefenderUnits() : Int? {

@@ -10,6 +10,8 @@ import java.util.logging.Logger
 
 class TargetTerrainSelectionActivity : AppCompatActivity() {
 
+    // TODO check and add possible attrition for hasty and prepared crossing for attacking unit
+    // TODO add MP cost information for attacking unit regarding river crossing (and possible other attributes as well)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_target_terrain_selection)
@@ -182,9 +184,41 @@ class TargetTerrainSelectionActivity : AppCompatActivity() {
 
             gameState.attackingUnit!!.riverCrossingType = riverCrossingTypeEnum
 
-            intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
-            startActivity(intent)
-            finish()
+            fun launchNextActivity() {
+                intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+                startActivity(intent)
+                finish()
+            }
+
+            if (riverCrossingTypeEnum != RiverCrossingTypeEnum.NONE) {
+
+                val movement = Movement()
+
+                val obstacle = gameState.hexTerrain!!.getObstacle(riverCrossingTypeEnum)
+                    ?: throw Exception("Obstacle shouldn't be null here")
+
+                val dice = Dice()
+                val result = dice.roll()
+
+                val attritionFromRiverCrossing = movement.getAttritionForRiverCrossing(result, obstacle, gameState.attackingUnit!!)
+
+                var dialogText = "River crossing dice roll: ${result.get()}\n\n"
+                dialogText += if (attritionFromRiverCrossing > 0) {
+                    "River crossing resulted $attritionFromRiverCrossing attrition for the attacking unit.\n\nAdd that attrition now."
+                } else {
+                    "River crossing didn't cause any attrition for the attacking unit."
+                }
+
+                Helpers.showInfoDialog(this, dialogText, "Understood", null, {
+                    launchNextActivity()
+                })
+            } else {
+                launchNextActivity()
+            }
+
+
         }
+
+
     }
 }

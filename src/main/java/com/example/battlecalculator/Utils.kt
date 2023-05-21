@@ -160,7 +160,6 @@ class Images {
         fun getDrawable(ImageName: String, activity: AppCompatActivity, context: Context, applicationInfo: ApplicationInfo): Drawable? {
             var identifier = activity.resources.getIdentifier(ImageName, "drawable", applicationInfo.packageName)
             if (identifier == 0) {
-                Log.d("IMAGE DEBUG", "setting swamp")
                 identifier = activity.resources.getIdentifier("swamp_smaller", "drawable", applicationInfo.packageName)
             }
 

@@ -37,6 +37,46 @@ class HexTerrain(terrainFeatures : MutableList<TerrainEnum>) {
         return 0
     }
 
+    private fun contains(terrainEnum: TerrainEnum): Boolean {
+        return features[terrainEnum]
+            ?: return false
+    }
+
+    fun getObstacle(riverCrossingTypeEnum: RiverCrossingTypeEnum) : ObstacleEnum? {
+        if (contains(TerrainEnum.BRIDGE)) {
+            return if (contains(TerrainEnum.MINORRIVER)) {
+                ObstacleEnum.MINOR_BRIDGED
+            } else if(contains(TerrainEnum.MAJORRIVER)) {
+                ObstacleEnum.MAJOR_PREPARED
+            } else {
+                throw Exception("There is a bridge but no river")
+            }
+        } else {
+            if (contains(TerrainEnum.MINORRIVER)) {
+                return when (riverCrossingTypeEnum) {
+                    RiverCrossingTypeEnum.HASTY -> {
+                        ObstacleEnum.MINOR_HASTY
+                    }
+                    RiverCrossingTypeEnum.PREPARED -> {
+                        ObstacleEnum.MINOR_PREPARED
+                    }
+                    else -> {
+                        throw Exception("Crossing minor river with no crossing type")
+                    }
+                }
+            } else if (contains(TerrainEnum.MAJORRIVER)) {
+                // Case major river
+                if (riverCrossingTypeEnum == RiverCrossingTypeEnum.PREPARED) {
+                    return ObstacleEnum.MAJOR_PREPARED
+                } else {
+                    throw Exception("Attempting to cross major river without preparation")
+                }
+            } else {
+                return null
+            }
+        }
+    }
+
     private fun convertToHashMap(terrainFeatures : MutableList<TerrainEnum>) : HashMap<TerrainEnum, Boolean> {
         val featureMap = HashMap<TerrainEnum, Boolean>()
 
@@ -66,7 +106,5 @@ class HexTerrain(terrainFeatures : MutableList<TerrainEnum>) {
         if (terrainFeatures[TerrainEnum.DEFENSE1] != null && terrainFeatures[TerrainEnum.DEFENSE3] != null) {
             throw Exception("Validate hex features: defenses 1 and 3 can't be present at the same time")
         }
-
-
     }
 }

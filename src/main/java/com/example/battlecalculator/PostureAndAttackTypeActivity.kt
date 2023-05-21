@@ -16,6 +16,9 @@ import com.example.battlecalculator.Helpers.General.getIntFromTextField
 
 class PostureAndAttackTypeActivity : AppCompatActivity() {
 
+    // TODO add missing postures to defending unit selection
+    // TODO remove non-attacking postures from attacking unit selection
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -91,43 +94,6 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
             }
 
         }
-
-        /*fun setEngagementStateButtons() {
-            val none = findViewById<RadioButton>(R.id.radio_engagement_status_none)
-            val halfEngaged = findViewById<RadioButton>(R.id.radio_engagement_status_half_engaged)
-            val engaged = findViewById<RadioButton>(R.id.radio_engagement_status_enganged)
-
-            none.isChecked = true
-            currentUnitState.engagementState = EngagementStateEnum.NONE
-
-            none.setOnClickListener {
-                if (none.isChecked) {
-                    halfEngaged.isChecked = false
-                    engaged.isChecked = false
-                    currentUnitState.engagementState = EngagementStateEnum.NONE
-
-                }
-            }
-
-            halfEngaged.setOnClickListener {
-                if (halfEngaged.isChecked) {
-                    none.isChecked = false
-                    engaged.isChecked = false
-                    currentUnitState.engagementState = EngagementStateEnum.HALF_ENGAGED
-
-                }
-            }
-
-            engaged.setOnClickListener {
-                if (engaged.isChecked) {
-                    none.isChecked = false
-                    halfEngaged.isChecked = false
-                    currentUnitState.engagementState = EngagementStateEnum.ENGAGED
-
-                }
-            }
-
-        }*/
 
         val headerText = findViewById<TextView>(R.id.postureSelHeader)
         if (unitSelectionType == UnitSelectionTypes.ATTACKER) {

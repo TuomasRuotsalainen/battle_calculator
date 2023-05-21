@@ -22,6 +22,8 @@ class MainActivity : AppCompatActivity() {
         var gameState = getGameStateIfExists(intent)
         gameState?.reset()
 
+        Log.d("Test", "TEST")
+
         val natoSelection = findViewById<RadioButton>(R.id.faction_selection_nato)
         val pactSelection = findViewById<RadioButton>(R.id.faction_selection_pact)
 
@@ -137,7 +139,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             gameState.updateConditions(conditions)
-            Log.d("Debug", "New conditions: ${conditions.toReadableString()}")
         }
 
         for (timeView in timeViews) {
@@ -188,7 +189,6 @@ class MainActivity : AppCompatActivity() {
 
         groundAttackButton.setOnClickListener{
             intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
-            Log.d("DEBUG", "Gamestate string: ${gameState.getStateString()}")
 
             startActivity(intent)
             finish()

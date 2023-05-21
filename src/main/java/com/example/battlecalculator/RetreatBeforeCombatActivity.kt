@@ -57,6 +57,9 @@ class RetreatBeforeCombatActivity : AppCompatActivity() {
             unit2Checkbox.isChecked = false
         }
 
+        // TODO what about units in hex that aren't defending but that must retreat as well?
+        // TODO we need to know their posture and amphibious capability at least, but maybe not much else
+
         var intent : Intent
         disengagementApplyButton.setOnClickListener{
             if (!noRetreatsButton.isChecked) {
@@ -68,7 +71,11 @@ class RetreatBeforeCombatActivity : AppCompatActivity() {
                     defendingUnits[1].orderDisengagementAttempt()
                 }
 
-                gameState.defendingUnits = mutableListOf(defendingUnits[0], defendingUnits[1])
+                gameState.defendingUnits = mutableListOf(defendingUnits[0])
+
+                if (defendingUnits.size == 2) {
+                    gameState.defendingUnits.add(defendingUnits[1])
+                }
 
             }
 
@@ -82,12 +89,3 @@ class RetreatBeforeCombatActivity : AppCompatActivity() {
     }
 
 }
-
-/*
-    val newUnits : MutableList<UnitState> = mutableListOf()
-    for (unit in gameState.defendingUnits) {
-        unit.orderDisengagementAttempt()
-
-        newUnits.add(unit)
-    }
-*/

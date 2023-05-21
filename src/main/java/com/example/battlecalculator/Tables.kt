@@ -16,6 +16,22 @@ class Tables {
 
         private val disengagementTable = getDisengagementTable()
 
+        // 15.8.7 - 15.8.10
+        fun getEmergencyPostureAndAttritionForRetreat(currentPosture: PostureEnum, inPostureTransition: Boolean) : Pair<PostureEnum, Int> {
+            if (inPostureTransition) {
+                return Pair(PostureEnum.TAC, 0)
+            }
+
+            return when (currentPosture) {
+                PostureEnum.REFT -> Pair(PostureEnum.TAC, 0)
+                PostureEnum.BAR -> Pair(PostureEnum.TAC, 0)
+                PostureEnum.SHOOTSCOOT -> Pair(PostureEnum.TAC, 0)
+                PostureEnum.DEPL -> Pair(PostureEnum.MOV, 0)
+                PostureEnum.FARP -> Pair(PostureEnum.TAC, 1)
+                else -> Pair(currentPosture, 0)
+            }
+        }
+
         fun getResult(posture: PostureEnum, unitType: UnitTypeEnum, dieRoll: DiceRollResult, modifier : Int): DisengagemenResult {
 
             val column = disengagementTable[posture]
@@ -161,10 +177,6 @@ class Tables {
         private val terrainContents : HashMap<TerrainEnum, TerrainCombatTableRow> = populateTerrainTable()
         private val obstacleContents : HashMap<ObstacleEnum, TerrainCombatTableRow> = populateObstacleTable()
 
-        private enum class ObstacleEnum {
-            MINOR_HASTY, MINOR_PREPARED, MINOR_BRIDGED, MAJOR_PREPARED, MAJOR_BRIDGED, RIBBON
-        }
-
         fun getCombatModifier(hexTerrain: HexTerrain, riverCrossingTypeEnum: RiverCrossingTypeEnum, defenderPostureEnums: List<PostureEnum>): Pair<Int, String> {
             val features = hexTerrain.features
 
@@ -176,7 +188,7 @@ class Tables {
             }
 
             val terrainCombatModifier = getTerrainModifier(terrainEnums, defenderPostureEnums)
-            val obstacleCombatModifier = getObstacleModifier(terrainEnums, defenderPostureEnums, riverCrossingTypeEnum)
+            val obstacleCombatModifier = getObstacleModifier(hexTerrain, defenderPostureEnums, riverCrossingTypeEnum)
 
             val explanation = terrainCombatModifier.second + obstacleCombatModifier.second
             val totalModifier = terrainCombatModifier.first + obstacleCombatModifier.first
@@ -184,47 +196,17 @@ class Tables {
         }
 
         private fun getObstacleModifier(
-            terrainEnums: List<TerrainEnum>,
+            hexTerrain: HexTerrain,
             defenderPostureEnums: List<PostureEnum>,
             riverCrossingTypeEnum: RiverCrossingTypeEnum
         ): Pair<Int, String> {
-
-            if (!terrainEnums.contains(TerrainEnum.MAJORRIVER) && !terrainEnums.contains(TerrainEnum.MINORRIVER)) {
-                // No obstacles
-                return Pair(0, "No obstacles\n")
-            }
 
             if (riverCrossingTypeEnum == RiverCrossingTypeEnum.NONE) {
                 throw Exception("There is a river, but river crossing type is NONE")
             }
 
-            val currentObstacle : ObstacleEnum
-            if (terrainEnums.contains(TerrainEnum.BRIDGE)) {
-                currentObstacle = if (terrainEnums.contains(TerrainEnum.MINORRIVER)) {
-                    ObstacleEnum.MINOR_BRIDGED
-                } else if(terrainEnums.contains(TerrainEnum.MAJORRIVER)) {
-                    ObstacleEnum.MAJOR_PREPARED
-                } else {
-                    throw Exception("There is a bridge but no river")
-                }
-            } else {
-                if (terrainEnums.contains(TerrainEnum.MINORRIVER)) {
-                    currentObstacle = if (riverCrossingTypeEnum == RiverCrossingTypeEnum.HASTY) {
-                        ObstacleEnum.MINOR_HASTY
-                    } else if(riverCrossingTypeEnum == RiverCrossingTypeEnum.PREPARED) {
-                        ObstacleEnum.MINOR_PREPARED
-                    } else {
-                        throw Exception("Crossing minor river with no crossing type")
-                    }
-                } else {
-                    // Case major river
-                    if (riverCrossingTypeEnum == RiverCrossingTypeEnum.PREPARED) {
-                        currentObstacle = ObstacleEnum.MAJOR_PREPARED
-                    } else {
-                        throw Exception("Attempting to cross major river without preparation")
-                    }
-                }
-            }
+            val currentObstacle = hexTerrain.getObstacle(riverCrossingTypeEnum)
+                ?: return Pair(0, "No obstacles\n")
 
             val weakestMovementMode = MovementMode().getWeakestMovementMode(defenderPostureEnums)
 

@@ -412,39 +412,25 @@ class CombatSupport(private var artilleryPoints: Int, private var airPoints : In
         //AT-0-0,0,0-5-false-2
         var str = ""
 
-
-
-        Log.d("DEBUG", str)
-
         str += if (isAttacker) {
             "AT"
         } else {
             "DEF"
         }
 
-        Log.d("DEBUG", str)
-
         str += DELIMITER+"$artilleryPoints"
 
-        Log.d("DEBUG", str)
-
         str += DELIMITER
-        Log.d("DEBUG", str)
         for (heliPoint in helicopterPoints) {
             str += "$heliPoint,"
-            Log.d("DEBUG", str)
         }
-        Log.d("DEBUG", str)
         str = str.dropLast(1)
-        Log.d("DEBUG", str)
         str += DELIMITER+"$airPoints"
-        Log.d("DEBUG", str)
         str += if (targetInCASZone) {
             DELIMITER+"true"
         } else {
             DELIMITER+"false"
         }
-        Log.d("DEBUG", str)
 
         if (ewPoints == null) {
             str +=DELIMITER+"null"
@@ -456,19 +442,8 @@ class CombatSupport(private var artilleryPoints: Int, private var airPoints : In
             str += ",${ewRollModifier!!}"
         }
 
-        Log.d("DEBUG", str)
-        Log.d("DEBUG", "Parsed combat support string: $str")
-
         val contents = str.split(DELIMITER)
         if (contents.size != 6) {
-            Log.d("artilleryPoints", "$artilleryPoints")
-            Log.d("airPoints", "$airPoints")
-            Log.d("artilleryPoints", "$artilleryPoints")
-            Log.d("helicopterPoints", "$helicopterPoints")
-            Log.d("targetInCASZone", "$targetInCASZone")
-            Log.d("isAttacker", "$isAttacker")
-            Log.d("ewPoints", "$ewPoints")
-            Log.d("ewRollModifier", "$ewRollModifier")
             throw Exception("Bad contents length for combat support string $str. ")
         }
 

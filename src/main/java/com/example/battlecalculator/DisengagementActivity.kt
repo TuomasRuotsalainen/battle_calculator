@@ -259,27 +259,37 @@ class DisengagementActivity : AppCompatActivity() {
         val movement = Movement()
         val applyBtn = findViewById<Button>(R.id.apply)
 
-        fun startNextActivity() {
-            gameState.setDisengagementDone(disengagingUnit)
-            val intent = if (gameState.getDisengagingDefender() != null) {
-                Intent(this, DisengagementActivity::class.java)
-            } else if (gameState.defendingUnits.size > 0) {
-                // In this case we handled disengagement before combat
-                Intent(this, FixedCombatModifierSelectionActivity::class.java)
-            } else {
-                Intent(this, MainActivity::class.java)
-            }
+        fun launchActivity(intent : Intent) {
             intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
             startActivity(intent)
             finish()
         }
 
-        // TODO disengagement in current posture, retreat in the new "emergency" posture
+        fun startNextActivity() {
+            gameState.setDisengagementDone(disengagingUnit)
+            val intent = if (gameState.getDisengagingDefender() != null) {
+                launchActivity(Intent(this, DisengagementActivity::class.java))
+            } else if (gameState.defendingUnits.size > 0) {
+                // In this case we handled disengagement before combat
+                launchActivity(Intent(this, FixedCombatModifierSelectionActivity::class.java))
+            } else {
+                showInfoDialog(this, "Are there retreating support/non-defending units in the hex?", "Yes", "No", {
+                    // TODO implement
+                    throw Exception("Not implemented")
+                }, {
+                    launchActivity(Intent(this, MainActivity::class.java))
+                })
+            }
+
+        }
+
         // If any sentient being ever tries to read this, I'm truly sorry
         applyBtn.setOnClickListener {
+
             val dice = Dice()
             val diceResult = dice.roll()
             val result = tables.getResult(disengagingUnit.posture!!, disengagingUnit.unit!!.type, diceResult, totalModifier)
+
             showInfoDialog(this, toString(result), "Understood", null, {
                 var totalAttrition = disengagingUnit.attritionFromCombat + resultOptions[result]!!.second
 
@@ -292,16 +302,48 @@ class DisengagementActivity : AppCompatActivity() {
                     if (totalAttrition > 0) {
                         totalAttrition -= 1
                     }
-                    showInfoDialog(this, "This unit can retreat\n\n1.Mark the unit as Half-Engaged (if not already Engaged)\n2. Apply $totalAttrition attrition points (attrition from combat and disengagement attempt - 1)", "Normal retreat", "Hasty crossing over a minor river", {
-                        //showInfoDialog(this, "retreat activity starts!") {}
+
+                    var dialogText = "This unit can retreat\n\n"
+
+                    // TODO set this properly
+                    val isInTransition = false
+                    val posture = disengagingUnit.posture!!
+                    val postureAfterRetreat = tables.getEmergencyPostureAndAttritionForRetreat(posture, isInTransition)
+
+                    if (postureAfterRetreat.first != posture) {
+                        dialogText += "This unit was in posture $posture. It needs to change to an emergency posture of $postureAfterRetreat in order to retreat."
+                        if (postureAfterRetreat.second != 0) {
+                            dialogText += "It also takes one additional attrition because of this transition.\n\n"
+                        }
+                    }
+
+                    totalAttrition += postureAfterRetreat.second
+                    dialogText += "1.Mark the unit as Half-Engaged (if not already Engaged)\n"
+                    if (totalAttrition != 0) {
+                        dialogText += "2. Apply $totalAttrition attrition points (attrition from combat and disengagement attempt - 1)"
+                        if (postureAfterRetreat.second != 0) {
+                            dialogText += " and emergency posture transition."
+                        }
+                        dialogText += "\n"
+                    }
+
+                    if (postureAfterRetreat.first != posture) {
+                        dialogText += "3. Change the unit's posture to $postureAfterRetreat\n"
+                    }
+
+                    if (isInTransition) {
+                        dialogText += "4. Remove the In Transition attribute from the unit.\n"
+                    }
+
+                    showInfoDialog(this, dialogText, "Normal retreat", "Hasty crossing over a minor river", {
                         startNextActivity()
                     }, {
                         val unitType = disengagingUnit.unit.type
-                        val movementType = getMovementType(unitType)
-                        val posture = disengagingUnit.posture!!
-                        val movementMode = Tables.TerrainCombatTable.MovementMode().get(posture)
-                        val maxAttritionRange = movement.getAttritionRangeForHastyCrossing(movementType,movementMode)
+
                         val attritionRoll = dice.roll()
+                        disengagingUnit.posture = postureAfterRetreat.first
+
+                        val maxAttritionRange = movement.getAttritionForRiverCrossing(attritionRoll, ObstacleEnum.MINOR_HASTY, disengagingUnit)
 
                         if (attritionRoll.get() > maxAttritionRange) {
                             showInfoDialog(this, "River crossing roll: ${attritionRoll.get()}. You can retreat the unit over the minor river without suffering additional attrition.", "Understood", null, {

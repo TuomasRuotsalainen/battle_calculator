@@ -216,11 +216,7 @@ class AAFireActivity : AppCompatActivity() {
 
         aaApply.setOnClickListener {
 
-            Log.d("DEBUG", "Apply button pressed. isFirstClick: $isFirstClick")
-
             if (isFirstClick) {
-
-                Log.d("DEBUG", "Starting to calculate AA results")
 
                 fun executeAA(aaValue : Int?): Tables.AAFire.Result? {
                     if (aaValue == null) {
@@ -252,8 +248,6 @@ class AAFireActivity : AppCompatActivity() {
 
             } else {
 
-                Log.d("DEBUG", "Starting to apply AA results")
-
                 fun adjustCombatSupport(combatSupport: CombatSupport) : CombatSupport {
                     if (defenderAASettings.fixedInUse()) {
                         combatSupport.adjustAirPoints(defenderAASettings.getFixedResult()!!)
@@ -277,8 +271,6 @@ class AAFireActivity : AppCompatActivity() {
 
                 gameState.combatSupport!!.setAttackerCombatSupport(attackerCS)
                 gameState.combatSupport!!.setDefenderCombatSupport(defenderCS)
-
-                Log.d("DEBUG", "Switching to EWActivity")
 
                 val intent = Intent(this, CombatResolutionActivity::class.java)
                 intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())

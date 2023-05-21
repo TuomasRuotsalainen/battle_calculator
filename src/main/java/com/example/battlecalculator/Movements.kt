@@ -2,40 +2,93 @@ package com.example.battlecalculator
 
 class Movement() {
 
-    private val obstacleTable = ObstacleTableRow()
+    private val obstacleTable = ObstacleTable()
 
-    class ObstacleTableRow() {
+    class ObstacleTable() {
         // Here we init the row for hasty crossings. When the whole table is implemented, move this away from this class
         private val contents = init()
 
-        fun getCell(movementTypeEnum: MovementTypeEnum, movementModeEnum: MovementModeEnum) : ObstacleTableCell? {
-            return contents[movementTypeEnum]!![movementModeEnum]!!
+        fun getCell(obstacleEnum: ObstacleEnum, movementTypeEnum: MovementTypeEnum, movementModeEnum: MovementModeEnum) : ObstacleTableCell {
+            val row = contents[obstacleEnum] ?: throw Exception("Obstacle table: $obstacleEnum not implemented")
+
+            return row[movementTypeEnum]!![movementModeEnum]!!
         }
 
-        private fun init() : HashMap<MovementTypeEnum, HashMap<MovementModeEnum, ObstacleTableCell>> {
-            val row = HashMap<MovementTypeEnum, HashMap<MovementModeEnum, ObstacleTableCell>>()
+        private fun init() : HashMap<ObstacleEnum, HashMap<MovementTypeEnum, HashMap<MovementModeEnum, ObstacleTableCell>>?> {
+            val table = HashMap<ObstacleEnum, HashMap<MovementTypeEnum, HashMap<MovementModeEnum, ObstacleTableCell>>?>()
+
+            val minorHastyRow = HashMap<MovementTypeEnum, HashMap<MovementModeEnum, ObstacleTableCell>>()
 
             // By chance the column is same for all movement modes
-            val commonColumn = HashMap<MovementModeEnum, ObstacleTableCell>()
-            commonColumn[MovementModeEnum.COLUM] = ObstacleTableCell(2, 3, false)
-            commonColumn[MovementModeEnum.TACTICAL] = ObstacleTableCell(2, 4, false)
-            commonColumn[MovementModeEnum.DEPLOYED] = ObstacleTableCell(3, 5, false)
+            val minorHastyColumn = HashMap<MovementModeEnum, ObstacleTableCell>()
+            minorHastyColumn[MovementModeEnum.COLUM] = ObstacleTableCell(2, 3, false)
+            minorHastyColumn[MovementModeEnum.TACTICAL] = ObstacleTableCell(2, 4, false)
+            minorHastyColumn[MovementModeEnum.DEPLOYED] = ObstacleTableCell(3, 5, false)
 
-            row[MovementTypeEnum.MECHANIZED] = commonColumn
-            row[MovementTypeEnum.MOTORIZED] = commonColumn
-            row[MovementTypeEnum.FOOT] = commonColumn
+            minorHastyRow[MovementTypeEnum.MECHANIZED] = minorHastyColumn
+            minorHastyRow[MovementTypeEnum.MOTORIZED] = minorHastyColumn
+            minorHastyRow[MovementTypeEnum.FOOT] = minorHastyColumn
 
-            return row
+            val minorPreparedRow = HashMap<MovementTypeEnum, HashMap<MovementModeEnum, ObstacleTableCell>>()
+
+            // By chance the column is same for all movement modes
+            val minorPreparedColumn = HashMap<MovementModeEnum, ObstacleTableCell>()
+            minorPreparedColumn[MovementModeEnum.COLUM] = ObstacleTableCell(4, null, false)
+            minorPreparedColumn[MovementModeEnum.TACTICAL] = ObstacleTableCell(4, null, false)
+            minorPreparedColumn[MovementModeEnum.DEPLOYED] = ObstacleTableCell(5, null, false)
+
+            minorPreparedRow[MovementTypeEnum.MECHANIZED] = minorPreparedColumn
+            minorPreparedRow[MovementTypeEnum.MOTORIZED] = minorPreparedColumn
+            minorPreparedRow[MovementTypeEnum.FOOT] = minorPreparedColumn
+
+            val majorPreparedRow = HashMap<MovementTypeEnum, HashMap<MovementModeEnum, ObstacleTableCell>>()
+
+            // By chance the column is same for all movement modes
+            val majorPreparedColumn = HashMap<MovementModeEnum, ObstacleTableCell>()
+            majorPreparedColumn[MovementModeEnum.COLUM] = ObstacleTableCell(0, 2, true)
+            majorPreparedColumn[MovementModeEnum.TACTICAL] = ObstacleTableCell(0, 2, true)
+            majorPreparedColumn[MovementModeEnum.DEPLOYED] = ObstacleTableCell(0, 3, true)
+
+            majorPreparedRow[MovementTypeEnum.MECHANIZED] = majorPreparedColumn
+            majorPreparedRow[MovementTypeEnum.MOTORIZED] = majorPreparedColumn
+            majorPreparedRow[MovementTypeEnum.FOOT] = majorPreparedColumn
+
+            table[ObstacleEnum.MINOR_HASTY] = minorHastyRow
+            table[ObstacleEnum.MINOR_PREPARED] = minorPreparedRow
+            table[ObstacleEnum.MAJOR_PREPARED] = majorPreparedRow
+
+            return table
 
         }
     }
 
     class ObstacleTableCell(val extraMPs : Int, val attritionRollMaxValue : Int?, val causesDelay : Boolean) {}
 
-    fun getAttritionRangeForHastyCrossing(movementTypeEnum: MovementTypeEnum, movementModeEnum: MovementModeEnum) : Int {
-        return obstacleTable.getCell(movementTypeEnum,movementModeEnum)!!.attritionRollMaxValue!!
+    fun getAttritionForRiverCrossing(diceResult: DiceRollResult, obstacleEnum: ObstacleEnum, unitState: UnitState) : Int {
+        val movementModeTable = Tables.TerrainCombatTable.MovementMode()
+        val movementMode = movementModeTable.get(unitState.posture!!)
+
+        val movementType = getMovementType(unitState.unit!!.type)
+
+        val range = getAttritionRange(obstacleEnum, movementType, movementMode) ?: return 0
+
+        if (diceResult.get() <= range) {
+            return 1
+        }
+
+        return 0
     }
 
+    private fun getAttritionRange(obstacleEnum: ObstacleEnum, movementTypeEnum: MovementTypeEnum, movementModeEnum: MovementModeEnum): Int? {
+        return obstacleTable.getCell(obstacleEnum, movementTypeEnum, movementModeEnum).attritionRollMaxValue
+    }
+
+    /*
+    private fun getAttritionRangeForHastyCrossing(movementTypeEnum: MovementTypeEnum, movementModeEnum: MovementModeEnum) : Int {
+        return getAttritionRange(ObstacleEnum.MINOR_HASTY, movementTypeEnum,movementModeEnum)!!
+    }*/
+
+    // TODO use this somewhere
     fun getRetreatPrerequisites() : String {
         var text = ""
 

@@ -1,7 +1,7 @@
 package com.example.battlecalculator
 
 enum class PostureEnum {
-    SCRN, DEF, RDEF, ADEF, ASL, FASL, TAC, REFT, MASL, ROAD, REC, MOV
+    SCRN, DEF, RDEF, ADEF, ASL, FASL, TAC, REFT, MASL, ROAD, REC, MOV, BAR, SHOOTSCOOT, DEPL, FARP
 }
 
 enum class MovementModeEnum {
@@ -54,4 +54,7 @@ enum class DayEnum {
 
 enum class DisengagemenResult {
     F1, S1, S0
+}
+enum class ObstacleEnum {
+    MINOR_HASTY, MINOR_PREPARED, MINOR_BRIDGED, MAJOR_PREPARED, MAJOR_BRIDGED, RIBBON
 }

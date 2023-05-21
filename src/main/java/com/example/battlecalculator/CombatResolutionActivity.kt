@@ -45,7 +45,6 @@ class CombatResolutionActivity : AppCompatActivity() {
             }
 
             fun proceed() {
-                Log.d("DEBUG", "Proceeding stage. Current one: $current")
                 current = when (current) {
                     STAGE_PROMPT_EW -> STAGE_DISPLAY_EW_PROMPT_CS
                     STAGE_DISPLAY_EW_PROMPT_CS -> STAGE_DISPLAY_CS_PROMPT_BATTLE
@@ -55,7 +54,6 @@ class CombatResolutionActivity : AppCompatActivity() {
                     else -> throw Exception("Unknown stage")
                 }
 
-                Log.d("DEBUG", "New one: $current")
             }
 
             fun noEwNeeded() {
