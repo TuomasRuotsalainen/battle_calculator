@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+    <TextView
+        android:id="@+id/header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Support units' retreat"
+
+        app:layout_constraintBottom_toTopOf="@+id/retreat_rules"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+
+        />
+
+    <TextView
+        android:id="@+id/retreat_rules"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Emergency posture change due to retreat:\n\nRefit, Barrage, ShootAndScoot -> Tactical\nIn posture transition -> Tactical\nDeployed HQ -> Moving\nFARP -> Tactical AND increase attrition by one!\n\n\nNote! The river crossing is only possible by \na hasty crossing over a minor river. \nFurthermore, the unit needs to be amhibious\n\nIf a unit can't retreat, it is destroyed"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/header"
+        app:layout_constraintBottom_toTopOf="@+id/selectionwrapper"
+
+
+        />
+
+
+    <LinearLayout
+        android:id="@+id/selectionwrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/retreat_rules"
+        app:layout_constraintBottom_toTopOf="@+id/apply"
+
+        android:gravity="center_horizontal"
+        >
+
+        <LinearLayout
+            android:id="@+id/movementselection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Non-defending\nsupport unit #1            "
+
+
+                />
+
+            <CheckBox
+                android:id="@+id/rivercorssing1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="River crossing\nduring retreat"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+
+
+                />
+
+
+
+            <CheckBox
+                android:id="@+id/movementselection_column"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="Column"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="12dp" />
+
+            <CheckBox
+                android:id="@+id/movementselection_tactical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="Tactical"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="60dp" />
+
+            <CheckBox
+                android:id="@+id/movementselection_deployed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="Deployed"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="60dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/movementselection2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Non-defending\nsupport unit #2"
+
+                />
+
+            <CheckBox
+                android:id="@+id/rivercorssing2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="River crossing\nduring retreat"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+
+
+                />
+
+            <CheckBox
+                android:id="@+id/movementselection_column2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="Column"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="12dp" />
+
+            <CheckBox
+                android:id="@+id/movementselection_tactical2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="Tactical"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="60dp" />
+
+            <CheckBox
+                android:id="@+id/movementselection_deployed2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="Deployed"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="60dp" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+
+
+    <Button
+        android:id="@+id/apply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Apply selection"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/selectionwrapper"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        />
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

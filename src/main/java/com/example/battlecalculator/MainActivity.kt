@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         var gameState = getGameStateIfExists(intent)
         gameState?.reset()
 
-        Log.d("Test", "TEST")
+        // TODO make sure rule section 31. (defensive works) is handled
 
         val natoSelection = findViewById<RadioButton>(R.id.faction_selection_nato)
         val pactSelection = findViewById<RadioButton>(R.id.faction_selection_pact)

@@ -274,8 +274,7 @@ class DisengagementActivity : AppCompatActivity() {
                 launchActivity(Intent(this, FixedCombatModifierSelectionActivity::class.java))
             } else {
                 showInfoDialog(this, "Are there retreating support/non-defending units in the hex?", "Yes", "No", {
-                    // TODO implement
-                    throw Exception("Not implemented")
+                    launchActivity(Intent(this, SupportUnitRetreatActivity::class.java))
                 }, {
                     launchActivity(Intent(this, MainActivity::class.java))
                 })

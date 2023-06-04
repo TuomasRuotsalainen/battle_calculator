@@ -12,7 +12,7 @@ class RetreatBeforeCombatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_retreat_before_combat)
 
-        var gameState = getGameState(intent)
+        val gameState = getGameState(intent)
 
         val disengagementApplyButton = findViewById<Button>(R.id.combat1_apply)
 
@@ -56,9 +56,6 @@ class RetreatBeforeCombatActivity : AppCompatActivity() {
             unit1Checkbox.isChecked = false
             unit2Checkbox.isChecked = false
         }
-
-        // TODO what about units in hex that aren't defending but that must retreat as well?
-        // TODO we need to know their posture and amphibious capability at least, but maybe not much else
 
         var intent : Intent
         disengagementApplyButton.setOnClickListener{

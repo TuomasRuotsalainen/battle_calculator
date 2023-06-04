@@ -79,6 +79,21 @@ class Movement() {
         return 0
     }
 
+    fun getAttritionForHastyCrossingDuringRetreat(diceResult: DiceRollResult, movementModeEnum : MovementModeEnum): Int {
+        // We don't need to know much for this special case
+        // I.e. movement type doesn't matter at all, the result is same regardless.
+        val range = getAttritionRange(ObstacleEnum.MINOR_HASTY, MovementTypeEnum.MOTORIZED, movementModeEnum) ?: 0
+        if (range == 0) {
+            return 0
+        }
+
+        if (diceResult.get() <= range) {
+            return 1
+        }
+
+        return 0
+    }
+
     private fun getAttritionRange(obstacleEnum: ObstacleEnum, movementTypeEnum: MovementTypeEnum, movementModeEnum: MovementModeEnum): Int? {
         return obstacleTable.getCell(obstacleEnum, movementTypeEnum, movementModeEnum).attritionRollMaxValue
     }
