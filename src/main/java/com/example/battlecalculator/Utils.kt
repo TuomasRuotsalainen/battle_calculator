@@ -8,6 +8,8 @@ import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.*
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
@@ -70,6 +72,57 @@ class Helpers {
                 throw Exception("Could convert string $str to Boolean")
             }
         }
+
+        class IconArrayAdapter(
+            context: Context,
+            private val items: List<String>,
+            private val icons: List<Int> // List of resource IDs for the icons
+        ) : ArrayAdapter<String>(context, android.R.layout.select_dialog_singlechoice, items) {
+
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getView(position, convertView, parent)
+                val textView = view.findViewById<TextView>(android.R.id.text1)
+                textView.setCompoundDrawablesWithIntrinsicBounds(icons[position], 0, 0, 0)
+                return view
+            }
+        }
+
+        fun showRadioButtonDialog(
+            context: Context?,
+            items: List<String>,
+            icons: List<Int>,
+            title: String? = null,
+            buttonText: String,
+            negativeButtonText: String? = null,
+            selectedCallback: (String) -> Unit,
+            negativeCallback: (() -> Unit)? = null
+        ) {
+
+            val builder = AlertDialog.Builder(context)
+            val checkedItem = 0 // this will check the item at position 0
+            val adapter = IconArrayAdapter(context!!, items, icons)
+
+            title?.let { builder.setTitle(it) }
+
+            builder.setSingleChoiceItems(adapter, checkedItem) { dialog, which ->
+                selectedCallback(items[which])
+            }
+
+            builder.setPositiveButton(buttonText) { dialog, _ ->
+                dialog.dismiss()
+            }
+
+            if (negativeCallback != null) {
+                builder.setNegativeButton(negativeButtonText) { dialog, _ ->
+                    dialog.dismiss()
+                    negativeCallback()
+                }
+            }
+
+            val dialog = builder.create()
+            dialog.show()
+        }
+
 
         fun showInfoDialog(
             context: Context?,

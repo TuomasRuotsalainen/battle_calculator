@@ -147,26 +147,70 @@ class SupportUnitRetreatActivity : AppCompatActivity() {
         var intent : Intent
         applyBtn.setOnClickListener{
 
+            val dice = Dice()
 
-            val crossingCount = if (riverCrossing1.isChecked && riverCrossing2.isChecked) {
-                2
-            } else if (riverCrossing1.isChecked || riverCrossing2.isChecked) {
-                1
+            val movementMode2 : MovementModeEnum = if (tactical2.isChecked) {
+                MovementModeEnum.TACTICAL
+            } else if (column2.isChecked) {
+                MovementModeEnum.COLUM
             } else {
-                0
+                MovementModeEnum.DEPLOYED
             }
 
-            val dice = Dice()
-            val diceResult1 = dice.roll()
-            val diceResult2 = dice.roll()
+            var resultText = ""
 
-            throw Exception("Finish implementation")
+            if (riverCrossing1.isChecked) {
+                val diceResult1 = dice.roll()
 
-            // No disengagements
-            intent = Intent(this, MainActivity::class.java)
-            intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
-            startActivity(intent)
-            finish()
+
+                val movementMode1 : MovementModeEnum = if (tactical1.isChecked) {
+                    MovementModeEnum.TACTICAL
+                } else if (column1.isChecked) {
+                    MovementModeEnum.COLUM
+                } else {
+                    MovementModeEnum.DEPLOYED
+                }
+
+                val attrition1 = movement.getAttritionForHastyCrossingDuringRetreat(diceResult1, movementMode1)
+
+                resultText += "First support unit: River crossing dice roll: ${diceResult1.get()}. Result: $attrition1 attrition.\n\n"
+
+            }
+
+            if (riverCrossing2.isChecked) {
+                val diceResult2 = dice.roll()
+
+
+                val movementMode2 : MovementModeEnum = if (tactical2.isChecked) {
+                    MovementModeEnum.TACTICAL
+                } else if (column2.isChecked) {
+                    MovementModeEnum.COLUM
+                } else {
+                    MovementModeEnum.DEPLOYED
+                }
+
+                val attrition2 = movement.getAttritionForHastyCrossingDuringRetreat(diceResult2, movementMode2)
+
+                resultText += "Second support unit: River crossing dice roll: ${diceResult2.get()}. Result: $attrition2 attrition.\n\n"
+
+            }
+
+            if (resultText == "") {
+                resultText = "No retreats over minor river. All support units can retreat normally to available hexes."
+            }
+
+            Helpers.showInfoDialog(
+                this,
+                resultText,
+                "Understood",
+                null,
+                {
+                    // No disengagements
+                    intent = Intent(this, MainActivity::class.java)
+                    intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+                    startActivity(intent)
+                    finish()
+                })
 
         }
     }

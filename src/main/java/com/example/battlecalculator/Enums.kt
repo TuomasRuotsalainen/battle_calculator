@@ -4,6 +4,10 @@ enum class PostureEnum {
     SCRN, DEF, RDEF, ADEF, ASL, FASL, TAC, REFT, MASL, ROAD, REC, MOV, BAR, SHOOTSCOOT, DEPL, FARP
 }
 
+enum class PostureWords {
+    screen, defense, rigid_defense, area_defense, full_assault, tactical, refit, march_assault, road, recon, moving, barrage, shoot_and_scoot, deployed, farp
+}
+
 enum class MovementModeEnum {
     COLUM, TACTICAL, DEPLOYED, FIXED
 }

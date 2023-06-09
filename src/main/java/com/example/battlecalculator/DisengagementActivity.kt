@@ -29,9 +29,11 @@ class DisengagementActivity : AppCompatActivity() {
 
 
 
-        fun toString(disengagemenResult: DisengagemenResult) : String {
+        fun toString(disengagemenResult: DisengagemenResult, diceResult : DiceRollResult) : String {
             val result = resultOptions[disengagemenResult]
-            var str = if (result!!.first) {
+            var str = "Dice roll: ${diceResult.get()}. "
+
+            str += if (result!!.first) {
                 "Disengagement successful."
             } else {
                 "Disengagement unsuccessful."
@@ -146,7 +148,7 @@ class DisengagementActivity : AppCompatActivity() {
             val unitType = disengagingUnit.unit!!.type
             estimationResult = tables.getResult(posture, unitType, meanDieRoll, totalModifier)
 
-            text += "\n\n${toString(estimationResult)}"
+            text += "\n\n${toString(estimationResult, meanDieRoll)}"
         }
 
         fun disableModifier(modifier : DisengagementModifiers) {
@@ -289,7 +291,7 @@ class DisengagementActivity : AppCompatActivity() {
             val diceResult = dice.roll()
             val result = tables.getResult(disengagingUnit.posture!!, disengagingUnit.unit!!.type, diceResult, totalModifier)
 
-            showInfoDialog(this, toString(result), "Understood", null, {
+            showInfoDialog(this, toString(result, diceResult), "Understood", null, {
                 var totalAttrition = disengagingUnit.attritionFromCombat + resultOptions[result]!!.second
 
                 if (!resultOptions[result]!!.first) {

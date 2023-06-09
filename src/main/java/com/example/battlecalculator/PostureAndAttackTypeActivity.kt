@@ -5,14 +5,11 @@ import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.RadioButton
-import android.widget.RadioGroup
-import android.widget.TextView
+import android.widget.*
+import androidx.lifecycle.Transformations.map
 import com.example.battlecalculator.Helpers.General.addTextFieldListener
 import com.example.battlecalculator.Helpers.General.getIntFromTextField
+import com.example.battlecalculator.Helpers.General.showRadioButtonDialog
 
 class PostureAndAttackTypeActivity : AppCompatActivity() {
 
@@ -30,6 +27,46 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
             throw Exception("Attacking unit state is null")
 
         }
+
+        val postureWords = PostureWords.values().toList()
+        val iconNames = postureWords.map { it.toString() + "_smaller" }
+
+        val iconResources = iconNames.map {
+            this.resources.getIdentifier(it, "drawable", this.packageName)
+        }
+
+        val readablePostures = postureWords.map { postureWord ->
+            val word = postureWord.name
+            val capitalized = word.split("_").joinToString(" ") { it.capitalize() }
+            capitalized
+        }
+
+        //val resourceName = "full_assault_smaller"
+        //val resourceID = this.resources.getIdentifier(resourceName, "drawable", this.packageName)
+
+
+        val icons = iconResources
+        val items = readablePostures
+        val title = "Select the unit's posture"
+        val positiveButtonText = "OK"
+        val negativeButtonText = "Cancel"
+
+        showRadioButtonDialog(
+            context = this,  // 'this' refers to the Context (could be Activity or Fragment)
+            items = items,
+            icons = icons,
+            title = title,
+            buttonText = positiveButtonText,
+            negativeButtonText = negativeButtonText,
+            selectedCallback = { selectedColor ->
+                // This will be called when the user selects a color
+                Toast.makeText(this, "You selected: $selectedColor", Toast.LENGTH_SHORT).show()
+            },
+            negativeCallback = {
+                // This will be called when the user taps the negative button (optional)
+                Toast.makeText(this, "No color was selected", Toast.LENGTH_SHORT).show()
+            }
+        )
 
         val currentUnitState : UnitState = if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
             gameState.attackingUnit!!
