@@ -98,12 +98,6 @@ class Movement() {
         return obstacleTable.getCell(obstacleEnum, movementTypeEnum, movementModeEnum).attritionRollMaxValue
     }
 
-    /*
-    private fun getAttritionRangeForHastyCrossing(movementTypeEnum: MovementTypeEnum, movementModeEnum: MovementModeEnum) : Int {
-        return getAttritionRange(ObstacleEnum.MINOR_HASTY, movementTypeEnum,movementModeEnum)!!
-    }*/
-
-    // TODO use this somewhere
     fun getRetreatPrerequisites() : String {
         var text = ""
 

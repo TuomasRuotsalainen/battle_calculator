@@ -306,13 +306,16 @@ class DisengagementActivity : AppCompatActivity() {
 
                     var dialogText = "This unit can retreat\n\n"
 
-                    // TODO set this properly
-                    val isInTransition = false
+                    val isInTransition = disengagingUnit.inPostureTransition
                     val posture = disengagingUnit.posture!!
                     val postureAfterRetreat = tables.getEmergencyPostureAndAttritionForRetreat(posture, isInTransition)
 
                     if (postureAfterRetreat.first != posture) {
-                        dialogText += "This unit was in posture $posture.\nIt has to change to an emergency posture of ${postureAfterRetreat.first} in order to retreat.\n"
+                        dialogText += if (isInTransition) {
+                            "This unit was in posture transition.\nIt has to change to an emergency posture of ${postureAfterRetreat.first} in order to retreat.\n"
+                        } else {
+                            "This unit was in posture $posture.\nIt has to change to an emergency posture of ${postureAfterRetreat.first} in order to retreat.\n"
+                        }
                         if (postureAfterRetreat.second != 0) {
                             dialogText += "It also takes one additional attrition because of this transition.\n\n"
                         }

@@ -18,9 +18,16 @@ class Calculator() {
         var mpExplanation = ""
         var differential = 0
 
+        var postureTransitionEffect = 0
+        var postureTransitionString = ""
+
         if (unitState.attackType == null) {
             fightingValue = unitState.unit!!.defense
             postureDifferential = unitPosture.defense
+            if (unitState.inPostureTransition) {
+                postureTransitionEffect = 2
+                postureTransitionString = "+ $postureTransitionEffect (posture transition effect) "
+            }
         } else {
             fightingValue = unitState.unit!!.attack
             val attackTypeModifier = AttackType().getCombatModifier(unitState.attackType!!)
@@ -33,9 +40,9 @@ class Calculator() {
 
         val commandStateDifferential = fixedModifiers.getCommandStateModifier(unitState)
 
-        differential += fightingValue
+        differential += fightingValue + postureTransitionEffect
 
-        explanation += "+ $postureDifferential (posture) + $fightingValue (unit)"
+        explanation += "+ $postureDifferential (posture) $postureTransitionString+ $fightingValue (unit)"
         explanation += " - ${unitState.attrition} (attrition)"
 
         differential += postureDifferential
@@ -45,7 +52,6 @@ class Calculator() {
             differential += commandStateDifferential.first
             explanation += "\n+ $commandStateDifferential (command state)"
         }
-
 
         explanation += "\n Total = $differential"
 
@@ -93,27 +99,28 @@ class Calculator() {
 
         val postures = Postures()
 
-        val defenderPostures = defenders.map { it.posture!! }
 
         val attackerPostureModifier = postures.getCombatModifier(attacker.posture!!, true)
-        val defenderPostureModifier = postures.getLeastFavourableDefenseModifier(defenderPostures)
+        val defenderPosture = postures.getLeastFavourableDefenseModifier(defenders)
 
         if (attackerPostureModifier == null) {
             throw Exception("Tried to use bad posture for attacking: ${attacker.posture.toString()}")
         }
 
-        explanation += "Attacker posture: $attackerPostureModifier, defender posture: $defenderPostureModifier\n"
+
+        explanation += "Attacker posture: $attackerPostureModifier, ${defenderPosture.second}\n"
 
         val totalCombatDifferential = defenderCombatStrength - attackerCombatStrength
         val combatDifferentialAfterPostures =
-            totalCombatDifferential + attackerPostureModifier + defenderPostureModifier
+            totalCombatDifferential + attackerPostureModifier + defenderPosture.first
 
         if (state.hexTerrain == null) {
             throw Exception("Hexterrain is null when calculating results")
         }
 
         // 15.6.5 Terrain
-        val terrainCombatModifier = Tables.TerrainCombatTable().getCombatModifier(state.hexTerrain!!, state.attackingUnit!!.riverCrossingType, defenderPostures)
+        val defenderPostureEnums = defenders.map { it.posture!! }
+        val terrainCombatModifier = Tables.TerrainCombatTable().getCombatModifier(state.hexTerrain!!, state.attackingUnit!!.riverCrossingType, defenderPostureEnums)
         explanation += terrainCombatModifier.second
 
         val fixedModifiers = calculateFixedModifiers(state)

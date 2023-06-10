@@ -46,19 +46,66 @@ class Postures() {
         return posture?.defense
     }
 
-    fun getLeastFavourableDefenseModifier(postureEnums : List<PostureEnum>): Int {
-        if (postureEnums.size == 0) {
-            throw Exception("Posture enums size is 0")
+    fun getLeastFavourableDefenseModifier(defenders : MutableList<UnitState>): Pair<Int, String> {
+        val defenderPostureEnums = defenders.map { it.posture!! }
+
+        if (defenderPostureEnums.isEmpty()) {
+            throw Exception("Defenders size is 0")
         }
+
+        if (defenders.size > 2) {
+            throw Exception("There are more than 2 defenders")
+        }
+
+        // 6.2.4. Posture transition
+        val postureTransitionModifier = 2
+
+        val firstDefenderPosture = defenders[0].posture
+        var firstExplanation = "Defender posture (${firstDefenderPosture.toString()}): "
+
+        var firstDefenderValue = postureMap[firstDefenderPosture]!!.defense
+        if (defenders[0].inPostureTransition) {
+            firstDefenderValue += postureTransitionModifier
+            firstExplanation += "$firstDefenderValue including posture transition penalty +2.\n"
+        } else {
+            firstExplanation += "$firstDefenderValue\n"
+        }
+
+        if (defenders.size > 1) {
+            val secondDefenderPosture = defenders[1].posture
+            var secondExplanation = "Defender posture (${secondDefenderPosture.toString()}): "
+
+            var secondDefenderValue = postureMap[secondDefenderPosture]!!.defense
+            if (defenders[1].inPostureTransition) {
+                secondDefenderValue += postureTransitionModifier
+                secondExplanation += "$secondDefenderValue including posture transition penalty +2.\n"
+            } else {
+                secondExplanation += "$secondDefenderValue\n"
+            }
+
+            if (secondDefenderValue > firstDefenderValue) {
+                return Pair(secondDefenderValue, secondExplanation)
+            }
+        }
+
+        return Pair(firstDefenderValue, firstExplanation)
+
+
+        /*
         var leastFavourable = -100
-        for (postureEnum in postureEnums) {
+        //for (postureEnum in defenderPostureEnums) {
+        for ((index, postureEnum) in defenderPostureEnums.withIndex()) {
+            var transitionModifier = 0
+            if (defenders[index].inPostureTransition) {
+                transitionModifier = 2
+            }
             val posture = postureMap[postureEnum]
             if (posture!!.defense > leastFavourable) {
                 leastFavourable = posture.defense
             }
         }
 
-        return leastFavourable
+        return leastFavourable*/
     }
 
     private fun getPostureEnumHashMap() : HashMap<String, PostureEnum> {

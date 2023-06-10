@@ -367,6 +367,13 @@
 
             />
 
+        <CheckBox
+            android:id="@+id/inTransition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="In posture transition"
+        />
+
     </LinearLayout>
 
     <TextView
@@ -401,6 +408,8 @@
         app:layout_constraintEnd_toStartOf="@+id/currentUnitView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

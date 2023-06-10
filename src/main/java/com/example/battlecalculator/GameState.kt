@@ -558,8 +558,8 @@ class GameState(stateString : String) {
             }
         }
 
-        if (properties.size != 8) {
-            throw Exception("Properties size of unit string $str is not 8")
+        if (properties.size != 9) {
+            throw Exception("Properties size of unit string $str is not 9")
         }
 
         val postureStr = properties[1]
@@ -601,7 +601,10 @@ class GameState(stateString : String) {
         val riverCrossingTypeStr = properties[7]
         riverCrossingType = getRiverCrossingTypeFromString(riverCrossingTypeStr)
 
-        return UnitState(unit, posture, attrition, commandState, disengagementOrdered, attritionFromCombat, attackType, riverCrossingType)
+        val inPostureTransitionStr = properties[8]
+        val inPostureTransition = strToBool(inPostureTransitionStr)
+
+        return UnitState(unit, posture, attrition, commandState, disengagementOrdered, attritionFromCombat, attackType, riverCrossingType, inPostureTransition)
 
     }
 }
@@ -614,7 +617,8 @@ class UnitState(
     disengagementOrdered : Boolean,
     attritionFromCombat : Int,
     attackTypeEnum: AttackTypeEnum?,
-    riverCrossingTypeEnum: RiverCrossingTypeEnum) {
+    riverCrossingTypeEnum: RiverCrossingTypeEnum,
+    inPostureTransition: Boolean) {
 
     val unit = unitInput
     var posture = postureInput
@@ -625,6 +629,7 @@ class UnitState(
     var attritionFromCombat = attritionFromCombat
     var attackType = attackTypeEnum
     var riverCrossingType = riverCrossingTypeEnum
+    var inPostureTransition = inPostureTransition
 
     fun isInfantryOutInTheOpen() : Boolean {
         if (unit?.eatsArmourInCity() == true || unit?.type == UnitTypeEnum.RECON) {
@@ -688,6 +693,8 @@ class UnitState(
         unitStr += "-$attackType"
 
         unitStr += "-$riverCrossingType"
+
+        unitStr += "-$inPostureTransition"
 
         return unitStr
     }

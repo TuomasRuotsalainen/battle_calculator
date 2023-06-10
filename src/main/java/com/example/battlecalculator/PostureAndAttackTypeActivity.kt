@@ -13,7 +13,6 @@ import com.example.battlecalculator.Helpers.General.showRadioButtonDialog
 
 class PostureAndAttackTypeActivity : AppCompatActivity() {
 
-    // TODO add missing postures to defending unit selection
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -64,6 +63,7 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
         val currentPostureView = findViewById<ImageView>(R.id.currentPostureView)
 
 
+
         fun updateCurrentPostureImage() {
             val currentPostureDrawable =
                 Images.getDrawable(selectedPostureIconName, this, applicationContext, applicationInfo)
@@ -76,9 +76,19 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
 
         val textView = findViewById<TextView>(R.id.combatDifferential)
 
+        val postureTransitionCheckBox = findViewById<CheckBox>(R.id.inTransition)
+        postureTransitionCheckBox.setOnClickListener {
+            currentUnitState.inPostureTransition = postureTransitionCheckBox.isChecked
+            val textContent = getTextViewString(currentUnitState)
+            textView.text = textContent
+        }
+
+
         if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
+            val layout = findViewById<LinearLayout>(R.id.attrition_input)
+            layout.removeViewAt(2)
+
             // remove non attack postures
-            //val postures = Postures()
             val attackPostures = Postures().getAttackPostures()
             val indexes: List<Int> = attackPostures.mapNotNull { posture ->
                 PostureEnum.values().indexOf(posture.enum).takeIf { it != -1 }
@@ -115,8 +125,6 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
                 }
             )
         }
-
-
 
         val attritionField = findViewById<EditText>(R.id.attrition_text_input)
         attritionField.setText("0")
@@ -192,48 +200,6 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
 
         currentUnitView.setImageDrawable(currentUnitDrawable)
 
-
-
-
-
-
-        val postures = Postures()
-
-        /*
-        var selectedPosture : PostureEnum
-
-        val postureAssault = findViewById<RadioButton>(R.id.radio_posture_assault)
-        val postureMarchAssault = findViewById<RadioButton>(R.id.radio_posture_march_assault)
-        val postureFullAssault = findViewById<RadioButton>(R.id.radio_posture_full_assault)
-        val postureRecon = findViewById<RadioButton>(R.id.radio_posture_recon)
-        val postureRefit = findViewById<RadioButton>(R.id.radio_posture_refit)
-        val postureScreen = findViewById<RadioButton>(R.id.radio_posture_screen)
-        val postureRigidDef = findViewById<RadioButton>(R.id.radio_posture_rigid_defence)
-        val postureDefense = findViewById<RadioButton>(R.id.radio_posture_defence)
-        val postureTactical = findViewById<RadioButton>(R.id.radio_posture_tactical)
-        val postureAreaDef = findViewById<RadioButton>(R.id.radio_posture_area_defense)
-
-        postureAssault.isChecked = true
-        selectedPosture = PostureEnum.ASL
-        currentUnitState.posture = PostureEnum.ASL
-
-        val postureRadios = listOf(
-            postureAssault, postureMarchAssault, postureFullAssault, postureRecon, postureRefit,
-            postureScreen, postureRigidDef, postureDefense, postureTactical, postureAreaDef)
-
-        for (postureRadio in postureRadios) {
-            postureRadio.setOnClickListener {
-                uncheckAllPostureRadios(postureRadios)
-                postureRadio.isChecked = true
-                selectedPosture = postures.getPostureEnumByStr(postureRadio.text.toString())
-                currentUnitState.posture = selectedPosture
-                val textContent = getTextViewString(currentUnitState)
-                textView.text = textContent
-
-            }
-        }*/
-
-
         if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
             val hasty = findViewById<RadioButton>(R.id.radio_attaktype_hasty)
             val prepared = findViewById<RadioButton>(R.id.radio_attaktype_prepared)
@@ -290,6 +256,7 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
             } else {
 
                 currentUnitState.posture = selectedPosture
+                currentUnitState.inPostureTransition = postureTransitionCheckBox.isChecked
                 gameState.setDefendingUnit(currentUnitState)
 
                 val nextDefender = gameState.getDefendingUnitStateWithoutPosture()

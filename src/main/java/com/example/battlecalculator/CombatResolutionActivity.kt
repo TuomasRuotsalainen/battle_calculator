@@ -86,6 +86,11 @@ class CombatResolutionActivity : AppCompatActivity() {
         val stage = Stage()
         val stage2Apply = "Calculate and apply final combat support"
         val applyButton = findViewById<Button>(R.id.apply)
+        val retreatRuleBtn = findViewById<Button>(R.id.explainretreat)
+
+        retreatRuleBtn.setOnClickListener {
+            showInfoDialog(this, Movement().getRetreatPrerequisites(), "Understood",null, {})
+        }
 
         if(!gameState.combatSupport!!.ewInUse()) {
             stage.noEwNeeded()
@@ -223,6 +228,7 @@ class CombatResolutionActivity : AppCompatActivity() {
                 val groundCombat = Tables.GroundCombat()
                 groundCombatResult = groundCombat.getResult(combatRoll, calculator.calculateCurrentCombatDifferential(gameState).first + attackerCs!! + defenderCs!!)
 
+                val retreatText = Movement().getRetreatPrerequisites()
                 applyButton.text = "Attempt to\n retreat"
 
                 addExitButton()
