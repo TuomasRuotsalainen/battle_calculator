@@ -35,7 +35,8 @@ class Tables {
         fun getResult(posture: PostureEnum, unitType: UnitTypeEnum, dieRoll: DiceRollResult, modifier : Int): DisengagemenResult {
 
             val column = disengagementTable[posture]
-            val cell = column?.get(unitType)!!
+                ?: throw Exception("Couldn't get disengagement column for posture $posture")
+            val cell = column.get(unitType)!!
 
             val s0Lower = cell.s0lowerLimit
             val f1Upper = cell.f1upperLimit
@@ -146,6 +147,12 @@ class Tables {
             disengagementTable[PostureEnum.RDEF] = OTHER_column
             disengagementTable[PostureEnum.REFT] = OTHER_column
             disengagementTable[PostureEnum.ROAD] = OTHER_column
+            disengagementTable[PostureEnum.SHOOTSCOOT] = OTHER_column
+            disengagementTable[PostureEnum.BAR] = OTHER_column
+            disengagementTable[PostureEnum.CSUP] = OTHER_column
+            disengagementTable[PostureEnum.FARP] = OTHER_column
+            disengagementTable[PostureEnum.DEPL] = OTHER_column
+            disengagementTable[PostureEnum.MOV] = OTHER_column
 
             return disengagementTable
         }
@@ -201,12 +208,12 @@ class Tables {
             riverCrossingTypeEnum: RiverCrossingTypeEnum
         ): Pair<Int, String> {
 
+            val currentObstacle = hexTerrain.getObstacle(riverCrossingTypeEnum)
+                ?: return Pair(0, "No obstacles\n")
+
             if (riverCrossingTypeEnum == RiverCrossingTypeEnum.NONE) {
                 throw Exception("There is a river, but river crossing type is NONE")
             }
-
-            val currentObstacle = hexTerrain.getObstacle(riverCrossingTypeEnum)
-                ?: return Pair(0, "No obstacles\n")
 
             val weakestMovementMode = MovementMode().getWeakestMovementMode(defenderPostureEnums)
 
@@ -369,16 +376,22 @@ class Tables {
             data[PostureEnum.TAC] = MovementModeEnum.TACTICAL
             data[PostureEnum.REC] = MovementModeEnum.TACTICAL
             data[PostureEnum.MASL] = MovementModeEnum.TACTICAL
+            data[PostureEnum.CSUP] = MovementModeEnum.TACTICAL
 
             data[PostureEnum.ROAD] = MovementModeEnum.COLUM
+            data[PostureEnum.MOV] = MovementModeEnum.COLUM
 
             data[PostureEnum.DEF] = MovementModeEnum.DEPLOYED
             data[PostureEnum.ADEF] = MovementModeEnum.DEPLOYED
             data[PostureEnum.RDEF] = MovementModeEnum.DEPLOYED
             data[PostureEnum.ASL] = MovementModeEnum.DEPLOYED
             data[PostureEnum.FASL] = MovementModeEnum.DEPLOYED
+            data[PostureEnum.SHOOTSCOOT] = MovementModeEnum.DEPLOYED
 
+            data[PostureEnum.BAR] = MovementModeEnum.FIXED
             data[PostureEnum.REFT] = MovementModeEnum.FIXED
+            data[PostureEnum.FARP] = MovementModeEnum.FIXED
+            data[PostureEnum.DEPL] = MovementModeEnum.FIXED
 
             return data
         }

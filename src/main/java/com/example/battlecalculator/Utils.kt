@@ -99,7 +99,7 @@ class Helpers {
         ) {
 
             val builder = AlertDialog.Builder(context)
-            val checkedItem = 0 // this will check the item at position 0
+            val checkedItem = 6 // this will check the item at position 0
             val adapter = IconArrayAdapter(context!!, items, icons)
 
             title?.let { builder.setTitle(it) }
@@ -205,6 +205,11 @@ class Images {
                 PostureEnum.REC -> "recon_smaller"
                 PostureEnum.MOV -> "road_smaller"
                 PostureEnum.ADEF -> "area_defense_smaller"
+                PostureEnum.SHOOTSCOOT -> "shoot_and_scoot_smaller"
+                PostureEnum.BAR -> "barrage_smaller"
+                PostureEnum.CSUP -> "close_support_smaller"
+                PostureEnum.FARP -> "farp_smaller"
+                PostureEnum.DEPL -> "deployed_smaller"
                 else -> throw Exception("Unrecognized posture: ${unitState.posture}")
             }
 

@@ -14,8 +14,6 @@ import com.example.battlecalculator.Helpers.General.showRadioButtonDialog
 class PostureAndAttackTypeActivity : AppCompatActivity() {
 
     // TODO add missing postures to defending unit selection
-    // TODO remove non-attacking postures from attacking unit selection
-
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -28,6 +26,14 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
 
         }
 
+        val currentUnitState : UnitState = if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
+            gameState.attackingUnit!!
+        } else {
+            gameState.getDefendingUnitStateWithoutPosture() ?:
+            // This means that we should not have started this activity any more
+            throw Exception("Started a posture and attack type activity for defender when all defending units have a posture already")
+        }
+
         val postureWords = PostureWords.values().toList()
         val iconNames = postureWords.map { it.toString() + "_smaller" }
 
@@ -38,45 +44,78 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
         val readablePostures = postureWords.map { postureWord ->
             val word = postureWord.name
             val capitalized = word.split("_").joinToString(" ") { it.capitalize() }
-            capitalized
+            "    $capitalized"
         }
 
-        //val resourceName = "full_assault_smaller"
-        //val resourceID = this.resources.getIdentifier(resourceName, "drawable", this.packageName)
-
-
-        val icons = iconResources
-        val items = readablePostures
+        var icons = iconResources
+        var items = readablePostures
         val title = "Select the unit's posture"
         val positiveButtonText = "OK"
         val negativeButtonText = "Cancel"
 
-        showRadioButtonDialog(
-            context = this,  // 'this' refers to the Context (could be Activity or Fragment)
-            items = items,
-            icons = icons,
-            title = title,
-            buttonText = positiveButtonText,
-            negativeButtonText = negativeButtonText,
-            selectedCallback = { selectedColor ->
-                // This will be called when the user selects a color
-                Toast.makeText(this, "You selected: $selectedColor", Toast.LENGTH_SHORT).show()
-            },
-            negativeCallback = {
-                // This will be called when the user taps the negative button (optional)
-                Toast.makeText(this, "No color was selected", Toast.LENGTH_SHORT).show()
-            }
-        )
+        var selectedPosture : PostureEnum = PostureEnum.TAC
+        var selectedPostureIconName : String = iconNames[6]
 
-        val currentUnitState : UnitState = if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
-            gameState.attackingUnit!!
-        } else {
-            gameState.getDefendingUnitStateWithoutPosture() ?:
-            // This means that we should not have started this activity any more
-            throw Exception("Started a posture and attack type activity for defender when all defending units have a posture already")
+        currentUnitState.posture = selectedPosture
+
+
+        val setPostureButton = findViewById<Button>(R.id.setposture)
+
+        val currentPostureView = findViewById<ImageView>(R.id.currentPostureView)
+
+
+        fun updateCurrentPostureImage() {
+            val currentPostureDrawable =
+                Images.getDrawable(selectedPostureIconName, this, applicationContext, applicationInfo)
+                    ?: throw Exception("Unable to get drawable for $selectedPostureIconName")
+
+            currentPostureView.setImageDrawable(currentPostureDrawable)
         }
 
+        updateCurrentPostureImage()
+
         val textView = findViewById<TextView>(R.id.combatDifferential)
+
+        if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
+            // remove non attack postures
+            //val postures = Postures()
+            val attackPostures = Postures().getAttackPostures()
+            val indexes: List<Int> = attackPostures.mapNotNull { posture ->
+                PostureEnum.values().indexOf(posture.enum).takeIf { it != -1 }
+            }
+
+            items = items.filterIndexed { index, _ -> index in indexes }
+            icons = icons.filterIndexed { index, _ -> index in indexes }
+
+
+        }
+
+        setPostureButton.setOnClickListener {
+            showRadioButtonDialog(
+                context = this,
+                items = items,
+                icons = icons,
+                title = title,
+                buttonText = positiveButtonText,
+                negativeButtonText = negativeButtonText,
+                selectedCallback = { selectedColor ->
+                    // This will be called when the user selects a color
+                    //Toast.makeText(this, "You selected: $selectedColor", Toast.LENGTH_SHORT).show()
+                    val postureIndex = readablePostures.indexOf(selectedColor)
+                    selectedPosture = PostureEnum.values()[postureIndex]
+                    selectedPostureIconName = iconNames[postureIndex]
+                    updateCurrentPostureImage()
+                    currentUnitState.posture = selectedPosture
+                    val textContent = getTextViewString(currentUnitState)
+                    textView.text = textContent
+                },
+                negativeCallback = {
+                    // This will be called when the user taps the negative button (optional)
+                    Toast.makeText(this, "No color was selected", Toast.LENGTH_SHORT).show()
+                }
+            )
+        }
+
 
 
         val attritionField = findViewById<EditText>(R.id.attrition_text_input)
@@ -89,7 +128,6 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
             val textContent = getTextViewString(currentUnitState)
             textView.text = textContent
         }
-
 
         fun setCommandStateButtons() {
             val normal = findViewById<RadioButton>(R.id.radio_command_status_none)
@@ -150,11 +188,18 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
                 ?: throw Exception("Unable to get drawable for $imageName")
 
         val currentUnitView = findViewById<ImageView>(R.id.currentUnitView)
+
+
         currentUnitView.setImageDrawable(currentUnitDrawable)
+
+
+
+
+
 
         val postures = Postures()
 
-
+        /*
         var selectedPosture : PostureEnum
 
         val postureAssault = findViewById<RadioButton>(R.id.radio_posture_assault)
@@ -186,7 +231,8 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
                 textView.text = textContent
 
             }
-        }
+        }*/
+
 
         if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
             val hasty = findViewById<RadioButton>(R.id.radio_attaktype_hasty)
@@ -237,6 +283,8 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
 
                     startActivity(nextIntent)
                     finish()
+                } else {
+                    Log.d("Tuomas tag", "posture $selectedPosture is not for attack")
                 }
 
             } else {

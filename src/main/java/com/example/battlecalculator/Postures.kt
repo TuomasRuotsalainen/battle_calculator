@@ -73,6 +73,14 @@ class Postures() {
         postureMap["Screen"] = PostureEnum.SCRN
         postureMap["Defense"] = PostureEnum.DEF
         postureMap["Area defense"] = PostureEnum.ADEF
+        postureMap["Shoot and scoot"] = PostureEnum.SHOOTSCOOT
+        postureMap["Road"] = PostureEnum.ROAD
+        postureMap["Barrage"] = PostureEnum.BAR
+        postureMap["Close support"] = PostureEnum.CSUP
+        postureMap["FARP"] = PostureEnum.FARP
+        postureMap["Deployed"] = PostureEnum.DEPL
+        postureMap["Moving"] = PostureEnum.MOV
+        postureMap["Refit"] = PostureEnum.REFT
 
         return postureMap
     }
@@ -90,6 +98,14 @@ class Postures() {
         postureMap[PostureEnum.REC] = Posture(-2, -4, 3, PostureEnum.REC)
         postureMap[PostureEnum.REFT] = Posture(1, null, 6, PostureEnum.REFT)
         postureMap[PostureEnum.MASL] = Posture(1, -2, 4, PostureEnum.MASL)
+        postureMap[PostureEnum.SHOOTSCOOT] = Posture(-1, null, 2, PostureEnum.SHOOTSCOOT)
+        postureMap[PostureEnum.ROAD] = Posture(4, null, 5, PostureEnum.ROAD)
+        postureMap[PostureEnum.BAR] = Posture(0, null, 3, PostureEnum.BAR)
+        postureMap[PostureEnum.CSUP] = Posture(1, null, 4, PostureEnum.CSUP)
+        postureMap[PostureEnum.FARP] = Posture(1, null, 2, PostureEnum.FARP)
+        postureMap[PostureEnum.DEPL] = Posture(0, null, 0, PostureEnum.DEPL)
+        postureMap[PostureEnum.MOV] = Posture(1, null, 5, PostureEnum.MOV)
+        postureMap[PostureEnum.REFT] = Posture(1, null, 6, PostureEnum.REFT)
 
         return postureMap
     }

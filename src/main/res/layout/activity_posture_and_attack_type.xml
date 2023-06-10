@@ -23,31 +23,56 @@
         android:id="@+id/currentUnitView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/postureRadio"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/attackTypeRadio"
+
+        app:layout_constraintStart_toEndOf="@+id/postureSelHeader"
+        app:layout_constraintEnd_toStartOf="@+id/currentPostureView"
         app:layout_constraintHorizontal_bias="0.522"
-        app:layout_constraintStart_toStartOf="parent"
+
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/swamp_smaller" />
+        app:srcCompat="@drawable/unit_73_smaller" />
 
-
-    <RadioGroup
-        android:id="@+id/postureRadio"
+    <ImageView
+        android:id="@+id/currentPostureView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@+id/attackTypeRadio"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.467"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/currentUnitView">
+        app:layout_constraintEnd_toStartOf="@+id/setposture"
+        app:layout_constraintHorizontal_bias="0.522"
+        app:layout_constraintStart_toEndOf="@+id/currentUnitView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/full_assault_smaller"
+        />
 
-        <LinearLayout
+
+    <Button
+        android:id="@+id/setposture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set\nposture"
+        app:layout_constraintBottom_toTopOf="@+id/attackTypeRadio"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.522"
+        app:layout_constraintStart_toEndOf="@+id/currentPostureView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!--
+        <RadioGroup
+            android:id="@+id/postureRadio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/attackTypeRadio"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.467"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/currentUnitView">
 
-            >
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
 
-            <!--style="@style/GreenText"-->
+                >
+
             <RadioButton
                 android:id="@+id/radio_posture_full_assault"
                 android:layout_width="wrap_content"
@@ -76,8 +101,6 @@
             android:layout_height="wrap_content"
 
             >
-
-            <!--style="@style/GreenText"-->
             <RadioButton
                 android:id="@+id/radio_posture_march_assault"
                 android:layout_width="wrap_content"
@@ -107,7 +130,6 @@
 
             >
 
-            <!--style="@style/GreenText"-->
             <RadioButton
                 android:id="@+id/radio_posture_refit"
                 android:layout_width="wrap_content"
@@ -189,6 +211,7 @@
         </LinearLayout>
     </RadioGroup>
 
+    -->
 
     <RadioGroup
         android:id="@+id/attackTypeRadio"
@@ -198,7 +221,7 @@
         app:layout_constraintEnd_toEndOf="parent"
 
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/postureRadio">
+        app:layout_constraintTop_toBottomOf="@+id/setposture">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -374,7 +397,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Attacking unit"
-        app:layout_constraintBottom_toTopOf="@+id/postureRadio"
+        app:layout_constraintBottom_toTopOf="@+id/attackTypeRadio"
         app:layout_constraintEnd_toStartOf="@+id/currentUnitView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

@@ -312,7 +312,7 @@ class DisengagementActivity : AppCompatActivity() {
                     val postureAfterRetreat = tables.getEmergencyPostureAndAttritionForRetreat(posture, isInTransition)
 
                     if (postureAfterRetreat.first != posture) {
-                        dialogText += "This unit was in posture $posture. It needs to change to an emergency posture of $postureAfterRetreat in order to retreat."
+                        dialogText += "This unit was in posture $posture.\nIt has to change to an emergency posture of ${postureAfterRetreat.first} in order to retreat.\n"
                         if (postureAfterRetreat.second != 0) {
                             dialogText += "It also takes one additional attrition because of this transition.\n\n"
                         }
@@ -329,7 +329,7 @@ class DisengagementActivity : AppCompatActivity() {
                     }
 
                     if (postureAfterRetreat.first != posture) {
-                        dialogText += "3. Change the unit's posture to $postureAfterRetreat\n"
+                        dialogText += "3. Change the unit's posture to ${postureAfterRetreat.first}\n"
                     }
 
                     if (isInTransition) {

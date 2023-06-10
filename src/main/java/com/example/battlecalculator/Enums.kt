@@ -1,11 +1,11 @@
 package com.example.battlecalculator
 
 enum class PostureEnum {
-    SCRN, DEF, RDEF, ADEF, ASL, FASL, TAC, REFT, MASL, ROAD, REC, MOV, BAR, SHOOTSCOOT, DEPL, FARP
+    SCRN, DEF, RDEF, ADEF, ASL, FASL, TAC, REFT, MASL, ROAD, REC, MOV, BAR, SHOOTSCOOT, DEPL, FARP, CSUP
 }
 
 enum class PostureWords {
-    screen, defense, rigid_defense, area_defense, full_assault, tactical, refit, march_assault, road, recon, moving, barrage, shoot_and_scoot, deployed, farp
+    screen, defense, rigid_defense, area_defense, assault, full_assault, tactical, refit, march_assault, road, recon, moving, barrage, shoot_and_scoot, deployed, farp, close_support
 }
 
 enum class MovementModeEnum {
