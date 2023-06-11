@@ -10,8 +10,8 @@ import java.util.logging.Logger
 
 class TargetTerrainSelectionActivity : AppCompatActivity() {
 
-    // TODO check and add possible attrition for hasty and prepared crossing for attacking unit
     // TODO add MP cost information for attacking unit regarding river crossing (and possible other attributes as well)
+    // TODO continued at least attack type, river crossing stuff, defensive works, possibly breakthroughs affect MP expenditure
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_target_terrain_selection)

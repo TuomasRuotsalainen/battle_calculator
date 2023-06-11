@@ -448,39 +448,6 @@ class GameState(stateString : String) {
         return str
     }
 
-    private fun getRiverCrossingTypeEnum() : RiverCrossingTypeEnum? {
-        // TODO: This has to be added to the state, view and everywhere
-        return RiverCrossingTypeEnum.NONE
-    }
-
-    /*
-    private fun getAttackTypeEnum() : AttackTypeEnum? {
-        val attackTypeStr = dataMap[DataIDs.AT.toString()]
-            ?: throw Exception("Attack type AT is not defined")
-
-        if (attackTypeStr == "null") {
-            return null
-        }
-
-        for (attackType in AttackTypeEnum.values()) {
-            if (attackType.toString() == attackTypeStr) {
-                return attackType
-            }
-        }
-
-        throw Exception("Attack type $attackTypeStr not recognized")
-
-    }*/
-
-    /*
-    private fun getAttackTypeStr() : String {
-        if (attackType == null) {
-            return "null"
-        }
-
-        return attackType.toString()
-    }*/
-
     private fun getAllianceStr() : String {
         return activeAlliance.toString()
     }
@@ -577,12 +544,6 @@ class GameState(stateString : String) {
             commandState = getCommandStateFromString(commandStateStr)
         }
 
-        /*
-        val engagementStateStr = properties[4]
-        if (engagementStateStr != nullVal) {
-            engagementState = getEngagementStateFromString(engagementStateStr)
-        }*/
-
         val disengagementOrderedStr = properties[4]
         if (disengagementOrderedStr != nullVal) {
             disengagementOrdered = strToBool(disengagementOrderedStr)
@@ -631,6 +592,10 @@ class UnitState(
     var riverCrossingType = riverCrossingTypeEnum
     var inPostureTransition = inPostureTransition
 
+    fun inFullAssault() : Boolean {
+        return posture == PostureEnum.FASL
+    }
+
     fun isInfantryOutInTheOpen() : Boolean {
         if (unit?.eatsArmourInCity() == true || unit?.type == UnitTypeEnum.RECON) {
             if (posture != PostureEnum.DEF && posture != PostureEnum.RDEF && posture != PostureEnum.ADEF && posture != PostureEnum.SCRN) {
@@ -678,13 +643,6 @@ class UnitState(
         } else {
             nullVal
         }
-
-        /*
-        unitStr += if (engagementState != null) {
-            "-$engagementState"
-         }else {
-            nullVal
-        }*/
 
         unitStr += "-$disengagementOrdered"
 

@@ -144,9 +144,19 @@ class CombatResolutionActivity : AppCompatActivity() {
                     calculator.calculateCurrentCombatDifferential(gameState).first + attackerCs!! + defenderCs!!
                 }"
             } else if (stage.get() == STAGE_DISPLAY_BATTLE_RESULTS) {
+                val possibleFullAssaultAttrition = if (gameState.attackingUnit!!.inFullAssault() && groundCombatResult!!.attackerAttrition > 0) {
+                    "(One additional attrition point to attacker in full assault posture)\n"
+                } else {
+                    ""
+                }
+
                 finalResults = "Combat roll: ${combatRoll.get()}\n\n"
-                finalResults += "Attrition to the attacking unit: ${groundCombatResult!!.attackerAttrition}\n" +
+                finalResults += "Attrition to the attacking unit: ${groundCombatResult!!.attackerAttrition}\n" + possibleFullAssaultAttrition +
                         "Attrition to all defending units: ${groundCombatResult!!.defenderAttrition}\n"
+                if (groundCombatResult!!.defenderAttrition > 0 && gameState.hexTerrain!!.getDefensiveWorksCombatModifier() < 0) {
+                    // 31.4.1. Reducing defensive works
+                    finalResults += "Defensive works reduced by one level.\n"
+                }
                 if (gameState.areSappersHit(groundCombatResult!!)) {
                     finalResults += "Sappers eliminated"
                 }
@@ -226,9 +236,13 @@ class CombatResolutionActivity : AppCompatActivity() {
 
             } else if (stage.get() == STAGE_DISPLAY_CS_PROMPT_BATTLE) {
                 val groundCombat = Tables.GroundCombat()
-                groundCombatResult = groundCombat.getResult(combatRoll, calculator.calculateCurrentCombatDifferential(gameState).first + attackerCs!! + defenderCs!!)
+                groundCombatResult = groundCombat.getResult(
+                    combatRoll,
+                    calculator.calculateCurrentCombatDifferential(gameState).first + attackerCs!! + defenderCs!!,
+                    gameState.attackingUnit!!.inFullAssault()
+                    )
 
-                val retreatText = Movement().getRetreatPrerequisites()
+                //val retreatText = Movement().getRetreatPrerequisites()
                 applyButton.text = "Attempt to\n retreat"
 
                 addExitButton()

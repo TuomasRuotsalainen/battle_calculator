@@ -1,8 +1,5 @@
 package com.example.battlecalculator
 
-import android.util.Log
-import kotlin.math.exp
-
 
 class Tables {
 
@@ -728,7 +725,7 @@ class Tables {
         // table needs to be searched Pair<y,x>
         private val table = initTable()
 
-        fun getResult(dieRoll : DiceRollResult, combatDifferential : Int) : GroundCombatResult {
+        fun getResult(dieRoll : DiceRollResult, combatDifferential : Int, attackerInFullAssault : Boolean) : GroundCombatResult {
             val finalDiff = if (combatDifferential > 9) {
                 9
             } else if (combatDifferential < -5) {
@@ -738,8 +735,19 @@ class Tables {
             }
 
             val result = table[Pair(dieRoll.get(), finalDiff)]
+                ?: throw Exception("Couldn't find result for ${dieRoll.get()} and $finalDiff")
 
-            return result!!
+            // 6.3.3 Full Assault Posture
+            if (result.attackerAttrition > 0 && attackerInFullAssault) {
+                return GroundCombatResult(
+                    attackerAttrition = result.attackerAttrition + 1,
+                    defenderAttrition = result.defenderAttrition,
+                    attackerSapperEliminated = result.attackerSapperEliminated,
+                    defenderSapperEliminated = result.defenderSapperEliminated
+                )
+            }
+
+            return result
         }
 
         private fun initTable() : Map<Pair<Int, Int>, GroundCombatResult> {
