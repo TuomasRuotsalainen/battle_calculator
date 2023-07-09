@@ -27,6 +27,10 @@ class Unit(typeStr: String, strengthStr : String, val name: String, cadre : Int)
 
         return true
     }
+
+    fun getString() : String {
+        return "$name:\n$type\nAttack: $attack, Defense: $defense\nCadre: $cadre"
+    }
 }
 
 class OrderOfBattle {
@@ -175,8 +179,7 @@ class OrderOfBattle {
                             "name" : "2nd Guards Tank",
                             "level_3" : [
                                 {
-                                    "name" : "16th Guards Tank",
-                                    "id" : "16GT"
+                                    "name" : "94th Guards Motor Rifle Division",
                                     "level_4" : [
                                             {
                                                 "name": "94gm_74g",
@@ -189,23 +192,147 @@ class OrderOfBattle {
                                                 "type": "MECHANIZED",
                                                 "strength": "6-8",
                                                 "cadre": 4
+                                            },
+                                                {
+                                                "name": "94gm_286g",
+                                                "type": "MECHANIZED",
+                                                "strength": "5-7",
+                                                "cadre": 4
+                                            },
+                                            {
+                                                "name": "94gm_12g",
+                                                "type": "RECON",
+                                                "strength": "2-2",
+                                                "cadre": 4
+                                            },
+                                            {
+                                                "name": "94gm_288g",
+                                                "type": "MECHANIZED",
+                                                "strength": "5-7",
+                                                "cadre": 4
+                                            },
+                                            {
+                                                "name": "94gm_28",
+                                                "type": "ARMOR",
+                                                "strength": "2-2",
+                                                "cadre": 4
                                             }
                                     ]
                                 },
                                 {
-                                    "name" : "21st Mot. Rifle",
+                                    "name" : "207th Motor Rifle Division",
+                                    "level_4" : [
+                                            {
+                                                "name": "207m_33",
+                                                "type": "MECHANIZED",
+                                                "strength": "5-7",
+                                                "cadre": 4
+                                            },
+                                            {
+                                                "name": "207m_41",
+                                                "type": "MECHANIZED",
+                                                "strength": "6-8",
+                                                "cadre": 4
+                                            },
+                                            {
+                                                "name": "207m_16g",
+                                                "type": "ARMOR",
+                                                "strength": "7-6",
+                                                "cadre": 4
+                                            },
+                                            {
+                                                "name": "207m_32",
+                                                "type": "ARMOR",
+                                                "strength": "2-2",
+                                                "cadre": 4
+                                            },
+                                            {
+                                                "name": "207m_400",
+                                                "type": "MECHANIZED",
+                                                "strength": "6-8",
+                                                "cadre": 4
+                                            },
+                                            {
+                                                "name": "207m_6",
+                                                "type": "RECON",
+                                                "strength": "2-2",
+                                                "cadre": 4
+                                            }
+                                    ]
+                                },
+                                {
+                                    "name" : "21st Motor Rifle Division",
                                     "level_4" : [
                                         {
-                                            "name" : "45M",
-                                            "type" : "MECHANIZED",
-                                            "strength" : "3-2"
-                                            "cadre" : 3
+                                            "name": "21m_18",
+                                            "type": "ARMOR",
+                                            "strength": "2-2",
+                                            "cadre": 4
                                         },
                                         {
-                                            "name" : "67e",
-                                            "type" : "ARMOR",
-                                            "strength" : "4-7"
-                                            "cadre" : 3
+                                            "name": "21m_239",
+                                            "type": "MECHANIZED",
+                                            "strength": "6-8",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "21m_283g",
+                                            "type": "MECHANIZED",
+                                            "strength": "5-7",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "21m_240",
+                                            "type": "MECHANIZED",
+                                            "strength": "5-8",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "21m_34",
+                                            "type": "RECON",
+                                            "strength": "1-2",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "21m_33",
+                                            "type": "ARMOR",
+                                            "strength": "7-6",
+                                            "cadre": 4
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "16th Guards Tank Division",
+                                    "level_4" : [
+                                        {
+                                            "name": "16gt_17g",
+                                            "type": "RECON",
+                                            "strength": "1-2",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "16gt_67g",
+                                            "type": "ARMOR",
+                                            "strength": "8-6",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "16gt_47g",
+                                            "type": "ARMOR",
+                                            "strength": "8-6",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "16gt_60",
+                                            "type": "MECHANIZED",
+                                            "strength": "5-8",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "16gt_65g",
+                                            "type": "ARMOR",
+                                            "strength": "8-6",
+                                            "cadre": 4
                                         }
                                     ]
                                 }
@@ -223,7 +350,9 @@ class OrderOfBattle {
 
         private val alliances = klaxon.parseArray<OOBData>(oobJSON)!!
 
-        val unitIndex = buildUnitIndex()
+        val index = buildUnitIndex()
+        val unitIndex = index.first
+        val allianceUnitIndex = index.second
 
     fun getOOB(alliance: Alliances) : OOBData {
         for (element in alliances) {
@@ -236,28 +365,38 @@ class OrderOfBattle {
     }
 
     fun searchUnits(searchTerm: String, alliance: Alliances) : List<Unit> {
-        return unitIndex.filterKeys { it.contains(searchTerm) }.values.toList()
+        return allianceUnitIndex[alliance]!!.filterKeys { it.contains(searchTerm) }.values.toList()
     }
 
-    private fun buildUnitIndex() : HashMap<String, Unit> {
+    private fun buildUnitIndex() : Pair<HashMap<String, Unit>, HashMap<Alliances, HashMap<String, Unit>>> {
         val unitIndex = HashMap<String, Unit>()
+        val alliancesUnitIndex = HashMap<Alliances, HashMap<String, Unit>>()
+
         for (alli in alliances) {
             if (alli.level1 == null) {
                 throw Exception("Level 1 of alliance ${alli.allianceName} is null")
             }
+
+            val allianceIndex = HashMap<String, Unit>()
+
             for (level1 in alli.level1) {
                 for (level2 in level1.level2) {
                     for (level3 in level2.level3) {
                         for (level4 in level3.level4) {
                             val unit = Unit(level4.type, level4.strength, level4.name, level4.cadre)
                             unitIndex[unit.name] = unit
+                            allianceIndex[unit.name] = unit
                         }
                     }
                 }
             }
+
+            val alliance = if (alli.allianceName == "NATO") Alliances.NATO else Alliances.PACT
+
+            alliancesUnitIndex[alliance] = allianceIndex
         }
 
-        return unitIndex
+        return Pair(unitIndex, alliancesUnitIndex)
     }
 
     /*

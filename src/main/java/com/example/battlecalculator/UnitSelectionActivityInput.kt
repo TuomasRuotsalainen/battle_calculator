@@ -1,10 +1,12 @@
 package com.example.battlecalculator
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -13,7 +15,7 @@ import com.google.android.material.textfield.TextInputLayout
 
 class UnitSelectionActivityInput : AppCompatActivity() {
 
-    private var selectedUnits = mutableListOf<String>()
+    private var selectedUnits = mutableListOf<Unit>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +24,8 @@ class UnitSelectionActivityInput : AppCompatActivity() {
         val unitSelectionType = Communication.getUnitSelectionType(intent)
 
         val activityHeader = findViewById<TextView>(R.id.textView)
+
+
         if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
             activityHeader.text = "SELECT THE ATTACKING UNIT"
         } else {
@@ -48,7 +52,23 @@ class UnitSelectionActivityInput : AppCompatActivity() {
         var matches : List<Unit> = listOf<Unit>()
 
 
+        fun handleSearch(searchTerm : String) {
+            matches = oob.searchUnits(searchTerm, gameState.activeAlliance)
+            // Code here executes after text has changed
 
+            if (matches.isNotEmpty()) {
+                if (selectedUnits.size > 0) {
+                    val mergedList = (selectedUnits + matches).distinct()
+                    updateSelectedView(mergedList, unitSelectionType)
+                } else {
+                    updateSelectedView(matches, unitSelectionType)
+
+                }
+
+            }
+        }
+
+        handleSearch("")
 
         unitInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
@@ -60,14 +80,7 @@ class UnitSelectionActivityInput : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable) {
-                Log.d("TUOMAS TEST", s.toString())
-                matches = oob.searchUnits(s.toString(), gameState.activeAlliance)
-                // Code here executes after text has changed
-
-                if (matches.isNotEmpty()) {
-                    updateSelectedView(unitSelectionType, matches[0].name)
-
-                }
+                handleSearch(s.toString())
             }
         })
 
@@ -81,9 +94,9 @@ class UnitSelectionActivityInput : AppCompatActivity() {
                     throw Exception("Selected units size is not 1 when committing attacking units")
                 }
 
-                val selectedUnitName = selectedUnits[0]
-                val selectedUnit = gameState.oob.unitIndex[selectedUnitName]
-                val unitState = UnitState(selectedUnit, null, null, null, false, 0, null, RiverCrossingTypeEnum.NONE, false)
+                //val selectedUnitName = selectedUnits[0]
+                //val selectedUnit = gameState.oob.unitIndex[selectedUnitName]
+                val unitState = UnitState(selectedUnits[0], null, null, null, false, 0, null, RiverCrossingTypeEnum.NONE, false)
 
                 gameState.attackingUnit = unitState
 
@@ -96,9 +109,9 @@ class UnitSelectionActivityInput : AppCompatActivity() {
             } else {
                 if (selectedUnits.size > 0) {
                     for (selectedUnit in selectedUnits) {
-                        val unit = gameState.oob.unitIndex[selectedUnit]
-                            ?: throw Exception("Couldn't find unit with name $selectedUnit when adding defending units")
-                        val unitState = UnitState(unit, null, null, null,  false, 0, null, RiverCrossingTypeEnum.NONE, false)
+                        //val unit = gameState.oob.unitIndex[selectedUnit]
+                           //?: throw Exception("Couldn't find unit with name $selectedUnit when adding defending units")
+                        val unitState = UnitState(selectedUnit, null, null, null,  false, 0, null, RiverCrossingTypeEnum.NONE, false)
 
                         gameState.defendingUnits.add(unitState)
                     }
@@ -119,20 +132,69 @@ class UnitSelectionActivityInput : AppCompatActivity() {
         }
     }
 
-    private fun updateSelectedView(selectionType: UnitSelectionTypes, unitName : String) {
-        val selectedView = findViewById<LinearLayout>(R.id.selected_units)
-        Log.d("TUOAMS TEST 1", unitName)
-        val imageFileName = Images.getImageFileName(unitName)
+    private fun updateSelectedView(units : List<Unit>, unitSelectionType: UnitSelectionTypes) {
 
-        Log.d("TUOAMS TEST 2", imageFileName)
-        if (selectionType == UnitSelectionTypes.ATTACKER) {
-            selectedView.removeAllViews()
+        val selectedView = findViewById<LinearLayout>(R.id.selected_units)
+        selectedView.removeAllViews()
+
+        val backgrounds = mutableListOf<ImageView>()
+
+        for (unit in units) {
+            val imageFileName = Images.getImageFileName(unit.name)
             val unitImage = getUnitImage(imageFileName)
-            Log.d("TUOAMS TEST 3", unitImage.toString())
-            selectedView.addView(unitImage)
-        } else if (selectionType == UnitSelectionTypes.DEFENDER) {
-            val unitImage = getUnitImage(imageFileName)
-            selectedView.addView(unitImage)
+            val unitImageLayout = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT)
+
+            unitImageLayout.gravity = Gravity.CENTER
+            unitImage.layoutParams = unitImageLayout
+
+            val frame = FrameLayout(this)
+
+            //selectedView.addView(unitImage)
+
+            val isSelected = selectedUnits.contains(unit)
+
+            val background = ImageView(this)
+            background.layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT
+            )
+            background.setImageResource(R.drawable.border_background)
+            background.setColorFilter(Color.BLACK)
+            background.scaleX = 1.1f
+            background.scaleY = 1.1f
+            background.visibility = if (isSelected) View.VISIBLE else View.INVISIBLE
+
+            backgrounds.add(background)
+
+            frame.addView(background)
+            frame.addView(unitImage)
+
+            selectedView.addView(frame)
+
+            unitImage.setOnClickListener {
+                Log.d("CLICKED", unit.name)
+                val unitInfo = findViewById<TextView>(R.id.unitinfo)
+
+                if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
+                    for (otherBackground in backgrounds) {
+                        otherBackground.visibility = View.INVISIBLE
+                        selectedUnits = mutableListOf()
+                    }
+                }
+
+                if (background.visibility == View.VISIBLE) {
+                    background.visibility = View.INVISIBLE
+                    unitInfo.text = ""
+                    selectedUnits.remove(unit)
+                } else {
+                    background.visibility = View.VISIBLE
+
+                    unitInfo.text = unit.getString()
+                    selectedUnits.add(unit)
+                }
+            }
         }
 
     }
