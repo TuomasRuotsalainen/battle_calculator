@@ -3,14 +3,14 @@ package com.example.battlecalculator
 import org.json.JSONObject
 import com.beust.klaxon.*
 
-class Unit(typeStr: String, strengthStr : String, val name: String, cadre : String) {
+class Unit(typeStr: String, strengthStr : String, val name: String, cadre : Int) {
 
     private val ok = checker(strengthStr)
 
     val type : UnitTypeEnum = UnitTypeEnum.valueOf(typeStr)
     val attack : Int = strengthStr[0].digitToInt()
     val defense : Int = strengthStr[2].digitToInt()
-    val cadre : Int = cadre[0].digitToInt()
+    val cadre : Int = cadre
 
     fun eatsArmourInCity(): Boolean {
         if (type == UnitTypeEnum.MECHANIZED || type == UnitTypeEnum.MOTORIZED || type == UnitTypeEnum.INFANTRY) {
@@ -49,13 +49,13 @@ class OrderOfBattle {
                                             "name" : "74",
                                             "type" : "ARMOR",
                                             "strength" : "4-5",
-                                            "cadre" : "4"
+                                            "cadre" : 4
                                         },
                                         {
                                             "name" : "73",
                                             "type" : "ARMOR",
                                             "strength" : "4-7"
-                                            "cadre" : "4"
+                                            "cadre" : 4
                                         }
                                     ]
                                 },
@@ -66,13 +66,13 @@ class OrderOfBattle {
                                             "name" : "123",
                                             "type" : "ARMOR",
                                             "strength" : "4-5"
-                                            "cadre" : "3"
+                                            "cadre" : 3
                                         },
                                         {
                                             "name" : "124",
                                             "type" : "ARMOR",
                                             "strength" : "4-7"
-                                            "cadre" : "3"
+                                            "cadre" : 3
                                         }
                                     ]
                                 }
@@ -88,13 +88,13 @@ class OrderOfBattle {
                                             "name" : "145",
                                             "type" : "ARMOR",
                                             "strength" : "4-5"
-                                            "cadre" : "3"
+                                            "cadre" : 3
                                         },
                                         {
                                             "name" : "146",
                                             "type" : "ARMOR",
                                             "strength" : "4-7"
-                                            "cadre" : "4"
+                                            "cadre" : 4
                                         }
                                     ]
                                 },
@@ -105,13 +105,13 @@ class OrderOfBattle {
                                             "name" : "345",
                                             "type" : "ARMOR",
                                             "strength" : "4-5"
-                                            "cadre" : "4"
+                                            "cadre" : 4
                                         },
                                         {
                                             "name" : "346",
                                             "type" : "ARMOR",
                                             "strength" : "4-7"
-                                            "cadre" : "4"
+                                            "cadre" : 4
                                         }
                                     ]
                                 }
@@ -132,13 +132,13 @@ class OrderOfBattle {
                                             "name" : "76",
                                             "type" : "ARMOR",
                                             "strength" : "4-5"
-                                            "cadre" : "4"
+                                            "cadre" : 4
                                         },
                                         {
                                             "name" : "66",
                                             "type" : "ARMOR",
                                             "strength" : "4-7"
-                                            "cadre" : "4"
+                                            "cadre" : 4
                                         }
                                     ]
                                 },
@@ -149,13 +149,13 @@ class OrderOfBattle {
                                             "name" : "45",
                                             "type" : "ARMOR",
                                             "strength" : "4-5"
-                                            "cadre" : "4"
+                                            "cadre" : 4
                                         },
                                         {
                                             "name" : "46",
                                             "type" : "ARMOR",
                                             "strength" : "4-7"
-                                            "cadre" : "4"
+                                            "cadre" : 4
                                         }
                                     ]
                                 }
@@ -176,19 +176,20 @@ class OrderOfBattle {
                             "level_3" : [
                                 {
                                     "name" : "16th Guards Tank",
+                                    "id" : "16GT"
                                     "level_4" : [
-                                        {
-                                            "name" : "74g",
-                                            "type" : "ARMOR",
-                                            "strength" : "6-3"
-                                            "cadre" : "3"
-                                        },
-                                        {
-                                            "name" : "34",
-                                            "type" : "MECHANIZED",
-                                            "strength" : "8-4"
-                                            "cadre" : "3"
-                                        }
+                                            {
+                                                "name": "94gm_74g",
+                                                "type": "ARMOR",
+                                                "strength": "7-6",
+                                                "cadre": 4
+                                            },
+                                            {
+                                                "name": "94gm_204g",
+                                                "type": "MECHANIZED",
+                                                "strength": "6-8",
+                                                "cadre": 4
+                                            }
                                     ]
                                 },
                                 {
@@ -198,13 +199,13 @@ class OrderOfBattle {
                                             "name" : "45M",
                                             "type" : "MECHANIZED",
                                             "strength" : "3-2"
-                                            "cadre" : "3"
+                                            "cadre" : 3
                                         },
                                         {
                                             "name" : "67e",
                                             "type" : "ARMOR",
                                             "strength" : "4-7"
-                                            "cadre" : "3"
+                                            "cadre" : 3
                                         }
                                     ]
                                 }
@@ -232,6 +233,10 @@ class OrderOfBattle {
         }
 
         throw Exception("No OOB found")
+    }
+
+    fun searchUnits(searchTerm: String, alliance: Alliances) : List<Unit> {
+        return unitIndex.filterKeys { it.contains(searchTerm) }.values.toList()
     }
 
     private fun buildUnitIndex() : HashMap<String, Unit> {
@@ -319,7 +324,7 @@ class OrderOfBattle {
         val name: String,
         val type: String,
         val strength: String,
-        val cadre: String
+        val cadre: Int
     )
 
 }
