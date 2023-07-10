@@ -1,5 +1,6 @@
 package com.example.battlecalculator
 
+import android.util.Log
 import org.json.JSONObject
 import com.beust.klaxon.*
 
@@ -126,6 +127,26 @@ class OrderOfBattle {
                                             "cadre": 4
                                         }
                                     ]
+                                }
+                            ],
+                            "level_4" : [
+                                {
+                                    "name": "3pz_3",
+                                    "type": "RECON",
+                                    "strength": "3-5",
+                                    "cadre": 5
+                                },
+                                {
+                                    "name": "3pz_36",
+                                    "type": "MOTORIZED",
+                                    "strength": "1-2",
+                                    "cadre": 4
+                                },
+                                {
+                                    "name": "3pz_37",
+                                    "type": "MOTORIZED",
+                                    "strength": "1-2",
+                                    "cadre": 4
                                 }
                             ]
                         },
@@ -428,6 +449,18 @@ class OrderOfBattle {
 
             for (level1 in alli.level1) {
                 for (level2 in level1.level2) {
+                    Log.d("LEVEL2", level2.name)
+                    if (level2.level4 != null) {
+
+                        for (level4 in level2.level4) {
+                            val unit = Unit(level4.type, level4.strength, level4.name, level4.cadre)
+                            Log.d("Adding", unit.name)
+
+                            unitIndex[unit.name] = unit
+                            allianceIndex[unit.name] = unit
+                        }
+                    }
+
                     for (level3 in level2.level3) {
                         for (level4 in level3.level4) {
                             val unit = Unit(level4.type, level4.strength, level4.name, level4.cadre)
@@ -482,21 +515,27 @@ class OrderOfBattle {
         val allianceName: String,
 
         @Json(name = "level_1")
-        val level1: List<Level1>? = null
+        val level1: List<Level1>
     )
 
     data class Level1 (
         val name: String,
 
         @Json(name = "level_2")
-        val level2: List<Level2>
+        val level2: List<Level2>,
+
+        @Json(name = "level_4")
+        val level4: List<Level4>? = null
     )
 
     data class Level2 (
         val name: String,
 
         @Json(name = "level_3")
-        val level3: List<Level3>
+        val level3: List<Level3>,
+
+        @Json(name = "level_4")
+        val level4: List<Level4>? = null
     )
 
     data class Level3 (
