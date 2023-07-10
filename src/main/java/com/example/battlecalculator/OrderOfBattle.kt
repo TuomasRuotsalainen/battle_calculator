@@ -44,39 +44,86 @@ class OrderOfBattle {
                     "name" : "NL I",
                     "level_2" : [
                         {
-                            "name" : "1 PtsInf",
+                            "name" : "3rd Panzer Division",
                             "level_3" : [
                                 {
-                                    "name" : "11 PtsInf Brigade",
+                                    "name" : "7th PzGren Brigade",
                                     "level_4" : [
                                         {
-                                            "name" : "74",
-                                            "type" : "ARMOR",
-                                            "strength" : "4-5",
-                                            "cadre" : 4
+                                            "name": "3pz_7_74",
+                                            "type": "ARMOR",
+                                            "strength": "5-4",
+                                            "cadre": 5
                                         },
                                         {
-                                            "name" : "73",
-                                            "type" : "ARMOR",
-                                            "strength" : "4-7"
-                                            "cadre" : 4
+                                            "name": "3pz_7_71",
+                                            "type": "MECHANIZED",
+                                            "strength": "4-5",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "3pz_7_73",
+                                            "type": "MECHANIZED",
+                                            "strength": "3-6",
+                                            "cadre": 5
+                                        },
+                                        {
+                                            "name": "3pz_7_72",
+                                            "type": "MECHANIZED",
+                                            "strength": "3-6",
+                                            "cadre": 5
                                         }
                                     ]
                                 },
                                 {
-                                    "name" : "12 PtsInf Brigade",
+                                    "name" : "8th PzGren Brigade",
                                     "level_4" : [
                                         {
-                                            "name" : "123",
-                                            "type" : "ARMOR",
-                                            "strength" : "4-5"
-                                            "cadre" : 3
+                                            "name": "3pz_8_83",
+                                            "type": "ARMOR",
+                                            "strength": "5-5",
+                                            "cadre": 5
                                         },
                                         {
-                                            "name" : "124",
-                                            "type" : "ARMOR",
-                                            "strength" : "4-7"
-                                            "cadre" : 3
+                                            "name": "3pz_8_84",
+                                            "type": "ARMOR",
+                                            "strength": "5-5",
+                                            "cadre": 5
+                                        },
+                                        {
+                                            "name": "3pz_8_82",
+                                            "type": "MECHANIZED",
+                                            "strength": "3-6",
+                                            "cadre": 5
+                                        },
+                                        {
+                                            "name": "3pz_8_81",
+                                            "type": "ARMOR",
+                                            "strength": "4-5",
+                                            "cadre": 4
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name" : "9th PzGren Brigade",
+                                    "level_4" : [
+                                        {
+                                            "name": "3pz_9_94",
+                                            "type": "ARMOR",
+                                            "strength": "5-5",
+                                            "cadre": 5
+                                        },
+                                        {
+                                            "name": "3pz_9_92l",
+                                            "type": "MECHANIZED",
+                                            "strength": "4-6",
+                                            "cadre": 5
+                                        },
+                                        {
+                                            "name": "3pz_9_91",
+                                            "type": "ARMOR",
+                                            "strength": "4-5",
+                                            "cadre": 4
                                         }
                                     ]
                                 }
