@@ -25,16 +25,25 @@ class UnitSelectionActivityInput : AppCompatActivity() {
 
         val activityHeader = findViewById<TextView>(R.id.textView)
 
+        val gameState = getGameState(intent)
+
+        var currentAlliance = gameState.activeAlliance
 
         if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
             activityHeader.text = "SELECT THE ATTACKING UNIT"
         } else {
+            currentAlliance = if (currentAlliance == Alliances.NATO) {
+                Alliances.PACT
+            } else {
+                Alliances.NATO
+            }
             activityHeader.text = "SELECT THE DEFENDING UNIT(S)"
         }
 
-        val gameState = getGameState(intent)
 
         val oob = OrderOfBattle()
+
+        /*
         val allianceOob : OrderOfBattle.OOBData = if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
             oob.getOOB(gameState.activeAlliance)
         } else {
@@ -43,7 +52,7 @@ class UnitSelectionActivityInput : AppCompatActivity() {
             } else {
                 oob.getOOB(Alliances.NATO)
             }
-        }
+        }*/
 
 
 
@@ -53,7 +62,7 @@ class UnitSelectionActivityInput : AppCompatActivity() {
 
 
         fun handleSearch(searchTerm : String) {
-            matches = oob.searchUnits(searchTerm, gameState.activeAlliance)
+            matches = oob.searchUnits(searchTerm, currentAlliance)
             // Code here executes after text has changed
 
             if (matches.isNotEmpty()) {

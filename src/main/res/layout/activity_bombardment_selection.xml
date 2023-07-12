@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+    <TextView
+        android:id="@+id/header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Bombardment\n\nNote: a unit can be targeted only once per turn"
+
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/target_selection"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+
+
+        />
+
+    <LinearLayout
+        android:id="@+id/target_selection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/header"
+        app:layout_constraintBottom_toTopOf="@+id/set_posture"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        >
+
+        <RadioButton
+            android:id="@+id/radio_command_status_none"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Bombard unit"
+             />
+
+        <RadioButton
+            android:id="@+id/radio_command_status_front_line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Bombard bridge"
+             />
+
+        <RadioButton
+            android:id="@+id/radio_command_status_out"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Interdict hex"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/set_posture"
+
+        app:layout_constraintTop_toBottomOf="@+id/target_selection"
+        app:layout_constraintBottom_toTopOf="@+id/target_attributes"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+
+        <ImageView
+            android:id="@+id/currentPostureView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/attackTypeRadio"
+            app:layout_constraintEnd_toStartOf="@+id/setposture"
+            app:layout_constraintHorizontal_bias="0.522"
+            app:layout_constraintStart_toEndOf="@+id/currentUnitView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/full_assault_smaller"
+            />
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="16dp"
+
+            android:text="Set target\nposture"
+
+        />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/target_attributes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/set_posture"
+        app:layout_constraintBottom_toTopOf="@+id/explanation"
+
+        >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:background="#FFF3E0"
+
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+
+
+
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Detection level\n(pick highest)"
+
+
+                />
+
+            <CheckBox
+                android:id="@+id/detection_lvl_adjacent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Adjacent to\nour units"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+
+                />
+
+
+
+            <CheckBox
+                android:id="@+id/detection_lvl_4hex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="Within 4 hexes\nof our\nDeployed HQ"
+                 />
+
+            <CheckBox
+                android:id="@+id/detection_lvl_none"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="None"
+                 />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Target attributes"
+
+
+                    />
+
+                <CheckBox
+                    android:id="@+id/target_attributes_combat"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Combat unit"
+
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    />
+
+                <CheckBox
+                    android:id="@+id/target_attributes_support"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="Support unit"
+                    tools:layout_editor_absoluteX="16dp"
+                    tools:layout_editor_absoluteY="12dp" />
+
+                <CheckBox
+                    android:id="@+id/target_attributes_soft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="Soft target\n(§)"
+                    tools:layout_editor_absoluteX="16dp"
+                    tools:layout_editor_absoluteY="60dp" />
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        android:background="#E1F5FE"
+
+
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Detection modifiers\n(multiselect)"
+
+
+            />
+
+        <CheckBox
+            android:id="@+id/detection_mod_road"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ROAD posture"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+        <CheckBox
+            android:id="@+id/detection_mod_postures"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="BARR, CSUP\nor MASL"
+             />
+
+        <CheckBox
+            android:id="@+id/detection_mod_close_arty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Artillery within\n2 hexes from us"
+            />
+
+        <CheckBox
+            android:id="@+id/detection_mod_farp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="FARP in airfield"
+             />
+
+        <CheckBox
+            android:id="@+id/detection_mod_city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Unit in city"
+            />
+
+        <CheckBox
+            android:id="@+id/detection_mod_movinghq"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Moving HQ"
+            />
+
+        <CheckBox
+            android:id="@+id/detection_mod_spottedhq"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Spotted HQ\n(optional rule)"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        android:background="#E8F5E9"
+
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Target terrain\n(pick highest)"
+
+
+            />
+
+        <CheckBox
+            android:id="@+id/target_terrain_city"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="City"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+        <CheckBox
+            android:id="@+id/target_terrain_def3"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Def.\nWorks 3"
+         />
+
+        <CheckBox
+            android:id="@+id/target_terrain_town"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Town"
+         />
+
+        <CheckBox
+            android:id="@+id/target_terrain_def1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Def.\nWorks 1"
+            />
+
+        <CheckBox
+            android:id="@+id/target_terrain_forest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Forest"
+            />
+
+        <CheckBox
+            android:id="@+id/target_terrain_none"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="None"
+            />
+
+    </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/explanation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Detection: 3, Bombardment modifier: 4\nHigher the better!\nMean result for bombardment of 2:\n0 attrition, target Half-Enganged"
+
+        app:layout_constraintTop_toBottomOf="@+id/target_attributes"
+        app:layout_constraintBottom_toTopOf="@+id/apply"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+
+
+        />
+
+    <LinearLayout
+        android:id="@+id/apply"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintTop_toBottomOf="@+id/explanation"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+       >
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+
+
+
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+
+        android:text="Commit"
+
+
+
+        />
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -441,21 +441,15 @@ class OrderOfBattle {
         val alliancesUnitIndex = HashMap<Alliances, HashMap<String, Unit>>()
 
         for (alli in alliances) {
-            if (alli.level1 == null) {
-                throw Exception("Level 1 of alliance ${alli.allianceName} is null")
-            }
 
             val allianceIndex = HashMap<String, Unit>()
 
             for (level1 in alli.level1) {
                 for (level2 in level1.level2) {
-                    Log.d("LEVEL2", level2.name)
                     if (level2.level4 != null) {
 
                         for (level4 in level2.level4) {
                             val unit = Unit(level4.type, level4.strength, level4.name, level4.cadre)
-                            Log.d("Adding", unit.name)
-
                             unitIndex[unit.name] = unit
                             allianceIndex[unit.name] = unit
                         }

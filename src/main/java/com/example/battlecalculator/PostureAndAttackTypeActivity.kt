@@ -243,7 +243,7 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
                     attackingUnit!!.posture = selectedPosture
                     gameState.attackingUnit = attackingUnit
 
-                    val nextIntent = Intent(this, UnitSelectionActivity::class.java)
+                    val nextIntent = Intent(this, UnitSelectionActivityInput::class.java)
                     nextIntent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
                     nextIntent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.DEFENDER.toString())
 

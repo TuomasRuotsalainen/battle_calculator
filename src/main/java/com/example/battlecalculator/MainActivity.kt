@@ -185,10 +185,21 @@ class MainActivity : AppCompatActivity() {
         val groundAttackButton = findViewById<Button>(R.id.groundAttackButton)
         val artillerBombardmentButton = findViewById<Button>(R.id.artillerBomabrdmentButton)
 
-        val intent = Intent(this, UnitSelectionActivityInput::class.java)
-        intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.ATTACKER.toString())
+
 
         groundAttackButton.setOnClickListener{
+            val intent = Intent(this, UnitSelectionActivityInput::class.java)
+            intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.ATTACKER.toString())
+
+            intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+
+            startActivity(intent)
+            finish()
+        }
+
+        artillerBombardmentButton.setOnClickListener{
+            val intent = Intent(this, BombardmentSelectionActivity::class.java)
+
             intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
 
             startActivity(intent)
