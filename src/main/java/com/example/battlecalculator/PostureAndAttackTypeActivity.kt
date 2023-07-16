@@ -62,8 +62,6 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
 
         val currentPostureView = findViewById<ImageView>(R.id.currentPostureView)
 
-
-
         fun updateCurrentPostureImage() {
             val currentPostureDrawable =
                 Images.getDrawable(selectedPostureIconName, this, applicationContext, applicationInfo)

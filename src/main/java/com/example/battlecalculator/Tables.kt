@@ -419,8 +419,15 @@ class Tables {
             }
         }
 
-        fun getResult(die : DiceRollResult, aaFireValue : Int): Result {
-            val row = map[die.get()-1]!!
+        fun getResult(die : DiceRollResult, aaFireValue : Int, againstBombardingRotary : Boolean): Result {
+            var rowIndex = die.get()-1
+
+            // 22.2.5. AA fire against bombarding rotary
+            if (againstBombardingRotary) {
+                rowIndex += 2
+            }
+
+            val row = map[rowIndex]!!
             val cell = row.getResult(aaFireValue) ?: return Result(die, 0,0,0)
             return Result(dieRoll = die, abortedAirPoints = cell.A, shotDownAirPoints = cell.S, attritionToHelicopters = cell.S + cell.A)
         }
@@ -652,7 +659,8 @@ class Tables {
 
         private fun calculate(combatSupportPoints : Int, dieRoll: DiceRollResult, isAttacker: Boolean) : Int {
             if (combatSupportPoints < 0) {
-                throw Exception("Combat support can't be smaller than 0")
+                // TODO there has been a case where this is smaller than 0. Needs investigation. Probably related to helicopter attrition
+                throw Exception("Combat support points can't be smaller than 0")
             }
 
             val validatedPoints = if (combatSupportPoints > 16) {
@@ -918,6 +926,211 @@ class Tables {
             table[Pair(8, 9)] = GroundCombatResult(0, false, 2, true)
             table[Pair(9, 9)] = GroundCombatResult(0, false, 2, true)
             table[Pair(10, 9)] = GroundCombatResult(0, false, 2, true)
+
+            return table
+        }
+    }
+
+    class BombardmentResult(combatUnitAttrition : Int, supportUnitAttrition : Int, targetHalfEngaged : Boolean) {
+
+    }
+
+    class BombardmentTable() {
+        private val table = initTable()
+
+        fun getResult(
+            detectionLevel: Int,
+            bombardmentValue: Int,
+            dieRoll: DiceRollResult
+        ): BombardmentResult {
+            // TODO dieRoll result is not modified. Fix
+            val rowIndex = getBombardmentRowIndex(detectionLevel, dieRoll)
+            val resultRow = table[rowIndex]
+                ?: throw Exception("Couldn't get bombardment result with $detectionLevel, $bombardmentValue, $dieRoll")
+
+            val columnIndex = mapBombardmentValueToColumnIndex(bombardmentValue)
+
+            return resultRow[columnIndex]
+        }
+
+        private fun getBombardmentRowIndex(detectionLevel : Int, modifiedDieRoll: DiceRollResult) : Int {
+            if (detectionLevel < 1 || detectionLevel > 4) {
+                return -1
+            }
+
+            val modifiedRollsDetection1 = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)
+            val modifiedRollsDetection2 = listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)
+            val modifiedRollsDetection3 = listOf(-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
+            val modifiedRollsDetection4 = listOf(-3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+
+            return when (detectionLevel) {
+                1 -> return modifiedRollsDetection1[modifiedDieRoll.get()]
+                2 -> return modifiedRollsDetection2[modifiedDieRoll.get()]
+                3 -> return modifiedRollsDetection3[modifiedDieRoll.get()]
+                else -> return modifiedRollsDetection4[modifiedDieRoll.get()]
+            }
+
+
+        }
+
+        private fun mapBombardmentValueToColumnIndex(bombardmentValue : Int) : Int {
+            return when {
+                (bombardmentValue <= 0) -> 0
+                (bombardmentValue == 1 || bombardmentValue == 2) -> 1
+                (bombardmentValue == 3 || bombardmentValue == 4) -> 2
+                (bombardmentValue == 5 || bombardmentValue == 6) -> 3
+                (bombardmentValue == 7 || bombardmentValue == 8) -> 4
+                (bombardmentValue == 9 || bombardmentValue == 10) -> 5
+                (bombardmentValue == 11 || bombardmentValue == 12) -> 6
+                else -> 7
+            }
+        }
+
+        private fun initTable() : Map<Int, List<BombardmentResult>> {
+
+            val map = mutableMapOf<Int, List<BombardmentResult>>()
+            val emptyResult = BombardmentResult(0,0,false)
+
+            map[0] = listOf(
+                emptyResult,
+                emptyResult,
+                emptyResult,
+                emptyResult,
+                emptyResult,
+                emptyResult,
+                emptyResult
+            )
+
+            map[1] = listOf(
+                emptyResult,
+                emptyResult,
+                emptyResult,
+                emptyResult,
+                emptyResult,
+                emptyResult,
+                BombardmentResult(0,0,true)
+            )
+
+            map[2] = listOf(
+                emptyResult,
+                emptyResult,
+                emptyResult,
+                emptyResult,
+                emptyResult,
+                BombardmentResult(0,0,true),
+                BombardmentResult(0,1,true)
+            )
+
+            map[3] = listOf(
+                emptyResult,
+                emptyResult,
+                emptyResult,
+                emptyResult,
+                BombardmentResult(0,0,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true)
+            )
+
+            map[4] = listOf(
+                emptyResult,
+                emptyResult,
+                emptyResult,
+                BombardmentResult(0,0,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true)
+            )
+
+            map[5] = listOf(
+                emptyResult,
+                emptyResult,
+                BombardmentResult(0,0,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true)
+            )
+
+            map[6] = listOf(
+                emptyResult,
+                emptyResult,
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true)
+            )
+
+            map[7] = listOf(
+                emptyResult,
+                BombardmentResult(0,0,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(1,2,true)
+            )
+
+            map[8] = listOf(
+                emptyResult,
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(1,2,true),
+                BombardmentResult(1,2,true)
+            )
+
+            map[9] = listOf(
+                BombardmentResult(0,0,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(1,2,true),
+                BombardmentResult(1,2,true),
+                BombardmentResult(1,2,true)
+            )
+
+            map[10] = listOf(
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(1,2,true),
+                BombardmentResult(1,2,true),
+                BombardmentResult(1,2,true),
+                BombardmentResult(1,2,true)
+            )
+
+            map[11] = listOf(
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(1,2,true),
+                BombardmentResult(1,2,true),
+                BombardmentResult(1,2,true),
+                BombardmentResult(1,2,true),
+                BombardmentResult(1,2,true)
+            )
+
+            map[12] = listOf(
+                BombardmentResult(0,1,true),
+                BombardmentResult(0,1,true),
+                BombardmentResult(1,2,true),
+                BombardmentResult(1,2,true),
+                BombardmentResult(1,2,true),
+                BombardmentResult(1,2,true),
+                BombardmentResult(2,2,true)
+            )
+
+            map[13] = listOf(
+                BombardmentResult(0,1,true),
+                BombardmentResult(1,2,true),
+                BombardmentResult(1,2,true),
+                BombardmentResult(1,2,true),
+                BombardmentResult(1,2,true),
+                BombardmentResult(2,2,true),
+                BombardmentResult(2,2,true)
+            )
+
 
             return table
         }

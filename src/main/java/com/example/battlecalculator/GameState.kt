@@ -19,7 +19,7 @@ zulu time = 03:00, state = 1, attacking unit id = 12J, unit ids in target hex 13
 
 fun GameState(conditions: Conditions) : GameState {
     val conditionString = conditions.toStateString()
-    val stateStr = "CON=$conditionString;AU=null;DU=null;HEX=null;ACT=NATO;FIXED=null;ADJ_AT=null;ADJ_DEF=null;COM_SUP=null;SUP_CNT=null"
+    val stateStr = "CON=$conditionString;AU=null;DU=null;HEX=null;ACT=NATO;FIXED=null;ADJ_AT=null;ADJ_DEF=null;COM_SUP=null;SUP_CNT=null;DET_LVL=null;DET_MOD=null"
     return GameState(stateStr)
 }
 
@@ -30,6 +30,7 @@ fun getMockGameState(): GameState {
 
 fun getGameState(intent: Intent) : GameState {
     val gameStateString = Utils.getStringFromIntent(intent, IntentExtraIDs.GAMESTATE.toString())
+    Log.d("GAMESTATESTR", gameStateString)
     return GameState(gameStateString)
 }
 
@@ -43,7 +44,7 @@ fun getGameStateIfExists(intent : Intent) : GameState? {
 class GameState(stateString : String) {
 
     private enum class DataIDs {
-        AU, DU, HEX, ACT, FIXED, ADJ_AT, ADJ_DEF, COM_SUP, CON, SUP_CNT
+        AU, DU, HEX, ACT, FIXED, ADJ_AT, ADJ_DEF, COM_SUP, CON, SUP_CNT, DET_LVL, DET_MOD
     }
 
     private val dataMap = getDataMap(stateString)
@@ -60,6 +61,9 @@ class GameState(stateString : String) {
     var adjacentAttackerCount : Int? = getAdjacentAttackerUnits()
     var combatSupport : CombatSupportSelection? = getCombatSupportSelection()
     var supportUnitCount : Int? = getSupportUnits()
+    var detectionLevel : DetectionLevel? = getDetectionLevelBomb()
+    var detectionLevelModifiers : MutableList<DetectionModifiers>? = getDetectionLevelModifiersBomb()
+
 
     fun reset() {
         attackingUnit = null
@@ -71,6 +75,8 @@ class GameState(stateString : String) {
         adjacentDefenderCount = null
         combatSupport = null
         supportUnitCount = null
+        detectionLevel = null
+        detectionLevelModifiers = null
 
     }
 
@@ -237,8 +243,10 @@ class GameState(stateString : String) {
         val adjacentAttackerCountStr = getAdjacentAttackerCountStr()
         val combatSupportSelectionStr = getCombatSupportSelectionStr()
         val supportUnitsStr = getSupportUnitsStr()
+        val detectionLevelStr = getDetectionLevelStr()
+        val detectionModifiersStr = getDetectionLevelModifiersStr()
 
-        return "CON=$conditionsStr;AU=$attackingUnitStr;DU=$defendingUnitsStr;HEX=$hexTerrainStr;ACT=$allianceStr;FIXED=$activeFixedModifiersStr;ADJ_DEF=$adjacentDefenderCountStr;ADJ_AT=$adjacentAttackerCountStr;COM_SUP=$combatSupportSelectionStr;SUP_CNT=$supportUnitsStr"
+        return "CON=$conditionsStr;AU=$attackingUnitStr;DU=$defendingUnitsStr;HEX=$hexTerrainStr;ACT=$allianceStr;FIXED=$activeFixedModifiersStr;ADJ_DEF=$adjacentDefenderCountStr;ADJ_AT=$adjacentAttackerCountStr;COM_SUP=$combatSupportSelectionStr;SUP_CNT=$supportUnitsStr;DET_LVL=$detectionLevelStr;DET_MOD=$detectionModifiersStr"
     }
 
     fun setDefendingUnit(unitState : UnitState) {
@@ -371,6 +379,41 @@ class GameState(stateString : String) {
         return getSupportUnitCountStr.toIntOrNull()
     }
 
+    private fun getDetectionLevelBomb() : DetectionLevel? {
+        val detectionLevelStr = dataMap[DataIDs.DET_LVL.toString()] ?: throw Exception("DET_LVL not defined")
+        if (detectionLevelStr == "null" || detectionLevelStr == "") {
+            return null
+        }
+
+        for (enum in DetectionLevel.values()) {
+            if (detectionLevelStr == enum.toString()) {
+                return enum
+            }
+        }
+
+        throw Exception("Couldn't map $detectionLevelStr to detection level")
+    }
+
+    private fun getDetectionLevelModifiersBomb() : MutableList<DetectionModifiers>? {
+        val detectionLevelStr = dataMap[DataIDs.DET_MOD.toString()] ?: throw Exception("DET_MOD not defined")
+        if (detectionLevelStr == "") {
+            return null
+        }
+
+        val levelStrs = detectionLevelStr.split(",")
+        val modifiers = mutableListOf<DetectionModifiers>()
+        for (levelStr in levelStrs) {
+            for (enum in DetectionModifiers.values()) {
+                if (levelStr == enum.toString()) {
+                    modifiers.add(enum)
+                    break
+                }
+            }
+        }
+
+        return modifiers
+    }
+
     private fun getAdjacentDefenderCountStr() : String {
         return if (adjacentDefenderCount == null) {
             "null"
@@ -401,6 +444,35 @@ class GameState(stateString : String) {
         }
 
         return supportUnitCount.toString()
+    }
+
+    private fun getDetectionLevelModifiersStr() : String {
+        if (detectionLevelModifiers == null) {
+            return "null"
+        }
+
+        var str = ""
+
+        if (detectionLevelModifiers!!.isEmpty()) {
+            return "null"
+        }
+
+        for (modifier in detectionLevelModifiers!!) {
+            str += modifier.toString()
+            str += ","
+        }
+
+        str = str.substring(0, str.length - 1)
+
+        return str
+    }
+
+    private fun getDetectionLevelStr() : String {
+        if (detectionLevel == null) {
+            return "null"
+        }
+
+        return detectionLevel.toString()
     }
 
     private fun getAdjacentDefenderUnits() : Int? {
@@ -475,11 +547,7 @@ class GameState(stateString : String) {
         val auUnitStr = dataMap[DataIDs.AU.toString()]
             ?: throw Exception("Attacking unit cell not defined")
 
-        if (auUnitStr == "") {
-            throw Exception("aaUnitStr is empty")
-        }
-
-        if (auUnitStr != "null") {
+        if (auUnitStr != "null" && auUnitStr != "") {
             return strToUnitState(auUnitStr)
         }
 

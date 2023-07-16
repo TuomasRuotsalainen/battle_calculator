@@ -391,4 +391,74 @@ class Calculator() {
 
         return unitInQuestion.unit?.defense!!
     }
+
+    fun calculateDetectionLevel(level : DetectionLevel, modifiers : List<DetectionModifiers>) : Int {
+        val levelVal = when (level) {
+            DetectionLevel.COMBAT_UNIT_ADJACENT -> 3
+            DetectionLevel.SUPPORT_UNIT_ADJACENT -> 2
+            DetectionLevel.COMBAT_UNIT_WITHIN_4 -> 2
+            DetectionLevel.SUPPORT_UNIT_WITHIN_4 -> 1
+            DetectionLevel.COMBAT_UNIT_OTHER -> 1
+            DetectionLevel.SUPPORT_UNIT_OTHER -> 0
+        }
+
+        var totalModifier = 0
+        for (modifier in modifiers) {
+            totalModifier += when(modifier) {
+                DetectionModifiers.ROAD -> 2
+                DetectionModifiers.BARR_CSUP_MASL -> 1
+                DetectionModifiers.ARTILLERY_WITHIN_2 -> 1
+                DetectionModifiers.MOVING_HQ -> 1
+                DetectionModifiers.SPOTTED_HQ -> 1
+                DetectionModifiers.FARP -> 1
+                DetectionModifiers.CITY -> -1
+            }
+        }
+
+        return levelVal + totalModifier
+    }
+
+    // TODO this only concerns WP chem at the moment
+    fun calculateBombardmentDieModifier(movementMode: MovementModeEnum, terrainEnum: TerrainEnum, chemWarfareTurn : Int?) : Int {
+        val terrainModifier = when (movementMode) {
+            MovementModeEnum.COLUM -> {
+                if (terrainEnum == TerrainEnum.CITY) {
+                    -1
+                } else {
+                    0
+                }
+            }
+            MovementModeEnum.TACTICAL -> {
+                when (terrainEnum) {
+                    TerrainEnum.TOWN -> -1
+                    TerrainEnum.CITY -> -2
+                    TerrainEnum.DEFENSE3 -> -1
+                    else -> 0
+                }
+            }
+            MovementModeEnum.FIXED, MovementModeEnum.DEPLOYED -> {
+                when (terrainEnum) {
+                    TerrainEnum.FOREST -> -1
+                    TerrainEnum.TOWN -> -2
+                    TerrainEnum.CITY -> -3
+                    TerrainEnum.DEFENSE1 -> -1
+                    TerrainEnum.DEFENSE3 -> -3
+                    else -> 0
+                }
+            }
+
+        }
+
+        var chemModifier = 0
+        if (chemWarfareTurn != null) {
+            chemModifier = when (chemWarfareTurn) {
+                in 1..8 -> 3
+                in 9..16 -> 2
+                in 17..100 -> 1
+                else -> 0
+            }
+        }
+
+        return terrainModifier + chemModifier
+    }
 }

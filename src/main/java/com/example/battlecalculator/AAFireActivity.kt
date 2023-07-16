@@ -73,6 +73,8 @@ class AAFireActivity : AppCompatActivity() {
                 return (fixed != null)
             }
 
+
+
             fun rotaryInUse() : Boolean {
                 return rotary.isNotEmpty()
             }
@@ -188,8 +190,9 @@ class AAFireActivity : AppCompatActivity() {
             }
         }
 
-        val attackerAASettings = AASettings(findViewById<LinearLayout>(R.id.aa_against_defender), gameState.combatSupport!!.getDefenderCombatSupport()!!, "Defender")
+        val unitSelectionType = Communication.getUnitSelectionType(intent)
 
+        val attackerAASettings = AASettings(findViewById<LinearLayout>(R.id.aa_against_defender), gameState.combatSupport!!.getDefenderCombatSupport()!!, "Defender")
         val defenderAASettings = AASettings(findViewById<LinearLayout>(R.id.aa_against_attacker), gameState.combatSupport!!.getAttackerCombatSupport()!!, "Attacker")
 
         fun addTextFieldListener(editText: EditText, onTextChanged: (String) -> Unit): Unit =
@@ -218,20 +221,22 @@ class AAFireActivity : AppCompatActivity() {
 
             if (isFirstClick) {
 
-                fun executeAA(aaValue : Int?): Tables.AAFire.Result? {
+                fun executeAA(aaValue : Int?, againstBombardingRotary : Boolean): Tables.AAFire.Result? {
                     if (aaValue == null) {
                         return null
                     }
 
                     val dice = Dice()
-                    return aaFire.getResult(dice.roll(), aaValue)
+                    val result = dice.roll()
+                    return aaFire.getResult(result, aaValue, againstBombardingRotary)
                 }
 
                 fun executeAaAndSetResults(aaSettings: AASettings) {
-                    val aaResultFixed = executeAA(aaSettings.getAaAgainstFixed())
+                    val aaResultFixed = executeAA(aaSettings.getAaAgainstFixed(), false)
                     val aaResultRotary = mutableListOf<Tables.AAFire.Result>()
                     for (aaAgainstRotary in aaSettings.getAaAgainstRotary()) {
-                        val resultAgainstRotary = executeAA(aaAgainstRotary)
+                        val bombardingRotary = unitSelectionType == UnitSelectionTypes.BOMBARDMENT
+                        val resultAgainstRotary = executeAA(aaAgainstRotary, bombardingRotary)
                             ?: throw Exception("AA against rotary shouldn't be null")
                         aaResultRotary.add(resultAgainstRotary)
                     }
@@ -240,8 +245,15 @@ class AAFireActivity : AppCompatActivity() {
                 }
 
                 executeAaAndSetResults(defenderAASettings)
-                executeAaAndSetResults(attackerAASettings)
 
+
+                if (unitSelectionType != UnitSelectionTypes.BOMBARDMENT) {
+                    if (attackerAASettings == null) {
+                        throw Exception("attackerAASettings shouldn't be null when unitselectiontype is not bombardment")
+                    }
+
+                    executeAaAndSetResults(attackerAASettings)
+                }
                 aaApply.text = "Apply AA resuls"
                 isFirstClick = false
 

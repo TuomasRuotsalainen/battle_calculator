@@ -29,7 +29,7 @@ enum class IntentExtraIDs {
 }
 
 enum class UnitSelectionTypes {
-    ATTACKER, DEFENDER, UNDEFINED
+    ATTACKER, DEFENDER, BOMBARDMENT
 }
 
 enum class FixedModifierEnum {
@@ -61,4 +61,12 @@ enum class DisengagemenResult {
 }
 enum class ObstacleEnum {
     MINOR_HASTY, MINOR_PREPARED, MINOR_BRIDGED, MAJOR_PREPARED, MAJOR_BRIDGED, RIBBON
+}
+
+enum class DetectionLevel {
+    COMBAT_UNIT_ADJACENT, SUPPORT_UNIT_ADJACENT, COMBAT_UNIT_WITHIN_4, SUPPORT_UNIT_WITHIN_4, COMBAT_UNIT_OTHER, SUPPORT_UNIT_OTHER
+}
+
+enum class DetectionModifiers {
+    ROAD, BARR_CSUP_MASL, ARTILLERY_WITHIN_2, MOVING_HQ, SPOTTED_HQ, FARP, CITY
 }

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.*
 import kotlin.Unit
 
@@ -57,7 +58,18 @@ class CombatSupportActivity : AppCompatActivity() {
                 Helpers.getIntFromTextField(airPoints),
                 mutableListOf(Helpers.getIntFromTextField(heliStrength1), Helpers.getIntFromTextField(heliStrength2), Helpers.getIntFromTextField(heliStrength3)),
                 insideCAS.isChecked,
-                unitSelectionType == UnitSelectionTypes.ATTACKER,
+                unitSelectionType != UnitSelectionTypes.DEFENDER, // also bombardment qualifies
+                null, null
+            )
+        }
+
+        fun createEmptyCombatSupport() : CombatSupport {
+            return CombatSupport(
+                0,
+                0,
+                mutableListOf(0,0,0),
+                false,
+                false, // we use this to create empty combat support for defender during bombardment
                 null, null
             )
         }
@@ -68,9 +80,21 @@ class CombatSupportActivity : AppCompatActivity() {
             totalSupport.text = "Total combat support value: $combatSupportValue / 16"
         }
 
+        var heloNotificationShown = false
+
         for (textField in textFields) {
             textField.setText("0")
             addTextFieldListener(textField) {
+                if (unitSelectionType == UnitSelectionTypes.BOMBARDMENT && !heloNotificationShown && (textField == heliStrength1 || textField == heliStrength2 || textField == heliStrength3)) {
+                    Helpers.showInfoDialog(
+                        this,
+                        "Note: it is risky (+2 dice modifier) to send attack helicopters to bombardment missions.\n",
+                        "If there is a risk, it is taken", null,
+                        {
+                            heloNotificationShown = true
+                        },
+                   )
+                }
                 updateCombatSupportValue()
             }
         }
@@ -96,8 +120,9 @@ class CombatSupportActivity : AppCompatActivity() {
         }
 
         combatSupportApply.setOnClickListener{
-            val intent = Intent(this, EWInputActivity::class.java)
-            intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), unitSelectionType.toString())
+
+
+            var intent = Intent(this, EWInputActivity::class.java)
 
             if (gameState.combatSupport == null) {
                 gameState.combatSupport = CombatSupportSelection()
@@ -105,11 +130,22 @@ class CombatSupportActivity : AppCompatActivity() {
 
             if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
                 gameState.combatSupport!!.setAttackerCombatSupport(createCombatSupport())
-            } else {
+            } else if (unitSelectionType == UnitSelectionTypes.DEFENDER) {
                 gameState.combatSupport!!.setDefenderCombatSupport(createCombatSupport())
+            } else {
+                gameState.combatSupport!!.setAttackerCombatSupport(createCombatSupport())
+                gameState.combatSupport!!.setDefenderCombatSupport(createEmptyCombatSupport())
+                intent = if (gameState.combatSupport!!.getAttackerCombatSupport()!!.getAirPoints() + gameState.combatSupport!!.getAttackerCombatSupport()!!.getHelicopterCount() > 0) {
+                    Intent(this, AAFireActivity::class.java)
+                } else {
+                    Intent(this, AAFireActivity::class.java)
+                    throw Exception("not implemented")
+                }
             }
 
+            intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), unitSelectionType.toString())
             intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+            Log.d("GAMESTATE", gameState.getStateString())
 
             startActivity(intent)
             finish()

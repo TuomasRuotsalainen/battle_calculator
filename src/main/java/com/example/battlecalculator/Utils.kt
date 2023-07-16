@@ -237,6 +237,8 @@ class Communication {
                 UnitSelectionTypes.ATTACKER
             } else if (unitSelectionTypeStr == UnitSelectionTypes.DEFENDER.toString()) {
                 UnitSelectionTypes.DEFENDER
+            } else if (unitSelectionTypeStr == UnitSelectionTypes.BOMBARDMENT.toString()) {
+                UnitSelectionTypes.BOMBARDMENT
             } else {
                 throw Exception("Unit selection type from intent is UNDEFINED")
             }

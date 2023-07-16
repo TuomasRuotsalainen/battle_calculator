@@ -222,6 +222,7 @@ class EWInputActivity : AppCompatActivity() {
                     Intent(this, CombatResolutionActivity::class.java)
                 }
 
+                intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.ATTACKER.toString()) // we assign this here, because AAFireActivity needs to know if we're doing BOMBARDMENT or normal combat
                 intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
                 startActivity(intent)
                 finish()
