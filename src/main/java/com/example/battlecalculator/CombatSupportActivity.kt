@@ -119,8 +119,10 @@ class CombatSupportActivity : AppCompatActivity() {
             dialog.show()
         }
 
-        combatSupportApply.setOnClickListener{
+        val bombardmentTable = Tables.BombardmentTable()
+        val calculator = Calculator()
 
+        combatSupportApply.setOnClickListener{
 
             var intent = Intent(this, EWInputActivity::class.java)
 
@@ -135,17 +137,45 @@ class CombatSupportActivity : AppCompatActivity() {
             } else {
                 gameState.combatSupport!!.setAttackerCombatSupport(createCombatSupport())
                 gameState.combatSupport!!.setDefenderCombatSupport(createEmptyCombatSupport())
-                intent = if (gameState.combatSupport!!.getAttackerCombatSupport()!!.getAirPoints() + gameState.combatSupport!!.getAttackerCombatSupport()!!.getHelicopterCount() > 0) {
-                    Intent(this, AAFireActivity::class.java)
+                if (gameState.combatSupport!!.getAttackerCombatSupport()!!.getAirPoints() + gameState.combatSupport!!.getAttackerCombatSupport()!!.getHelicopterCount() > 0) {
+                    intent = Intent(this, AAFireActivity::class.java)
                 } else {
-                    Intent(this, AAFireActivity::class.java)
-                    throw Exception("not implemented")
+                    // Let's resolve artillery-only bombardment here and now
+                    val result = Dice().roll()
+                    val supportVal = gameState.combatSupport!!.getAttackerCombatSupport()!!.getTotalSupport()
+                    val target = gameState.attackingUnit ?: throw Exception("target not set")
+                    val targetPosture = target.posture ?: throw Exception("target posture not set")
+                    val movementMode = Tables.TerrainCombatTable.MovementMode().get(target.posture!!)
+                    val modifier = calculator.calculateBombardmentDieModifier(movementMode, gameState.hexTerrain!!.getFeatureForBombardment(), null) // TODO handle chem
+                    val detectionLevel = calculator.calculateDetectionLevel(gameState.detectionLevel!!, gameState.detectionLevelModifiers!!)
+                    val bombardmentResult = bombardmentTable.getResult(detectionLevel, modifier, supportVal, result)
+                    val engagementInfo = if (bombardmentResult.targetHalfEngaged) {
+                        ". Target is now at least Half-Engaged"
+                    } else {
+                        ""
+                    }
+
+                    intent = Intent(this, MainActivity::class.java)
+
+                    Helpers.showInfoDialog(
+                        this,
+                        "Bombardment dice roll: ${result.get()}\n\nResult:\nAttrition to target: ${bombardmentResult.combatUnitAttrition}" + engagementInfo, // TODO make difference between combat / support and soft
+                        "Understood", null,
+                        {
+                            intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+                            startActivity(intent)
+                            finish()
+                        },
+                    )
+
+                    return@setOnClickListener
+
+
                 }
             }
 
             intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), unitSelectionType.toString())
             intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
-            Log.d("GAMESTATE", gameState.getStateString())
 
             startActivity(intent)
             finish()

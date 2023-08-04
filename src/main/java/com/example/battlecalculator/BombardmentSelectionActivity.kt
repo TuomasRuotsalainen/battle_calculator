@@ -125,7 +125,8 @@ class BombardmentSelectionActivity : AppCompatActivity() {
 
         updateExplanation()
 
-        gameState.attackingUnit = UnitState(null, selectedPosture, null, null, false, 0, null, RiverCrossingTypeEnum.NONE, false) // This is a hacky way to deliver posture information
+        val dummyUnit = Unit("ARMOR", "1-1", "TARGETPRACTICE", 1)
+        gameState.attackingUnit = UnitState(dummyUnit, selectedPosture, null, null, false, 0, null, RiverCrossingTypeEnum.NONE, false) // This is a hacky way to deliver posture information
 
         setPostureButton.setOnClickListener {
             Helpers.showRadioButtonDialog(
@@ -254,6 +255,11 @@ class BombardmentSelectionActivity : AppCompatActivity() {
         }
 
         commitBtn.setOnClickListener{
+            if (gameState.attackingUnit == null) {
+                throw Exception("Attacking (target) unit is null")
+            } else {
+                Log.d("Attacking unit not null", gameState.attackingUnit.toString())
+            }
             val nextIntent = Intent(this, CombatSupportActivity::class.java)
             nextIntent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
             nextIntent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.BOMBARDMENT.toString())

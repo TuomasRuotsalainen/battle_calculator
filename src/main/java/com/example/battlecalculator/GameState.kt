@@ -287,7 +287,9 @@ class GameState(stateString : String) {
     }
 
     private fun getAttackUnitStr() : String {
+        Log.d("DEBUG ", "1")
         val unitState = attackingUnit ?: return "null"
+        Log.d("DEBUG ", "2")
         return unitState.getStateString()
     }
 
@@ -689,6 +691,7 @@ class UnitState(
         var unitStr = ""
 
         if (unit == null) {
+            Log.d("DEBUG ", "3")
             return ""
         }
 
@@ -721,6 +724,9 @@ class UnitState(
         unitStr += "-$riverCrossingType"
 
         unitStr += "-$inPostureTransition"
+
+        Log.d("DEBUG ", "4")
+        Log.d("DEBUG ", unitStr)
 
         return unitStr
     }

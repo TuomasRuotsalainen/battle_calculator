@@ -659,7 +659,7 @@ class Tables {
 
         private fun calculate(combatSupportPoints : Int, dieRoll: DiceRollResult, isAttacker: Boolean) : Int {
             if (combatSupportPoints < 0) {
-                // TODO there has been a case where this is smaller than 0. Needs investigation. Probably related to helicopter attrition
+                // TODO there has been a case where this happens. Needs investigation. Probably related to helicopter attrition
                 throw Exception("Combat support points can't be smaller than 0")
             }
 
@@ -932,7 +932,9 @@ class Tables {
     }
 
     class BombardmentResult(combatUnitAttrition : Int, supportUnitAttrition : Int, targetHalfEngaged : Boolean) {
-
+        val combatUnitAttrition = combatUnitAttrition
+        val supportUnitAttrition = supportUnitAttrition
+        val targetHalfEngaged = targetHalfEngaged
     }
 
     class BombardmentTable() {
@@ -940,20 +942,21 @@ class Tables {
 
         fun getResult(
             detectionLevel: Int,
+            totalDetectionModifiers: Int,
             bombardmentValue: Int,
             dieRoll: DiceRollResult
         ): BombardmentResult {
-            // TODO dieRoll result is not modified. Fix
-            val rowIndex = getBombardmentRowIndex(detectionLevel, dieRoll)
+            val rowIndex = getBombardmentRowIndex(detectionLevel, dieRoll.get()-1+totalDetectionModifiers)
             val resultRow = table[rowIndex]
                 ?: throw Exception("Couldn't get bombardment result with $detectionLevel, $bombardmentValue, $dieRoll")
 
             val columnIndex = mapBombardmentValueToColumnIndex(bombardmentValue)
 
-            return resultRow[columnIndex]
+            val result = resultRow[columnIndex]
+            return result
         }
 
-        private fun getBombardmentRowIndex(detectionLevel : Int, modifiedDieRoll: DiceRollResult) : Int {
+        private fun getBombardmentRowIndex(detectionLevel : Int, modifiedDieRoll: Int) : Int {
             if (detectionLevel < 1 || detectionLevel > 4) {
                 return -1
             }
@@ -964,10 +967,10 @@ class Tables {
             val modifiedRollsDetection4 = listOf(-3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 
             return when (detectionLevel) {
-                1 -> return modifiedRollsDetection1[modifiedDieRoll.get()]
-                2 -> return modifiedRollsDetection2[modifiedDieRoll.get()]
-                3 -> return modifiedRollsDetection3[modifiedDieRoll.get()]
-                else -> return modifiedRollsDetection4[modifiedDieRoll.get()]
+                1 -> return modifiedRollsDetection1[modifiedDieRoll]
+                2 -> return modifiedRollsDetection2[modifiedDieRoll]
+                3 -> return modifiedRollsDetection3[modifiedDieRoll]
+                else -> return modifiedRollsDetection4[modifiedDieRoll]
             }
 
 
@@ -1132,7 +1135,7 @@ class Tables {
             )
 
 
-            return table
+            return map
         }
     }
 

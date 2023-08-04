@@ -18,6 +18,16 @@ class HexTerrain(terrainFeatures : MutableList<TerrainEnum>) {
         return false
     }
 
+    fun getFeatureForBombardment() : TerrainEnum {
+        for (feature in features) {
+            if (feature.value) {
+                return feature.key
+            }
+        }
+
+        throw Exception("No features available")
+    }
+
     fun getDefensiveWorksCombatModifier(): Int {
         val defWorks1 = this.features[TerrainEnum.DEFENSE1]
         val defWorks3 = this.features[TerrainEnum.DEFENSE3]
