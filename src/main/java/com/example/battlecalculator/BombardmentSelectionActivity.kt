@@ -10,6 +10,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.google.android.material.textfield.TextInputEditText
 
 class BombardmentSelectionActivity : AppCompatActivity() {
@@ -54,6 +55,10 @@ class BombardmentSelectionActivity : AppCompatActivity() {
 
         updateCurrentPostureImage()
 
+        val unitBombardmentRadio = findViewById<RadioButton>(R.id.radio_unit)
+        val bridgeBombardmentRadio = findViewById<RadioButton>(R.id.radio_bridge)
+        val interdictionRadio = findViewById<RadioButton>(R.id.radio_interdict)
+
         val explanation = findViewById<TextView>(R.id.explanation)
 
         val adjacentBox = findViewById<CheckBox>(R.id.detection_lvl_adjacent)
@@ -75,6 +80,11 @@ class BombardmentSelectionActivity : AppCompatActivity() {
         val boxTerrainDef1 = findViewById<CheckBox>(R.id.target_terrain_def1)
         val boxTerrainForest = findViewById<CheckBox>(R.id.target_terrain_forest)
         val boxTerrainNone = findViewById<CheckBox>(R.id.target_terrain_none)
+        val boxPermanentBridge = findViewById<CheckBox>(R.id.target_attributes_permanent)
+        val boxPanelBridge = findViewById<CheckBox>(R.id.target_attributes_panel)
+
+        boxPermanentBridge.isVisible = false
+        boxPanelBridge.isVisible = false
 
         val terranCheckboxMap = mutableMapOf<CheckBox, TerrainEnum>()
         terranCheckboxMap[boxTerrainCity] = TerrainEnum.CITY
@@ -94,6 +104,10 @@ class BombardmentSelectionActivity : AppCompatActivity() {
         detectionLevelModifierMap[boxSpottedHQ] = DetectionModifiers.SPOTTED_HQ
 
         val calculator = Calculator()
+
+        val targetAttributeCheckBoxes = listOf(
+            boxSoftTarget, boxSupportUnit, boxCombatUnit
+        )
 
         // Target Terrain Checkboxes
         val detectionLevelModCheckboxes = listOf(
@@ -119,11 +133,26 @@ class BombardmentSelectionActivity : AppCompatActivity() {
 
 
         fun updateExplanation() {
-            val newDetectionLevel = calculator.calculateDetectionLevel(gameState.detectionLevel!!, gameState.detectionLevelModifiers!!)
-            explanation.text = "Detection: $newDetectionLevel, Bombardment modifier: 4\nHigher the better!\nMean result for bombardment of 2:\n0 attrition, target Half-Enganged"
+            if (bridgeBombardmentRadio.isChecked) {
+                var target = "Permanent bridge"
+                if (boxPanelBridge.isChecked) {
+                    target = "Panel bridge"
+                }
+                explanation.text = "Targeting $target"
+            } else if (interdictionRadio.isChecked){
+                explanation.text = "INTERDICTION NOT IMPLEMENTED YET"
+            } else {
+                val newDetectionLevel = calculator.calculateDetectionLevel(gameState.detectionLevel!!, gameState.detectionLevelModifiers!!)
+                // TODO finish this
+                explanation.text = "Detection: $newDetectionLevel, Bombardment modifier: 4\nHigher the better!\nMean result for bombardment of 2:\n0 attrition, target Half-Enganged"
+            }
         }
 
         updateExplanation()
+
+        unitBombardmentRadio.isChecked = true
+
+
 
         val dummyUnit = Unit("ARMOR", "1-1", "3pz_7_74", 1)
         gameState.attackingUnit = UnitState(dummyUnit, selectedPosture, null, null, false, 0, null, RiverCrossingTypeEnum.NONE, false) // This is a hacky way to deliver posture information
@@ -242,6 +271,135 @@ class BombardmentSelectionActivity : AppCompatActivity() {
 
                 updateExplanation()
             }
+        }
+
+        unitBombardmentRadio.setOnClickListener {
+            bridgeBombardmentRadio.isChecked = false
+            interdictionRadio.isChecked = false
+            detectionLevelModCheckboxes.forEach {
+                it.isEnabled = true
+                it.isVisible = true
+            }
+            targetTerrainCheckboxes.forEach {
+                it.isEnabled = true
+                it.isVisible = true
+            }
+            detectionLevelCheckboxes.forEach {
+                it.isEnabled = true
+                it.isVisible = true
+            }
+            targetAttributeCheckBoxes.forEach {
+                it.isEnabled = true
+                it.isVisible = true
+            }
+
+            boxPermanentBridge.isChecked = false
+            boxPanelBridge.isChecked = false
+            boxPermanentBridge.isVisible = false
+            boxPanelBridge.isVisible = false
+
+            setPostureButton.isEnabled = true
+
+            boxNone.isChecked = true
+            boxTerrainNone.isChecked = true
+
+            gameState.attackingUnit!!.riverCrossingType = RiverCrossingTypeEnum.NONE
+
+            gameState.attackingUnit!!.disengagementOrdered = false
+
+            updateExplanation()
+
+        }
+
+        bridgeBombardmentRadio.setOnClickListener {
+            unitBombardmentRadio.isChecked = false
+            interdictionRadio.isChecked = false
+            detectionLevelModCheckboxes.forEach {
+                it.isChecked = false
+                it.isEnabled = false
+                it.isVisible = false
+            }
+            targetTerrainCheckboxes.forEach {
+                it.isChecked = false
+                it.isEnabled = false
+                it.isVisible = false
+            }
+            detectionLevelCheckboxes.forEach {
+                it.isChecked = false
+                it.isEnabled = false
+                it.isVisible = false
+            }
+
+            targetAttributeCheckBoxes.forEach {
+                it.isChecked = false
+                it.isEnabled = false
+                it.isVisible = false
+            }
+
+            boxPermanentBridge.isChecked = true
+            gameState.attackingUnit!!.riverCrossingType = RiverCrossingTypeEnum.PREPARED
+
+            gameState.attackingUnit!!.disengagementOrdered = false
+
+            boxPanelBridge.isChecked = false
+            boxPermanentBridge.isVisible = true
+            boxPanelBridge.isVisible = true
+
+            setPostureButton.isEnabled = false
+
+            updateExplanation()
+
+        }
+        
+        boxPanelBridge.setOnClickListener {
+            boxPermanentBridge.isChecked = !boxPanelBridge.isChecked
+            gameState.attackingUnit!!.riverCrossingType = RiverCrossingTypeEnum.HASTY
+            updateExplanation()
+        }
+
+        boxPermanentBridge.setOnClickListener {
+            boxPanelBridge.isChecked = !boxPermanentBridge.isChecked
+            gameState.attackingUnit!!.riverCrossingType = RiverCrossingTypeEnum.PREPARED
+            updateExplanation()
+        }
+
+        interdictionRadio.setOnClickListener {
+            unitBombardmentRadio.isChecked = false
+            bridgeBombardmentRadio.isChecked = false
+
+            detectionLevelModCheckboxes.forEach {
+                it.isChecked = false
+                it.isEnabled = false
+                it.isVisible = false
+            }
+            targetTerrainCheckboxes.forEach {
+                it.isChecked = false
+                it.isEnabled = false
+                it.isVisible = false
+            }
+            detectionLevelCheckboxes.forEach {
+                it.isChecked = false
+                it.isEnabled = false
+                it.isVisible = false
+            }
+
+            targetAttributeCheckBoxes.forEach {
+                it.isChecked = false
+                it.isEnabled = false
+                it.isVisible = false
+            }
+
+            boxPanelBridge.isChecked = false
+            boxPanelBridge.isVisible = false
+
+            boxPermanentBridge.isChecked = false
+            boxPermanentBridge.isVisible = false
+
+            gameState.attackingUnit!!.riverCrossingType = RiverCrossingTypeEnum.NONE
+
+            gameState.attackingUnit!!.disengagementOrdered = true
+
+            updateExplanation()
         }
 
         val cancelBtn = findViewById<Button>(R.id.btncancel)

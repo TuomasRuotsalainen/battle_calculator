@@ -8,6 +8,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.*
+import androidx.core.view.isVisible
 import kotlin.Unit
 
 class CombatSupportActivity : AppCompatActivity() {
@@ -53,9 +54,22 @@ class CombatSupportActivity : AppCompatActivity() {
         val heliStrength3 = findViewById<EditText>(R.id.helicopter_barrage_strength_3)
         val airPoints = findViewById<EditText>(R.id.air_points_strength)
 
+        val heliText = findViewById<TextView>(R.id.helicopter_label)
+
+        if (unitSelectionType == UnitSelectionTypes.BOMBARDMENT && (gameState.attackingUnit!!.riverCrossingType != RiverCrossingTypeEnum.NONE || gameState.attackingUnit!!.disengagementOrdered)) {
+            heliStrength1.isEnabled = false
+            heliStrength2.isEnabled = false
+            heliStrength3.isEnabled = false
+            //heliText.isVisible = false
+        }
+
         val textFields = listOf(artilleryStrength, heliStrength1, heliStrength2, heliStrength3, airPoints)
 
         val insideCAS = findViewById<CheckBox>(R.id.cas_enabled)
+        if (unitSelectionType == UnitSelectionTypes.BOMBARDMENT) {
+            insideCAS.isEnabled = false
+            insideCAS.isChecked = true
+        }
 
         fun createCombatSupport() : CombatSupport {
             return CombatSupport(
@@ -108,6 +122,7 @@ class CombatSupportActivity : AppCompatActivity() {
             updateCombatSupportValue()
         }
 
+        /*
         val ewRulesBtn = findViewById<Button>(R.id.ew_rules)
 
         ewRulesBtn.setOnClickListener {
@@ -122,7 +137,7 @@ class CombatSupportActivity : AppCompatActivity() {
             }
             val dialog = builder.create()
             dialog.show()
-        }
+        }*/
 
         val bombardmentTable = Tables.BombardmentTable()
         val calculator = Calculator()
@@ -145,8 +160,18 @@ class CombatSupportActivity : AppCompatActivity() {
                 if (gameState.combatSupport!!.getAttackerCombatSupport()!!.getAirPoints() + gameState.combatSupport!!.getAttackerCombatSupport()!!.getHelicopterCount() > 0) {
                     intent = Intent(this, AAFireActivity::class.java)
                 } else {
+                    var result : Pair<String, Boolean>
+                    if (gameState.attackingUnit!!.disengagementOrdered) {
+                        val interdictionTable = Tables.InterdictionTable()
+                        val interdictionVal =
+                            gameState.combatSupport!!.getAttackerCombatSupport()!!.getTotalSupport()
+                        val diceRollResult = Dice().roll()
+                        result = interdictionTable.getResult(interdictionVal, diceRollResult)
+                    } else {
+                        result = Bombardment.resolveBombardment(gameState)
+
+                    }
                     // Let's resolve artillery-only bombardment here and now
-                    val bombardmentResultStr = Bombardment.resolveBombardment(gameState)
 
                     /*val result = Dice().roll()
                     val supportVal = gameState.combatSupport!!.getAttackerCombatSupport()!!.getTotalSupport()
@@ -165,13 +190,13 @@ class CombatSupportActivity : AppCompatActivity() {
 
                     intent = Intent(this, MainActivity::class.java)
                     var dialogOk = "Understood"
-                    if (bombardmentResultStr.second) {
+                    if (result.second) {
                         dialogOk = "Smells like victory"
                     }
 
                     Helpers.showInfoDialog(
                         this,
-                        bombardmentResultStr.first, // TODO make difference between combat / support and soft
+                        result.first, // TODO make difference between combat / support and soft
                         dialogOk, null,
                         {
                             intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())

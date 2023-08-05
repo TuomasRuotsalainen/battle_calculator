@@ -76,7 +76,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="2"
-                android:hint="0"
+                android:hint="2"
                 android:inputType="number"
 
                 />
@@ -105,7 +105,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="2"
-                android:hint="0"
+                android:hint="2"
                 android:inputType="number"
 
                 />
@@ -138,7 +138,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="2"
-                android:hint="0"
+                android:hint="2"
                 android:inputType="number"
 
                 />
@@ -172,7 +172,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="2"
-                android:hint="0"
+                android:hint="2"
                 android:inputType="number"
 
                 />
@@ -220,7 +220,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="2"
-                android:hint="0"
+                android:hint="2"
                 android:inputType="number"
 
                 />
@@ -247,7 +247,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="2"
-                android:hint="0"
+                android:hint="2"
                 android:inputType="number"
 
                 />
@@ -280,7 +280,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="2"
-                android:hint="0"
+                android:hint="2"
                 android:inputType="number"
 
                 />
@@ -313,7 +313,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="2"
-                android:hint="0"
+                android:hint="2"
                 android:inputType="number"
 
                 />

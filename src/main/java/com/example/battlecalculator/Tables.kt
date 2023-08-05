@@ -948,14 +948,18 @@ class Tables {
         ): BombardmentResult {
             val rowIndex = getBombardmentRowIndex(detectionLevel, dieRoll.get()-1+totalDetectionModifiers)
             val resultRow = table[rowIndex]
-                ?: throw Exception("Couldn't get bombardment result with $detectionLevel, $bombardmentValue, $dieRoll")
+                ?: throw Exception("Couldn't get bombardment result with det modifiers $totalDetectionModifiers detection $detectionLevel, bombardment $bombardmentValue, die roll ${dieRoll.get()}, rowIndex $rowIndex")
 
             val columnIndex = mapBombardmentValueToColumnIndex(bombardmentValue)
+            if (columnIndex < 0) {
+                return BombardmentResult(0,0,false)
+            }
 
             val result = resultRow[columnIndex]
             return result
         }
 
+        // 0-13
         private fun getBombardmentRowIndex(detectionLevel : Int, modifiedDieRoll: Int) : Int {
             if (detectionLevel < 1 || detectionLevel > 4) {
                 return -1
@@ -967,10 +971,10 @@ class Tables {
             val modifiedRollsDetection4 = listOf(-3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 
             return when (detectionLevel) {
-                1 -> return modifiedRollsDetection1[modifiedDieRoll]
-                2 -> return modifiedRollsDetection2[modifiedDieRoll]
-                3 -> return modifiedRollsDetection3[modifiedDieRoll]
-                else -> return modifiedRollsDetection4[modifiedDieRoll]
+                1 -> return modifiedRollsDetection1.indexOf(modifiedDieRoll)
+                2 -> return modifiedRollsDetection2.indexOf(modifiedDieRoll)
+                3 -> return modifiedRollsDetection3.indexOf(modifiedDieRoll)
+                else -> return modifiedRollsDetection4.indexOf(modifiedDieRoll)
             }
 
 
@@ -978,14 +982,14 @@ class Tables {
 
         private fun mapBombardmentValueToColumnIndex(bombardmentValue : Int) : Int {
             return when {
-                (bombardmentValue <= 0) -> 0
-                (bombardmentValue == 1 || bombardmentValue == 2) -> 1
-                (bombardmentValue == 3 || bombardmentValue == 4) -> 2
-                (bombardmentValue == 5 || bombardmentValue == 6) -> 3
-                (bombardmentValue == 7 || bombardmentValue == 8) -> 4
-                (bombardmentValue == 9 || bombardmentValue == 10) -> 5
-                (bombardmentValue == 11 || bombardmentValue == 12) -> 6
-                else -> 7
+                (bombardmentValue <= 0) -> -1
+                (bombardmentValue == 1 || bombardmentValue == 2) -> 0
+                (bombardmentValue == 3 || bombardmentValue == 4) -> 1
+                (bombardmentValue == 5 || bombardmentValue == 6) -> 2
+                (bombardmentValue == 7 || bombardmentValue == 8) -> 3
+                (bombardmentValue == 9 || bombardmentValue == 10) -> 4
+                (bombardmentValue == 11 || bombardmentValue == 12) -> 5
+                else -> 6
             }
         }
 
@@ -1136,6 +1140,46 @@ class Tables {
 
 
             return map
+        }
+    }
+
+    class InterdictionTable() {
+
+        // TODO add LARS support
+
+        private val table = initTable()
+
+        private fun initTable() : MutableList<List<Int>> {
+            val table : MutableList<List<Int>> = mutableListOf()
+            table.add(listOf(0,0,2,2,2))
+            table.add(listOf(0,2,2,2,2))
+            table.add(listOf(0,0,2,2,4))
+            table.add(listOf(0,2,2,2,4))
+            table.add(listOf(0,2,2,4,4))
+            table.add(listOf(2,2,2,4,4))
+            table.add(listOf(2,2,4,4,4))
+            table.add(listOf(2,2,4,4,4))
+            table.add(listOf(2,4,4,4,4))
+            table.add(listOf(2,4,4,4,4))
+
+            return table
+        }
+
+        fun getResult(interdictionValue : Int, dieRoll: DiceRollResult) : Pair<String, Boolean> {
+            val interdictionResult = when (interdictionValue) {
+                in 1..2 -> table[dieRoll.get()][0]
+                in 3..4 -> table[dieRoll.get()][1]
+                in 5..6 -> table[dieRoll.get()][2]
+                in 7..8 -> table[dieRoll.get()][3]
+                in 9..10 -> table[dieRoll.get()][4]
+                else -> throw Exception("Error getting interdiction result $interdictionValue, ${dieRoll.get()}")
+            }
+
+            return if (interdictionResult > 0) {
+                Pair("Total strength: $interdictionValue. Dice roll: ${dieRoll.get()}\n\nInterdiction successful! Total value: $interdictionResult", true)
+            } else {
+                Pair("Total strength: $interdictionValue. Dice roll: ${dieRoll.get()}\n\nInterdiction failed", false)
+            }
         }
     }
 

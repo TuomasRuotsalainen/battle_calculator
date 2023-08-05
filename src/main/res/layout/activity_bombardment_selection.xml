@@ -38,7 +38,7 @@
         >
 
         <RadioButton
-            android:id="@+id/radio_command_status_none"
+            android:id="@+id/radio_unit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
@@ -46,7 +46,7 @@
              />
 
         <RadioButton
-            android:id="@+id/radio_command_status_front_line"
+            android:id="@+id/radio_bridge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
@@ -54,7 +54,7 @@
              />
 
         <RadioButton
-            android:id="@+id/radio_command_status_out"
+            android:id="@+id/radio_interdict"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
@@ -206,6 +206,25 @@
                     android:layout_height="wrap_content"
 
                     android:text="Soft target\n(§)"
+                    tools:layout_editor_absoluteX="16dp"
+                    tools:layout_editor_absoluteY="60dp" />
+
+                <CheckBox
+                    android:id="@+id/target_attributes_panel"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="Panel bridge"
+                    tools:layout_editor_absoluteX="16dp"
+                    tools:layout_editor_absoluteY="12dp" />
+
+                <CheckBox
+                    android:id="@+id/target_attributes_permanent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="Permanent bridge"
                     tools:layout_editor_absoluteX="16dp"
                     tools:layout_editor_absoluteY="60dp" />
 

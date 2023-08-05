@@ -7,6 +7,7 @@ import android.content.pm.ApplicationInfo
 import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -254,32 +255,62 @@ class Bombardment {
             val supportVal =
                 gameState.combatSupport!!.getAttackerCombatSupport()!!.getTotalSupport()
             val target = gameState.attackingUnit ?: throw Exception("target not set")
+
+            val detectionLevel = when(target.riverCrossingType) {
+                RiverCrossingTypeEnum.NONE ->
+                    calculator.calculateDetectionLevel(
+                        gameState.detectionLevel!!,
+                        gameState.detectionLevelModifiers!!
+                    )
+                RiverCrossingTypeEnum.PREPARED ->
+                    // permanent bridge
+                    4
+                RiverCrossingTypeEnum.HASTY ->
+                    // panel bridge
+                    2
+            }
+
             val targetPosture =
                 target.posture ?: throw Exception("target posture not set") //TODO posture not used
             val movementMode = Tables.TerrainCombatTable.MovementMode().get(target.posture!!)
-            val modifier = calculator.calculateBombardmentDieModifier(
-                movementMode,
-                gameState.hexTerrain!!.getFeatureForBombardment(),
-                null
-            ) // TODO handle chem
-            val detectionLevel = calculator.calculateDetectionLevel(
-                gameState.detectionLevel!!,
-                gameState.detectionLevelModifiers!!
-            )
-            val bombardmentResult =
-                bombardmentTable.getResult(detectionLevel, modifier, supportVal, result)
-            val engagementInfo = if (bombardmentResult.targetHalfEngaged) {
-                ". Target is now at least Half-Engaged"
-            } else {
-                ""
+            var modifier = 0
+            if (target.riverCrossingType == RiverCrossingTypeEnum.NONE) {
+                modifier = calculator.calculateBombardmentDieModifier(
+                    movementMode,
+                    gameState.hexTerrain!!.getFeatureForBombardment(),
+                    null
+                ) // TODO handle chem
+            }
+                Log.d("BOMBARDMENT" ,"detection level : $detectionLevel, modifier: $modifier, supportval: $supportVal")
+                val bombardmentResult =
+                    bombardmentTable.getResult(detectionLevel, modifier, supportVal, result)
+                var engagementInfo = if (bombardmentResult.targetHalfEngaged) {
+                    ". Target is now at least Half-Engaged"
+                } else {
+                    ""
+                }
+
+            if (target.riverCrossingType == RiverCrossingTypeEnum.HASTY) {
+                return if (bombardmentResult.supportUnitAttrition > 0) {
+                    Pair("Dice roll: ${result.get()}. Panel bridge destroyed", true)
+                } else {
+                    Pair("Dice roll: ${result.get()}. Panel bridge intact", false)
+                }
+            } else if (target.riverCrossingType == RiverCrossingTypeEnum.PREPARED) {
+                return if (bombardmentResult.supportUnitAttrition > 1) {
+                    Pair("Dice roll: ${result.get()}. Permanent bridge destroyed", true)
+                } else {
+                    Pair("Dice roll: ${result.get()}. Permanent bridge intact", false)
+                }
             }
 
-            var targetDamaged = false
-            if (bombardmentResult.combatUnitAttrition > 0 || bombardmentResult.targetHalfEngaged) {
-                targetDamaged = true
+                var targetDamaged = false
+                if (bombardmentResult.combatUnitAttrition > 0 || bombardmentResult.targetHalfEngaged) {
+                    targetDamaged = true
+                }
+
+                return Pair("Bombardment dice roll: ${result.get()}\n\nResult:\nAttrition to target: ${bombardmentResult.combatUnitAttrition}" + engagementInfo, targetDamaged)
             }
 
-            return Pair("Bombardment dice roll: ${result.get()}\n\nResult:\nAttrition to target: ${bombardmentResult.combatUnitAttrition}" + engagementInfo, targetDamaged)
-        }
     }
 }

@@ -648,10 +648,10 @@ class UnitState(
     postureInput: PostureEnum?,
     attrition: Int?,
     commandStateEnum: CommandStateEnum?,
-    disengagementOrdered : Boolean,
+    disengagementOrdered : Boolean, // as an ultimate hack we're also using this field to know if we're doing interdiction during bombardment or not :D
     attritionFromCombat : Int,
     attackTypeEnum: AttackTypeEnum?,
-    riverCrossingTypeEnum: RiverCrossingTypeEnum,
+    riverCrossingTypeEnum: RiverCrossingTypeEnum, // as an ultimate hack we're also using this field to hold target bridge data: Prepared: Permanent, Hasty: Panel, None: None
     inPostureTransition: Boolean) {
 
     val unit = unitInput

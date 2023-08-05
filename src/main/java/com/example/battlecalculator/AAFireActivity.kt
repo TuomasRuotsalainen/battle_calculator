@@ -130,7 +130,7 @@ class AAFireActivity : AppCompatActivity() {
                         throw Exception("No results for AA against fixed wing, but fixed wing in use")
                     }
 
-                    fixed!!.setResult("Die roll result: ${fixedResult.getDieRoll().get()}. ${this.name} air points aborted: ${fixedResult.getAbortedAirPoints()}air points shot down: ${fixedResult.getShotDownAirPoints()}", false)
+                    fixed!!.setResult("Die roll result: ${fixedResult.getDieRoll().get()}. ${this.name} \n\nAir points aborted: ${fixedResult.getAbortedAirPoints()}\nAir points shot down: ${fixedResult.getShotDownAirPoints()}", false)
                     this.fixedResult = fixedResult
                 }
 
@@ -194,6 +194,8 @@ class AAFireActivity : AppCompatActivity() {
                 }
             }
         }
+
+        // TODO the default value of an aa field is not actually 2
 
         val unitSelectionType = Communication.getUnitSelectionType(intent)
 
@@ -259,7 +261,12 @@ class AAFireActivity : AppCompatActivity() {
 
                     executeAaAndSetResults(attackerAASettings)
                 }
-                aaApply.text = "Apply AA resuls"
+
+                if (unitSelectionType == UnitSelectionTypes.BOMBARDMENT) {
+                    aaApply.text = "Apply AA results and shoot"
+                } else {
+                    aaApply.text = "Apply AA results"
+                }
                 isFirstClick = false
 
 
@@ -299,12 +306,28 @@ class AAFireActivity : AppCompatActivity() {
                     // calculate bombardment result now
                     intent = Intent(this, MainActivity::class.java)
 
-                    val bombardmentResultStr = Bombardment.resolveBombardment(gameState)
+                    var result : Pair<String, Boolean>
+                    if (gameState.attackingUnit!!.disengagementOrdered) {
+                        val interdictionTable = Tables.InterdictionTable()
+                        val interdictionVal =
+                            gameState.combatSupport!!.getAttackerCombatSupport()!!.getTotalSupport()
+                        val diceRollResult = Dice().roll()
+                        result = interdictionTable.getResult(interdictionVal, diceRollResult)
+                    } else {
+                        result = Bombardment.resolveBombardment(gameState)
+
+                    }
+
+                    val dialogOk = if (result.second) {
+                        "Smells like victory"
+                    } else {
+                        "Understood"
+                    }
 
                     Helpers.showInfoDialog(
                         this,
-                        bombardmentResultStr.first,
-                        "Understood", null,
+                        result.first,
+                        dialogOk, null,
                         {
                             intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
                             startActivity(intent)
