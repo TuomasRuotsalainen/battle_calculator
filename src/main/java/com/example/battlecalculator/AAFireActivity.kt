@@ -16,6 +16,11 @@ class AAFireActivity : AppCompatActivity() {
         setContentView(R.layout.activity_aa_fire)
 
         var gameState = getGameState(intent)
+        if (gameState.attackingUnit == null) {
+            throw Exception("Attacking unit is null")
+        } else if (gameState.attackingUnit!!.unit == null) {
+            throw Exception("Attacking unit unit is null")
+        }
 
         if (gameState.combatSupport == null) {
             throw Exception("Combat support is null")
@@ -284,11 +289,31 @@ class AAFireActivity : AppCompatActivity() {
                 gameState.combatSupport!!.setAttackerCombatSupport(attackerCS)
                 gameState.combatSupport!!.setDefenderCombatSupport(defenderCS)
 
-                val intent = Intent(this, CombatResolutionActivity::class.java)
-                intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+                if (unitSelectionType != UnitSelectionTypes.BOMBARDMENT) {
+                    val intent = Intent(this, CombatResolutionActivity::class.java)
+                    intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
 
-                startActivity(intent)
-                finish()
+                    startActivity(intent)
+                    finish()
+                } else {
+                    // calculate bombardment result now
+                    intent = Intent(this, MainActivity::class.java)
+
+                    val bombardmentResultStr = Bombardment.resolveBombardment(gameState)
+
+                    Helpers.showInfoDialog(
+                        this,
+                        bombardmentResultStr.first,
+                        "Understood", null,
+                        {
+                            intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+                            startActivity(intent)
+                            finish()
+                        },
+                    )
+                }
+
+
             }
 
 

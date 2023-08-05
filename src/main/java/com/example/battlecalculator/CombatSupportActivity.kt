@@ -17,6 +17,11 @@ class CombatSupportActivity : AppCompatActivity() {
         setContentView(R.layout.activity_support_artillery)
 
         var gameState = getGameState(intent)
+        if (gameState.attackingUnit == null) {
+            throw Exception("Attacking unit is null")
+        } else if (gameState.attackingUnit!!.unit == null) {
+            throw Exception("Attacking unit unit is null")
+        }
 
         val unitSelectionType = Communication.getUnitSelectionType(intent)
 
@@ -141,10 +146,12 @@ class CombatSupportActivity : AppCompatActivity() {
                     intent = Intent(this, AAFireActivity::class.java)
                 } else {
                     // Let's resolve artillery-only bombardment here and now
-                    val result = Dice().roll()
+                    val bombardmentResultStr = Bombardment.resolveBombardment(gameState)
+
+                    /*val result = Dice().roll()
                     val supportVal = gameState.combatSupport!!.getAttackerCombatSupport()!!.getTotalSupport()
                     val target = gameState.attackingUnit ?: throw Exception("target not set")
-                    val targetPosture = target.posture ?: throw Exception("target posture not set")
+                    val targetPosture = target.posture ?: throw Exception("target posture not set") //TODO posture not used
                     val movementMode = Tables.TerrainCombatTable.MovementMode().get(target.posture!!)
                     val modifier = calculator.calculateBombardmentDieModifier(movementMode, gameState.hexTerrain!!.getFeatureForBombardment(), null) // TODO handle chem
                     val detectionLevel = calculator.calculateDetectionLevel(gameState.detectionLevel!!, gameState.detectionLevelModifiers!!)
@@ -153,14 +160,19 @@ class CombatSupportActivity : AppCompatActivity() {
                         ". Target is now at least Half-Engaged"
                     } else {
                         ""
-                    }
+                    }*/
+
 
                     intent = Intent(this, MainActivity::class.java)
+                    var dialogOk = "Understood"
+                    if (bombardmentResultStr.second) {
+                        dialogOk = "Smells like victory"
+                    }
 
                     Helpers.showInfoDialog(
                         this,
-                        "Bombardment dice roll: ${result.get()}\n\nResult:\nAttrition to target: ${bombardmentResult.combatUnitAttrition}" + engagementInfo, // TODO make difference between combat / support and soft
-                        "Understood", null,
+                        bombardmentResultStr.first, // TODO make difference between combat / support and soft
+                        dialogOk, null,
                         {
                             intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
                             startActivity(intent)

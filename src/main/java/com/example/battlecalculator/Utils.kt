@@ -7,14 +7,11 @@ import android.content.pm.ApplicationInfo
 import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.*
-import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.content.res.ResourcesCompat
-import java.util.concurrent.CountDownLatch
 import kotlin.Unit
 
 class Utils {
@@ -242,6 +239,47 @@ class Communication {
             } else {
                 throw Exception("Unit selection type from intent is UNDEFINED")
             }
+        }
+    }
+}
+
+class Bombardment {
+    companion object Resolver {
+        fun resolveBombardment(gameState: GameState): Pair<String, Boolean> {
+            val calculator = Calculator()
+            val bombardmentTable = Tables.BombardmentTable()
+
+            val result = Dice().roll()
+
+            val supportVal =
+                gameState.combatSupport!!.getAttackerCombatSupport()!!.getTotalSupport()
+            val target = gameState.attackingUnit ?: throw Exception("target not set")
+            val targetPosture =
+                target.posture ?: throw Exception("target posture not set") //TODO posture not used
+            val movementMode = Tables.TerrainCombatTable.MovementMode().get(target.posture!!)
+            val modifier = calculator.calculateBombardmentDieModifier(
+                movementMode,
+                gameState.hexTerrain!!.getFeatureForBombardment(),
+                null
+            ) // TODO handle chem
+            val detectionLevel = calculator.calculateDetectionLevel(
+                gameState.detectionLevel!!,
+                gameState.detectionLevelModifiers!!
+            )
+            val bombardmentResult =
+                bombardmentTable.getResult(detectionLevel, modifier, supportVal, result)
+            val engagementInfo = if (bombardmentResult.targetHalfEngaged) {
+                ". Target is now at least Half-Engaged"
+            } else {
+                ""
+            }
+
+            var targetDamaged = false
+            if (bombardmentResult.combatUnitAttrition > 0 || bombardmentResult.targetHalfEngaged) {
+                targetDamaged = true
+            }
+
+            return Pair("Bombardment dice roll: ${result.get()}\n\nResult:\nAttrition to target: ${bombardmentResult.combatUnitAttrition}" + engagementInfo, targetDamaged)
         }
     }
 }

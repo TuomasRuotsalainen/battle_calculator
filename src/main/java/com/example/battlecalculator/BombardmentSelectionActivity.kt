@@ -125,7 +125,7 @@ class BombardmentSelectionActivity : AppCompatActivity() {
 
         updateExplanation()
 
-        val dummyUnit = Unit("ARMOR", "1-1", "TARGETPRACTICE", 1)
+        val dummyUnit = Unit("ARMOR", "1-1", "3pz_7_74", 1)
         gameState.attackingUnit = UnitState(dummyUnit, selectedPosture, null, null, false, 0, null, RiverCrossingTypeEnum.NONE, false) // This is a hacky way to deliver posture information
 
         setPostureButton.setOnClickListener {

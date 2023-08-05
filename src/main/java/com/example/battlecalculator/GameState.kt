@@ -592,6 +592,9 @@ class GameState(stateString : String) {
             val unitID = properties[0]
             if (unitID != "") {
                 unit = oob.unitIndex[unitID]
+                if (unit == null) {
+                    throw Exception("Couldn't find unit $unitID from oob")
+                }
             }
         }
 
