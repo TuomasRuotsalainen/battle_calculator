@@ -95,6 +95,14 @@ class UnitSelectionActivityInput : AppCompatActivity() {
 
 
         val commitButton = findViewById<Button>(R.id.combat1_apply)
+        val cancelButton = findViewById<Button>(R.id.cancel)
+
+        cancelButton.setOnClickListener {
+            val nextIntent = Intent(this, MainActivity::class.java)
+            nextIntent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+            startActivity(nextIntent)
+            finish()
+        }
 
         commitButton.setOnClickListener {
 

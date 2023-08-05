@@ -419,7 +419,12 @@ class Calculator() {
     }
 
     // TODO this only concerns WP chem at the moment
-    fun calculateBombardmentDieModifier(movementMode: MovementModeEnum, terrainEnum: TerrainEnum, chemWarfareTurn : Int?) : Int {
+    fun calculateBombardmentDieModifier(terrainEnum: TerrainEnum, chemWarfareTurn : Int?, postureEnum: PostureEnum) : Int {
+
+        val movementMode = Tables.TerrainCombatTable.MovementMode().get(postureEnum)
+
+        val postureModifier = Postures().getBombardmentModifier(postureEnum)
+
         val terrainModifier = when (movementMode) {
             MovementModeEnum.COLUM -> {
                 if (terrainEnum == TerrainEnum.CITY) {
@@ -459,6 +464,6 @@ class Calculator() {
             }
         }
 
-        return terrainModifier + chemModifier
+        return terrainModifier + chemModifier + postureModifier
     }
 }

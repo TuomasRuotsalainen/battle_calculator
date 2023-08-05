@@ -134,19 +134,24 @@ class BombardmentSelectionActivity : AppCompatActivity() {
 
         fun updateExplanation() {
             if (bridgeBombardmentRadio.isChecked) {
-                var target = "Permanent bridge"
+                explanation.text = "Targeting Permanent bridge.\nBombardment strength of 9 has ~50% chance to destroy it."
                 if (boxPanelBridge.isChecked) {
-                    target = "Panel bridge"
+                    explanation.text = "Targeting Panel bridge.\nBombardment strength of 7 has ~50% chance to destroy it."
                 }
-                explanation.text = "Targeting $target"
             } else if (interdictionRadio.isChecked){
-                explanation.text = "INTERDICTION NOT IMPLEMENTED YET"
+                explanation.text = "Interdict hex"
             } else {
                 val newDetectionLevel = calculator.calculateDetectionLevel(gameState.detectionLevel!!, gameState.detectionLevelModifiers!!)
                 // TODO finish this
                 explanation.text = "Detection: $newDetectionLevel, Bombardment modifier: 4\nHigher the better!\nMean result for bombardment of 2:\n0 attrition, target Half-Enganged"
             }
         }
+
+        boxSoftTarget.setOnClickListener {
+            gameState.attackingUnit!!.inPostureTransition = boxSoftTarget.isChecked
+            updateExplanation()
+        }
+
 
         updateExplanation()
 
@@ -155,7 +160,7 @@ class BombardmentSelectionActivity : AppCompatActivity() {
 
 
         val dummyUnit = Unit("ARMOR", "1-1", "3pz_7_74", 1)
-        gameState.attackingUnit = UnitState(dummyUnit, selectedPosture, null, null, false, 0, null, RiverCrossingTypeEnum.NONE, false) // This is a hacky way to deliver posture information
+        gameState.attackingUnit = UnitState(dummyUnit, selectedPosture, null, null, false, 0, AttackTypeEnum.PREPARED, RiverCrossingTypeEnum.NONE, false) // This is a hacky way to deliver posture information
 
         setPostureButton.setOnClickListener {
             Helpers.showRadioButtonDialog(
@@ -252,12 +257,22 @@ class BombardmentSelectionActivity : AppCompatActivity() {
         boxCombatUnit.setOnClickListener {
             boxSupportUnit.isChecked = !boxCombatUnit.isChecked
             combatUnitSelected = boxCombatUnit.isChecked
+            if (boxCombatUnit.isChecked) {
+                gameState.attackingUnit!!.attackType = AttackTypeEnum.PREPARED
+            } else {
+                gameState.attackingUnit!!.attackType = AttackTypeEnum.HASTY
+            }
             updateExplanation()
         }
 
         boxSupportUnit.setOnClickListener {
             boxCombatUnit.isChecked = !boxSupportUnit.isChecked
             combatUnitSelected = boxCombatUnit.isChecked
+            if (boxCombatUnit.isChecked) {
+                gameState.attackingUnit!!.attackType = AttackTypeEnum.PREPARED
+            } else {
+                gameState.attackingUnit!!.attackType = AttackTypeEnum.HASTY
+            }
             updateExplanation()
         }
 

@@ -28,8 +28,14 @@ class AAFireActivity : AppCompatActivity() {
 
         class AASettingRow(private val layout : LinearLayout) {
             private val textView : TextView = layout.getChildAt(0) as TextView
-            private val editText : EditText = layout.getChildAt(1) as EditText
+            private val editText : EditText = getInitialEditText()
             private val rotaryCheckBox : CheckBox? = getCheckbox(layout)
+
+            fun getInitialEditText() : EditText {
+                val eTxt = layout.getChildAt(1) as EditText
+                eTxt.setText("2")
+                return eTxt
+            }
 
             fun setResult(text : String, enableCheckBox : Boolean) {
                 textView.text = text
@@ -194,8 +200,6 @@ class AAFireActivity : AppCompatActivity() {
                 }
             }
         }
-
-        // TODO the default value of an aa field is not actually 2
 
         val unitSelectionType = Communication.getUnitSelectionType(intent)
 

@@ -946,7 +946,7 @@ class Tables {
             bombardmentValue: Int,
             dieRoll: DiceRollResult
         ): BombardmentResult {
-            val rowIndex = getBombardmentRowIndex(detectionLevel, dieRoll.get()-1+totalDetectionModifiers)
+            val rowIndex = getBombardmentRowIndex(detectionLevel, dieRoll.get()+totalDetectionModifiers)
             val resultRow = table[rowIndex]
                 ?: throw Exception("Couldn't get bombardment result with det modifiers $totalDetectionModifiers detection $detectionLevel, bombardment $bombardmentValue, die roll ${dieRoll.get()}, rowIndex $rowIndex")
 
@@ -970,13 +970,18 @@ class Tables {
             val modifiedRollsDetection3 = listOf(-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
             val modifiedRollsDetection4 = listOf(-3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 
-            return when (detectionLevel) {
-                1 -> return modifiedRollsDetection1.indexOf(modifiedDieRoll)
-                2 -> return modifiedRollsDetection2.indexOf(modifiedDieRoll)
-                3 -> return modifiedRollsDetection3.indexOf(modifiedDieRoll)
-                else -> return modifiedRollsDetection4.indexOf(modifiedDieRoll)
+            val result = when (detectionLevel) {
+                1 -> modifiedRollsDetection1.indexOf(modifiedDieRoll)
+                2 -> modifiedRollsDetection2.indexOf(modifiedDieRoll)
+                3 -> modifiedRollsDetection3.indexOf(modifiedDieRoll)
+                else -> modifiedRollsDetection4.indexOf(modifiedDieRoll)
             }
 
+            if (result == -1) {
+                throw Exception("Couldn't find bombardment row index for modifiedDieRoll $modifiedDieRoll and detectionLevel $detectionLevel")
+            }
+
+            return result
 
         }
 

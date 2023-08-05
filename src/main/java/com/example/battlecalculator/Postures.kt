@@ -37,6 +37,12 @@ class Postures() {
             ?: throw Exception("Couldn't find posture $postureEnum from posture map")
     }
 
+    fun getBombardmentModifier(postureEnum: PostureEnum): Int {
+        val posture = postureMap[postureEnum]
+            ?: throw Exception("Could find data for posture $postureEnum")
+        return posture.bombardment
+    }
+
     fun getCombatModifier(postureEnum: PostureEnum, isAttack: Boolean): Int? {
         val posture = postureMap[postureEnum]
         if (isAttack) {

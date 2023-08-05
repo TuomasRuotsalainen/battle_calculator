@@ -8,6 +8,14 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/background3opa"
+        android:adjustViewBounds="true"
+        />
+
 
     <TextView
         android:id="@+id/textView4"
@@ -52,6 +60,7 @@
 
     <LinearLayout
         android:id="@+id/selected_units"
+        android:background="@drawable/background"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -129,13 +138,24 @@
 
     <TextView
         android:id="@+id/unitinfo"
+        android:background="@drawable/background"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Division"
+        android:text=""
         app:layout_constraintBottom_toTopOf="@+id/combat1_apply"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/selected_units" />
+
+    <Button
+        android:id="@+id/cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        app:layout_constraintTop_toBottomOf="@+id/unitinfo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/combat1_apply"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/combat1_apply"
@@ -145,7 +165,8 @@
         app:layout_constraintTop_toBottomOf="@+id/unitinfo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/cancel" />
+
 
 
 

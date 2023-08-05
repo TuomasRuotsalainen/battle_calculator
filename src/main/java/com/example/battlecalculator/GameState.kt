@@ -650,9 +650,9 @@ class UnitState(
     commandStateEnum: CommandStateEnum?,
     disengagementOrdered : Boolean, // as an ultimate hack we're also using this field to know if we're doing interdiction during bombardment or not :D
     attritionFromCombat : Int,
-    attackTypeEnum: AttackTypeEnum?,
+    attackTypeEnum: AttackTypeEnum?, // as an ultimate hack we're also using this field to know if the target is combat unit or support unit during bombardment :D :D
     riverCrossingTypeEnum: RiverCrossingTypeEnum, // as an ultimate hack we're also using this field to hold target bridge data: Prepared: Permanent, Hasty: Panel, None: None
-    inPostureTransition: Boolean) {
+    inPostureTransition: Boolean) { // as an ultimate hack we're also using this field to know if the target is soft or not during bombardment :D :D
 
     val unit = unitInput
     var posture = postureInput
