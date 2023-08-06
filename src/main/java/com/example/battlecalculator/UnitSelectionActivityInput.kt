@@ -108,7 +108,7 @@ class UnitSelectionActivityInput : AppCompatActivity() {
 
             if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
                 if (selectedUnits.size != 1) {
-                    throw Exception("Selected units size is not 1 when committing attacking units")
+                    return@setOnClickListener
                 }
 
                 //val selectedUnitName = selectedUnits[0]

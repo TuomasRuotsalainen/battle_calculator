@@ -201,50 +201,6 @@ class OrderOfBattle {
                             ]
                         },
                     ]
-                },
-                {
-                    "name" : "WG I",
-                    "level_2" : [
-                        {
-                            "name" : "7 Panzer",
-                            "level_3" : [
-                                {
-                                    "name" : "19 PzGren",
-                                    "level_4" : [
-                                        {
-                                            "name" : "76",
-                                            "type" : "ARMOR",
-                                            "strength" : "4-5"
-                                            "cadre" : 4
-                                        },
-                                        {
-                                            "name" : "66",
-                                            "type" : "ARMOR",
-                                            "strength" : "4-7"
-                                            "cadre" : 4
-                                        }
-                                    ]
-                                },
-                                {
-                                    "name" : "20 Panzer",
-                                    "level_4" : [
-                                        {
-                                            "name" : "45",
-                                            "type" : "ARMOR",
-                                            "strength" : "4-5"
-                                            "cadre" : 4
-                                        },
-                                        {
-                                            "name" : "46",
-                                            "type" : "ARMOR",
-                                            "strength" : "4-7"
-                                            "cadre" : 4
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
                 }
             ]
         },
