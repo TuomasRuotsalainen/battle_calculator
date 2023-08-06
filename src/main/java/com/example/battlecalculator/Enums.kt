@@ -29,7 +29,7 @@ enum class IntentExtraIDs {
 }
 
 enum class UnitSelectionTypes {
-    ATTACKER, DEFENDER, BOMBARDMENT
+    ATTACKER, DEFENDER, BOMBARDMENT, DISENGAGEMENT
 }
 
 enum class FixedModifierEnum {

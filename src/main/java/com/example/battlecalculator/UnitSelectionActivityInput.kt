@@ -31,6 +31,8 @@ class UnitSelectionActivityInput : AppCompatActivity() {
 
         if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
             activityHeader.text = "SELECT THE ATTACKING UNIT"
+        } else if (unitSelectionType == UnitSelectionTypes.DISENGAGEMENT){
+            activityHeader.text = "SELECT THE DISENGAGING UNIT"
         } else {
             currentAlliance = if (currentAlliance == Alliances.NATO) {
                 Alliances.PACT
@@ -106,7 +108,7 @@ class UnitSelectionActivityInput : AppCompatActivity() {
 
         commitButton.setOnClickListener {
 
-            if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
+            if (unitSelectionType == UnitSelectionTypes.ATTACKER || unitSelectionType == UnitSelectionTypes.DISENGAGEMENT) {
                 if (selectedUnits.size != 1) {
                     return@setOnClickListener
                 }
@@ -119,7 +121,7 @@ class UnitSelectionActivityInput : AppCompatActivity() {
 
                 val intent = Intent(this, PostureAndAttackTypeActivity::class.java)
                 intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
-                intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.ATTACKER.toString())
+                intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), unitSelectionType.toString())
                 startActivity(intent)
                 finish()
 
@@ -194,7 +196,7 @@ class UnitSelectionActivityInput : AppCompatActivity() {
                 Log.d("CLICKED", unit.name)
                 val unitInfo = findViewById<TextView>(R.id.unitinfo)
 
-                if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
+                if (unitSelectionType == UnitSelectionTypes.ATTACKER || unitSelectionType == UnitSelectionTypes.DISENGAGEMENT) {
                     for (otherBackground in backgrounds) {
                         otherBackground.visibility = View.INVISIBLE
                         selectedUnits = mutableListOf()

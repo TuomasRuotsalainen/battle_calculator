@@ -306,6 +306,19 @@
         app:layout_constraintStart_toStartOf="parent"
 
         app:layout_constraintTop_toBottomOf="@+id/time_selection"
+        app:layout_constraintBottom_toTopOf="@+id/disengagementButton"
+
+        />
+
+    <Button
+        android:id="@+id/disengagementButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Disengagement"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/groundAttackButton"
         app:layout_constraintBottom_toTopOf="@+id/artillerBomabrdmentButton"
 
         />
@@ -318,7 +331,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
 
-        app:layout_constraintTop_toBottomOf="@+id/groundAttackButton"
+        app:layout_constraintTop_toBottomOf="@+id/disengagementButton"
         app:layout_constraintBottom_toBottomOf="parent"
         />
 

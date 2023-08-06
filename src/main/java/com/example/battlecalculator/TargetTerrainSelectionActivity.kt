@@ -17,6 +17,7 @@ class TargetTerrainSelectionActivity : AppCompatActivity() {
         setContentView(R.layout.activity_target_terrain_selection)
 
         val gameState = getGameState(intent)
+        val unitSelectionType = Communication.getUnitSelectionType(intent)
 
         val forestCheck = findViewById<CheckBox>(R.id.checkBoxForest)
         val plainCheck = findViewById<CheckBox>(R.id.checkBoxPlain)
@@ -130,10 +131,14 @@ class TargetTerrainSelectionActivity : AppCompatActivity() {
 
         val applyButton = findViewById<Button>(R.id.terrain_apply)
 
-        val intent = if (gameState.getDisengagingDefender() != null) {
+        val intent = if (gameState.getDisengagingDefender() != null || unitSelectionType == UnitSelectionTypes.DISENGAGEMENT) {
             Intent(this, DisengagementActivity::class.java)
         } else {
             Intent(this, FixedCombatModifierSelectionActivity::class.java)
+        }
+
+        if (unitSelectionType == UnitSelectionTypes.DISENGAGEMENT) {
+            intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.DISENGAGEMENT.toString())
         }
 
         applyButton.setOnClickListener{

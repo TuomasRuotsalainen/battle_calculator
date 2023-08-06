@@ -25,7 +25,7 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
 
         }
 
-        val currentUnitState : UnitState = if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
+        val currentUnitState : UnitState = if (unitSelectionType == UnitSelectionTypes.ATTACKER || unitSelectionType == UnitSelectionTypes.DISENGAGEMENT) {
             gameState.attackingUnit!!
         } else {
             gameState.getDefendingUnitStateWithoutPosture() ?:
@@ -97,6 +97,8 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
 
 
         }
+
+        // TODO add non movement postures for disengagement
 
         setPostureButton.setOnClickListener {
             showRadioButtonDialog(
@@ -179,6 +181,8 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
         val headerText = findViewById<TextView>(R.id.postureSelHeader)
         if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
             headerText.text = "Attacking unit:"
+        } else if (unitSelectionType == UnitSelectionTypes.DISENGAGEMENT) {
+            headerText.text = "Disengaging unit:"
         } else {
             headerText.text = "Defending unit:"
         }
@@ -242,14 +246,40 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
                     gameState.attackingUnit = attackingUnit
 
                     val nextIntent = Intent(this, UnitSelectionActivityInput::class.java)
-                    nextIntent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
-                    nextIntent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.DEFENDER.toString())
+                    nextIntent.putExtra(
+                        IntentExtraIDs.GAMESTATE.toString(),
+                        gameState.getStateString()
+                    )
+                    nextIntent.putExtra(
+                        IntentExtraIDs.UNITSELECTIONTYPE.toString(),
+                        UnitSelectionTypes.DEFENDER.toString()
+                    )
 
                     startActivity(nextIntent)
                     finish()
                 } else {
                     Log.d("Tuomas tag", "posture $selectedPosture is not for attack")
                 }
+
+            } else if (unitSelectionType == UnitSelectionTypes.DISENGAGEMENT) {
+                val attackingUnit = gameState.attackingUnit
+                attackingUnit!!.posture = selectedPosture
+                attackingUnit.disengagementOrdered = true
+
+                gameState.attackingUnit = attackingUnit
+
+                val nextIntent = Intent(this, TargetTerrainSelectionActivity::class.java)
+                nextIntent.putExtra(
+                    IntentExtraIDs.GAMESTATE.toString(),
+                    gameState.getStateString()
+                )
+                nextIntent.putExtra(
+                    IntentExtraIDs.UNITSELECTIONTYPE.toString(),
+                    UnitSelectionTypes.DISENGAGEMENT.toString()
+                )
+
+                startActivity(nextIntent)
+                finish()
 
             } else {
 

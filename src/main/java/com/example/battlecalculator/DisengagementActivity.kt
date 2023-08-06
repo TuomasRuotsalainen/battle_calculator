@@ -27,7 +27,7 @@ class DisengagementActivity : AppCompatActivity() {
         resultOptions[DisengagemenResult.S1] = Pair(true, 1)
         resultOptions[DisengagemenResult.S0] = Pair(true, 0)
 
-
+        val unitSelectionType = Communication.getUnitSelectionType(intent)
 
         fun toString(disengagemenResult: DisengagemenResult, diceResult : DiceRollResult) : String {
             val result = resultOptions[disengagemenResult]
@@ -51,7 +51,12 @@ class DisengagementActivity : AppCompatActivity() {
 
         var gameState = getGameState(intent)
 
-        val disengagingUnit = gameState.getDisengagingDefender()
+        val disengagingUnit = if (unitSelectionType == UnitSelectionTypes.DISENGAGEMENT) {
+            gameState.attackingUnit
+        } else {
+            gameState.getDisengagingDefender()
+        }
+
         if (disengagingUnit == null) {
             Log.d("DEBUG", "state string: ${gameState.getStateString()}")
             throw Exception("Disengaging unit is null")

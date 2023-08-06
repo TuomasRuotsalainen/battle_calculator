@@ -183,12 +183,21 @@ class MainActivity : AppCompatActivity() {
 
         val groundAttackButton = findViewById<Button>(R.id.groundAttackButton)
         val artillerBombardmentButton = findViewById<Button>(R.id.artillerBomabrdmentButton)
-
-
+        val disengagementButton = findViewById<Button>(R.id.disengagementButton)
 
         groundAttackButton.setOnClickListener{
             val intent = Intent(this, UnitSelectionActivityInput::class.java)
             intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.ATTACKER.toString())
+
+            intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+
+            startActivity(intent)
+            finish()
+        }
+
+        disengagementButton.setOnClickListener {
+            val intent = Intent(this, UnitSelectionActivityInput::class.java)
+            intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.DISENGAGEMENT.toString())
 
             intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
 
