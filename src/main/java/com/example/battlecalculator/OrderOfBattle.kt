@@ -154,41 +154,52 @@ class OrderOfBattle {
                             "name" : "4 PtsInf",
                             "level_3" : [
                                 {
-                                    "name" : "41 Pantser",
+                                    "name" : "4 Pantser",
                                     "level_4" : [
-                                        {
-                                            "name" : "145",
-                                            "type" : "ARMOR",
-                                            "strength" : "4-5"
-                                            "cadre" : 3
-                                        },
-                                        {
-                                            "name" : "146",
-                                            "type" : "ARMOR",
-                                            "strength" : "4-7"
-                                            "cadre" : 4
-                                        }
+                                            {
+                                                "name": "nl1_4ptsinf_4pz_43pz",
+                                                "type": "ARMOR",
+                                                "strength": "6-5",
+                                                "cadre": 4
+                                            }
                                     ]
                                 },
                                 {
-                                    "name" : "42 PtsInf",
+                                    "name" : "41 PtsInf",
                                     "level_4" : [
-                                        {
-                                            "name" : "345",
-                                            "type" : "ARMOR",
-                                            "strength" : "4-5"
-                                            "cadre" : 4
-                                        },
-                                        {
-                                            "name" : "346",
-                                            "type" : "ARMOR",
-                                            "strength" : "4-7"
-                                            "cadre" : 4
-                                        }
+                                            {
+                                                "name": "nl1_4ptsinf_41pz_42pi",
+                                                "type": "MECHANIZED",
+                                                "strength": "6-5",
+                                                "cadre": 4
+                                            },
+                                            {
+                                                "name": "nl1_4ptsinf_41pz_41pz",
+                                                "type": "ARMOR",
+                                                "strength": "6-5",
+                                                "cadre": 4
+                                            }
+                                    ]
+                                },
+                                {
+                                    "name" : "NL1 Attached",
+                                    "level_4" : [
+                                            {
+                                                "name": "nl1_103r",
+                                                "type": "RECON",
+                                                "strength": "3-5",
+                                                "cadre": 5
+                                            },
+                                            {
+                                                "name": "nl1_25vbp",
+                                                "type": "INFANTRY",
+                                                "strength": "0-1",
+                                                "cadre": 3
+                                            },
                                     ]
                                 }
                             ]
-                        }
+                        },
                     ]
                 },
                 {
@@ -401,6 +412,41 @@ class OrderOfBattle {
                                             "type": "ARMOR",
                                             "strength": "8-6",
                                             "cadre": 4
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "2GTA attached",
+                                    "level_4" : [
+                                        {
+                                            "name": "2gta_138",
+                                            "type": "ARMOR",
+                                            "strength": "4-2",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "38g_3",
+                                            "type": "INFANTRY",
+                                            "strength": "2-3",
+                                            "cadre": 5
+                                        },
+                                        {
+                                            "name": "38g_2",
+                                            "type": "INFANTRY",
+                                            "strength": "2-3",
+                                            "cadre": 5
+                                        },
+                                        {
+                                            "name": "38g_1",
+                                            "type": "INFANTRY",
+                                            "strength": "2-3",
+                                            "cadre": 5
+                                        },
+                                        {
+                                            "name": "38g_4",
+                                            "type": "MECHANIZED",
+                                            "strength": "2-1",
+                                            "cadre": 5
                                         }
                                     ]
                                 }
