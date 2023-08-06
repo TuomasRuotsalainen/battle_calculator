@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.*
+import androidx.core.view.isVisible
 import androidx.lifecycle.Transformations.map
 import com.example.battlecalculator.Helpers.General.addTextFieldListener
 import com.example.battlecalculator.Helpers.General.getIntFromTextField
@@ -80,6 +81,8 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
             val textContent = getTextViewString(currentUnitState)
             textView.text = textContent
         }
+
+
 
 
         if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
@@ -202,9 +205,46 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
 
         currentUnitView.setImageDrawable(currentUnitDrawable)
 
+
+        val stavkaCheckBox = findViewById<CheckBox>(R.id.stavka)
+        val airmobileCheckBox = findViewById<CheckBox>(R.id.airmobile)
+
+        stavkaCheckBox.isVisible = false
+        airmobileCheckBox.isVisible = false
+
+        val hasty = findViewById<RadioButton>(R.id.radio_attaktype_hasty)
+        val prepared = findViewById<RadioButton>(R.id.radio_attaktype_prepared)
+
+        fun toggleCardCheckBoxes() {
+            if (gameState.attackingUnit!!.attackType == AttackTypeEnum.PREPARED && gameState.activeAlliance == Alliances.PACT) {
+                if (unitSelectionType == UnitSelectionTypes.DEFENDER) {
+                    airmobileCheckBox.isVisible = true
+                    airmobileCheckBox.isChecked = false
+                } else if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
+                    stavkaCheckBox.isVisible = true
+                    airmobileCheckBox.isChecked = false
+                }
+            } else {
+                airmobileCheckBox.isVisible = false
+                stavkaCheckBox.isVisible = false
+
+                airmobileCheckBox.isChecked = false
+                stavkaCheckBox.isChecked = false
+            }
+
+            stavkaCheckBox.setOnClickListener {
+                gameState.activeFixedModifiers.map[FixedModifierEnum.STAVKA_INTERVENTION] = stavkaCheckBox.isChecked
+            }
+
+            airmobileCheckBox.setOnClickListener {
+                gameState.activeFixedModifiers.map[FixedModifierEnum.AIRMOBILE_FORCES] = airmobileCheckBox.isChecked
+            }
+        }
+
+        toggleCardCheckBoxes()
+
+
         if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
-            val hasty = findViewById<RadioButton>(R.id.radio_attaktype_hasty)
-            val prepared = findViewById<RadioButton>(R.id.radio_attaktype_prepared)
 
             hasty.isChecked = true
             //gameState.attackType = AttackTypeEnum.HASTY
@@ -212,6 +252,8 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
 
             hasty.setOnClickListener {
                 prepared.isChecked = false
+                gameState.attackingUnit!!.attackType = AttackTypeEnum.HASTY
+                toggleCardCheckBoxes()
                 currentUnitState.attackType = AttackTypeEnum.HASTY
                 val textContent = getTextViewString(currentUnitState)
                 textView.text = textContent
@@ -219,6 +261,8 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
 
             prepared.setOnClickListener {
                 hasty.isChecked = false
+                gameState.attackingUnit!!.attackType = AttackTypeEnum.PREPARED
+                toggleCardCheckBoxes()
                 currentUnitState.attackType = AttackTypeEnum.PREPARED
                 val textContent = getTextViewString(currentUnitState)
                 textView.text = textContent
@@ -229,6 +273,7 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
             val attackTypeGroup = findViewById<RadioGroup>(R.id.attackTypeRadio)
             attackTypeGroup.removeAllViews()
         }
+
 
         setCommandStateButtons()
         //setEngagementStateButtons()

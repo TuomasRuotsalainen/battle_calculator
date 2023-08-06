@@ -264,7 +264,7 @@
             <RadioButton
                 android:id="@+id/radio_command_status_none"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
 
                 android:text="Normal\ncommand"
                 tools:layout_editor_absoluteX="16dp"
@@ -345,7 +345,7 @@
         android:layout_height="wrap_content"
 
         app:layout_constraintTop_toBottomOf="@+id/commandStatusRadio"
-        app:layout_constraintBottom_toTopOf="@+id/combatDifferential"
+        app:layout_constraintBottom_toTopOf="@+id/cards"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -376,6 +376,34 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/cards"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintTop_toBottomOf="@+id/attrition_input"
+        app:layout_constraintBottom_toTopOf="@+id/combatDifferential"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        >
+
+        <CheckBox
+            android:id="@+id/stavka"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="STAVKA Inervention"
+            />
+
+        <CheckBox
+            android:id="@+id/airmobile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Use Airmobile Forces"
+            />
+
+    </LinearLayout>
+
     <TextView
         android:id="@+id/combatDifferential"
         android:layout_width="wrap_content"
@@ -385,7 +413,7 @@
         app:layout_constraintBottom_toTopOf="@+id/groudcombatApply"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/attrition_input"
+        app:layout_constraintTop_toBottomOf="@+id/cards"
 
         />
 

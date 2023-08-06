@@ -412,10 +412,15 @@ class Calculator() {
                 DetectionModifiers.SPOTTED_HQ -> 1
                 DetectionModifiers.FARP -> 1
                 DetectionModifiers.CITY -> -1
+                DetectionModifiers.OPERATION_MAPS_ACTIVE -> 2
             }
         }
 
-        return levelVal + totalModifier
+        var total = levelVal + totalModifier
+        if (total > 4) {
+            total = 4
+        }
+        return total
     }
 
     // TODO this only concerns WP chem at the moment

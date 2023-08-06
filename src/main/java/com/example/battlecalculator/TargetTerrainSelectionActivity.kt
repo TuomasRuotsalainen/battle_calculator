@@ -139,6 +139,8 @@ class TargetTerrainSelectionActivity : AppCompatActivity() {
 
         if (unitSelectionType == UnitSelectionTypes.DISENGAGEMENT) {
             intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.DISENGAGEMENT.toString())
+        } else {
+            intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.DEFENDER.toString())
         }
 
         applyButton.setOnClickListener{

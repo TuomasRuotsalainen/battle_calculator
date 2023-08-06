@@ -115,9 +115,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:background="#FFF3E0"
-
-
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
 
@@ -242,9 +239,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
 
-        android:background="#E1F5FE"
-
-
         android:orientation="vertical">
 
         <TextView
@@ -315,6 +309,14 @@
             android:text="Spotted HQ\n(optional rule)"
             />
 
+        <CheckBox
+            android:id="@+id/detection_mod_map"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Operation maps\n(card active)"
+            />
+
     </LinearLayout>
 
     <LinearLayout
@@ -323,8 +325,6 @@
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-
-        android:background="#E8F5E9"
 
         android:orientation="vertical">
 

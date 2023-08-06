@@ -259,6 +259,7 @@ class CombatResolutionActivity : AppCompatActivity() {
 
                 val intent = Intent(this, DisengagementActivity::class.java)
                 intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+                intent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.DEFENDER.toString())
                 startActivity(intent)
                 finish()
             }

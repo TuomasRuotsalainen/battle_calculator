@@ -74,6 +74,8 @@ class BombardmentSelectionActivity : AppCompatActivity() {
         val boxCity = findViewById<CheckBox>(R.id.detection_mod_city)
         val boxMovingHQ = findViewById<CheckBox>(R.id.detection_mod_movinghq)
         val boxSpottedHQ = findViewById<CheckBox>(R.id.detection_mod_spottedhq)
+        val boxMapsActive = findViewById<CheckBox>(R.id.detection_mod_map)
+
         val boxTerrainCity = findViewById<CheckBox>(R.id.target_terrain_city)
         val boxTerrainDef3 = findViewById<CheckBox>(R.id.target_terrain_def3)
         val boxTerrainTown = findViewById<CheckBox>(R.id.target_terrain_town)
@@ -102,6 +104,7 @@ class BombardmentSelectionActivity : AppCompatActivity() {
         detectionLevelModifierMap[boxCity] = DetectionModifiers.CITY // TODO add this to terrain enums instead?
         detectionLevelModifierMap[boxMovingHQ] = DetectionModifiers.MOVING_HQ
         detectionLevelModifierMap[boxSpottedHQ] = DetectionModifiers.SPOTTED_HQ
+        detectionLevelModifierMap[boxMapsActive] = DetectionModifiers.OPERATION_MAPS_ACTIVE
 
         val calculator = Calculator()
 
@@ -117,7 +120,8 @@ class BombardmentSelectionActivity : AppCompatActivity() {
             boxFARP,
             boxCity,
             boxMovingHQ,
-            boxSpottedHQ
+            boxSpottedHQ,
+            boxMapsActive
         )
 
         gameState.detectionLevelModifiers = mutableListOf()

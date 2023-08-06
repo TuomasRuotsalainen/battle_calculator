@@ -180,6 +180,8 @@ class FixedModifiers() {
         map[FixedModifierEnum.ATTACKER_HAS_SAPPERS] = 0
         map[FixedModifierEnum.DEFENDER_USES_SAPPERS] = -1
         map[FixedModifierEnum.DEFENDER_HAS_SAPPERS] = 0
+        map[FixedModifierEnum.AIRMOBILE_FORCES] = -2
+        map[FixedModifierEnum.STAVKA_INTERVENTION] = 2
 
         return map
     }

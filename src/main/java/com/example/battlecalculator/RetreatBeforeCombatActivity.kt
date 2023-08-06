@@ -78,6 +78,10 @@ class RetreatBeforeCombatActivity : AppCompatActivity() {
 
             // No disengagements
             intent = Intent(this, TargetTerrainSelectionActivity::class.java)
+            intent.putExtra(
+                IntentExtraIDs.UNITSELECTIONTYPE.toString(),
+                UnitSelectionTypes.DEFENDER.toString()
+            )
             intent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
             startActivity(intent)
             finish()
