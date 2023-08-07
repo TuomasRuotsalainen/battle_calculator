@@ -232,6 +232,25 @@ class PostureAndAttackTypeActivity : AppCompatActivity() {
                 stavkaCheckBox.isChecked = false
             }
 
+            gameState.activeFixedModifiers.map[FixedModifierEnum.NATO_DISORG_ATTACK] = false
+            gameState.activeFixedModifiers.map[FixedModifierEnum.NATO_DISORG_DEFENCE] = false
+
+            if (gameState.conditions.dayEnum == DayEnum.D0) {
+                if (gameState.conditions.hourEnum == HourEnum.H06 ||
+                    gameState.conditions.hourEnum == HourEnum.H09 ||
+                    gameState.conditions.hourEnum == HourEnum.H12 ||
+                    gameState.conditions.hourEnum == HourEnum.H15) {
+
+                    if (gameState.activeAlliance == Alliances.NATO) {
+                        gameState.activeFixedModifiers.map[FixedModifierEnum.NATO_DISORG_ATTACK] = true
+                        gameState.activeFixedModifiers.map[FixedModifierEnum.NATO_DISORG_DEFENCE] = false
+                    } else {
+                        gameState.activeFixedModifiers.map[FixedModifierEnum.NATO_DISORG_DEFENCE] = true
+                        gameState.activeFixedModifiers.map[FixedModifierEnum.NATO_DISORG_ATTACK] = false
+                    }
+                }
+            }
+
             stavkaCheckBox.setOnClickListener {
                 gameState.activeFixedModifiers.map[FixedModifierEnum.STAVKA_INTERVENTION] = stavkaCheckBox.isChecked
             }
