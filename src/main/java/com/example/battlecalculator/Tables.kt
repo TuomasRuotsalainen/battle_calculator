@@ -208,7 +208,7 @@ class Tables {
             val currentObstacle = hexTerrain.getObstacle(riverCrossingTypeEnum)
                 ?: return Pair(0, "No obstacles\n")
 
-            if (riverCrossingTypeEnum == RiverCrossingTypeEnum.NONE) {
+            if (riverCrossingTypeEnum == RiverCrossingTypeEnum.NONE && (currentObstacle != ObstacleEnum.MINOR_BRIDGED && currentObstacle != ObstacleEnum.MAJOR_BRIDGED)) {
                 throw Exception("There is a river, but river crossing type is NONE")
             }
 
@@ -684,7 +684,7 @@ class Tables {
                 7,8-> row[4]
                 9,10-> row[5]
                 11,12-> row[6]
-                13,15-> row[7]
+                13,14,15-> row[7]
                 16-> row[8]
                 else -> throw Exception("Couldn't map validatedPoints $validatedPoints")
             }
@@ -1158,7 +1158,7 @@ class Tables {
             val table : MutableList<List<Int>> = mutableListOf()
             table.add(listOf(0,0,2,2,2))
             table.add(listOf(0,2,2,2,2))
-            table.add(listOf(0,0,2,2,4))
+            table.add(listOf(0,2,2,2,4))
             table.add(listOf(0,2,2,2,4))
             table.add(listOf(0,2,2,4,4))
             table.add(listOf(2,2,2,4,4))

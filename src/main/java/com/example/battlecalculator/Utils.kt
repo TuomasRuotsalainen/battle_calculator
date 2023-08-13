@@ -259,11 +259,13 @@ class Bombardment {
             val target = gameState.attackingUnit ?: throw Exception("target not set")
 
             val detectionLevel = when(target.riverCrossingType) {
-                RiverCrossingTypeEnum.NONE ->
-                    calculator.calculateDetectionLevel(
+                RiverCrossingTypeEnum.NONE -> {
+                    val detectionLevel = calculator.calculateDetectionLevel(
                         gameState.detectionLevel!!,
                         gameState.detectionLevelModifiers!!
                     )
+                    detectionLevel.first
+                }
                 RiverCrossingTypeEnum.PREPARED ->
                     // permanent bridge
                     4
@@ -274,7 +276,7 @@ class Bombardment {
 
             val targetPosture =
                 target.posture ?: throw Exception("target posture not set")
-            var modifier = 0
+            var modifier : Pair<Int, String> = Pair(0, "")
             if (target.riverCrossingType == RiverCrossingTypeEnum.NONE) {
                 modifier = calculator.calculateBombardmentDieModifier(
                     gameState.hexTerrain!!.getFeatureForBombardment(),
@@ -282,9 +284,8 @@ class Bombardment {
                     targetPosture
                 )
             }
-                Log.d("BOMBARDMENT" ,"detection level : $detectionLevel, modifier: $modifier, supportval: $supportVal")
                 val bombardmentResult =
-                    bombardmentTable.getResult(detectionLevel, modifier, supportVal, result)
+                    bombardmentTable.getResult(detectionLevel, modifier.first, supportVal, result)
                 var engagementInfo = if (bombardmentResult.targetHalfEngaged) {
                     ". Target is now at least Half-Engaged"
                 } else {
@@ -329,7 +330,7 @@ class Bombardment {
                 softTargetExplanation = "Soft target took double attrition."
             }
 
-                return Pair("Total bombardment strength: $supportVal\nDetection level and modifier: $detectionLevel + $modifier\nBombardment dice roll: ${result.get()}\n\nResult:\nAttrition to target: $damage ($softTargetExplanation)\n" + engagementInfo, targetDamaged)
+                return Pair("Total bombardment strength: $supportVal\nDetection level $detectionLevel. Bombardment roll modifier: ${modifier.first}\nBombardment dice roll: ${result.get()}\n\nResult:\nAttrition to target: $damage ($softTargetExplanation)\n" + engagementInfo, targetDamaged)
             }
 
     }

@@ -135,6 +135,10 @@ class BombardmentSelectionActivity : AppCompatActivity() {
 
         gameState.detectionLevel = DetectionLevel.COMBAT_UNIT_OTHER
 
+        val dummyUnit = Unit("ARMOR", "1-1", "3pz_7_74", 1)
+        gameState.attackingUnit = UnitState(dummyUnit, selectedPosture, null, null, false, 0, AttackTypeEnum.PREPARED, RiverCrossingTypeEnum.NONE, false) // This is a hacky way to deliver posture information
+
+        var currentDetectionLvl = 0
 
         fun updateExplanation() {
             if (bridgeBombardmentRadio.isChecked) {
@@ -146,8 +150,12 @@ class BombardmentSelectionActivity : AppCompatActivity() {
                 explanation.text = "Interdict hex"
             } else {
                 val newDetectionLevel = calculator.calculateDetectionLevel(gameState.detectionLevel!!, gameState.detectionLevelModifiers!!)
+                val feature = gameState.hexTerrain!!.getFeatureForBombardment()
+                val posture = gameState.attackingUnit!!.posture!!
+                val bombardmentModifier = calculator.calculateBombardmentDieModifier(feature, gameState.conditions.getChemWarfareTurn(), posture)
                 // TODO finish this
-                explanation.text = "Detection: $newDetectionLevel, Bombardment modifier: 4\nHigher the better!\nMean result for bombardment of 2:\n0 attrition, target Half-Enganged"
+                explanation.text = "Detection: ${newDetectionLevel.first} (${newDetectionLevel.second}),\n\n Bombardment modifier: ${bombardmentModifier.first} (${bombardmentModifier.second})\nHigher the better!\nMean result for bombardment of 2:\n0 attrition, target Half-Enganged"
+                currentDetectionLvl = newDetectionLevel.first
             }
         }
 
@@ -160,11 +168,6 @@ class BombardmentSelectionActivity : AppCompatActivity() {
         updateExplanation()
 
         unitBombardmentRadio.isChecked = true
-
-
-
-        val dummyUnit = Unit("ARMOR", "1-1", "3pz_7_74", 1)
-        gameState.attackingUnit = UnitState(dummyUnit, selectedPosture, null, null, false, 0, AttackTypeEnum.PREPARED, RiverCrossingTypeEnum.NONE, false) // This is a hacky way to deliver posture information
 
         setPostureButton.setOnClickListener {
             Helpers.showRadioButtonDialog(
@@ -194,6 +197,7 @@ class BombardmentSelectionActivity : AppCompatActivity() {
             )
         }
 
+        // TODO make also combat/support unit boxes activate this
         // Detection Level Checkboxes
         val detectionLevelCheckboxes = listOf(adjacentBox, box4Hex, boxNone)
         detectionLevelCheckboxes.forEach { checkbox ->
@@ -251,7 +255,7 @@ class BombardmentSelectionActivity : AppCompatActivity() {
                 }
                 checkbox.isChecked = true
                 val hexTerrain = terranCheckboxMap[checkbox]
-                    ?: throw Exception("Couldn't find hexterrain for checkbox ${checkbox}")
+                    ?: throw Exception("Couldn't find hexterrain for checkbox $checkbox")
                 gameState.hexTerrain = HexTerrain(mutableListOf(hexTerrain))
 
                 updateExplanation()
@@ -432,16 +436,24 @@ class BombardmentSelectionActivity : AppCompatActivity() {
         }
 
         commitBtn.setOnClickListener{
-            if (gameState.attackingUnit == null) {
-                throw Exception("Attacking (target) unit is null")
+            if (currentDetectionLvl < 1) {
+                Helpers.showInfoDialog(this, "Bombardment not possible with detection level $currentDetectionLvl", "Understood", null, {
+                    return@showInfoDialog
+                })
             } else {
-                Log.d("Attacking unit not null", gameState.attackingUnit.toString())
+                if (gameState.attackingUnit == null) {
+                    throw Exception("Attacking (target) unit is null")
+                } else {
+                    Log.d("Attacking unit not null", gameState.attackingUnit.toString())
+                }
+                val nextIntent = Intent(this, CombatSupportActivity::class.java)
+                nextIntent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
+                nextIntent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.BOMBARDMENT.toString())
+                startActivity(nextIntent)
+                finish()
             }
-            val nextIntent = Intent(this, CombatSupportActivity::class.java)
-            nextIntent.putExtra(IntentExtraIDs.GAMESTATE.toString(), gameState.getStateString())
-            nextIntent.putExtra(IntentExtraIDs.UNITSELECTIONTYPE.toString(), UnitSelectionTypes.BOMBARDMENT.toString())
-            startActivity(nextIntent)
-            finish()
+
+
         }
 
     }

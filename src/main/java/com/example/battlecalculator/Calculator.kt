@@ -156,8 +156,8 @@ class Calculator() {
         }
 
         if (defenderMinCadre != null) {
-            explanation += "Cadre difference: $cadreModifier\n"
             cadreModifier = defenderMinCadre - attacker.unit!!.cadre
+            explanation += "Cadre difference: $cadreModifier\n"
         } else {
             throw Exception("Defender cadre is null")
         }
@@ -392,7 +392,8 @@ class Calculator() {
         return unitInQuestion.unit?.defense!!
     }
 
-    fun calculateDetectionLevel(level : DetectionLevel, modifiers : List<DetectionModifiers>) : Int {
+    fun calculateDetectionLevel(level : DetectionLevel, modifiers : List<DetectionModifiers>) : Pair<Int, String> {
+        var explanation = ""
         val levelVal = when (level) {
             DetectionLevel.COMBAT_UNIT_ADJACENT -> 3
             DetectionLevel.SUPPORT_UNIT_ADJACENT -> 2
@@ -401,6 +402,8 @@ class Calculator() {
             DetectionLevel.COMBAT_UNIT_OTHER -> 1
             DetectionLevel.SUPPORT_UNIT_OTHER -> 0
         }
+
+        explanation += level.name + ": " + levelVal + ".\n"
 
         var totalModifier = 0
         for (modifier in modifiers) {
@@ -414,18 +417,22 @@ class Calculator() {
                 DetectionModifiers.CITY -> -1
                 DetectionModifiers.OPERATION_MAPS_ACTIVE -> 2
             }
+
+            explanation += modifier.name + " " + totalModifier + ", "
+
         }
 
         var total = levelVal + totalModifier
         if (total > 4) {
             total = 4
         }
-        return total
+        return Pair(total, explanation)
     }
 
     // TODO this only concerns WP chem at the moment
-    fun calculateBombardmentDieModifier(terrainEnum: TerrainEnum, chemWarfareTurn : Int?, postureEnum: PostureEnum) : Int {
+    fun calculateBombardmentDieModifier(terrainEnum: TerrainEnum, chemWarfareTurn : Int?, postureEnum: PostureEnum) : Pair<Int, String> {
 
+        var explanation = ""
         val movementMode = Tables.TerrainCombatTable.MovementMode().get(postureEnum)
 
         val postureModifier = Postures().getBombardmentModifier(postureEnum)
@@ -469,6 +476,8 @@ class Calculator() {
             }
         }
 
-        return terrainModifier + chemModifier + postureModifier
+        explanation += "Terrain: $terrainModifier, Chem: $chemModifier, Posture: $postureModifier"
+
+        return Pair((terrainModifier + chemModifier + postureModifier), explanation)
     }
 }

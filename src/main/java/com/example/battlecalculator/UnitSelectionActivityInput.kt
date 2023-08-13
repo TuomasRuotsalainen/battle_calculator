@@ -106,6 +106,8 @@ class UnitSelectionActivityInput : AppCompatActivity() {
             finish()
         }
 
+        // TODO enable generic support unit
+
         commitButton.setOnClickListener {
 
             if (unitSelectionType == UnitSelectionTypes.ATTACKER || unitSelectionType == UnitSelectionTypes.DISENGAGEMENT) {

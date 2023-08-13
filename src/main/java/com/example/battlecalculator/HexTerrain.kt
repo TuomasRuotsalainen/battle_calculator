@@ -57,7 +57,7 @@ class HexTerrain(terrainFeatures : MutableList<TerrainEnum>) {
             return if (contains(TerrainEnum.MINORRIVER)) {
                 ObstacleEnum.MINOR_BRIDGED
             } else if(contains(TerrainEnum.MAJORRIVER)) {
-                ObstacleEnum.MAJOR_PREPARED
+                ObstacleEnum.MAJOR_BRIDGED
             } else {
                 throw Exception("There is a bridge but no river")
             }

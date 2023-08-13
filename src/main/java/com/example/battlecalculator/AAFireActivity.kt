@@ -232,22 +232,22 @@ class AAFireActivity : AppCompatActivity() {
 
             if (isFirstClick) {
 
-                fun executeAA(aaValue : Int?, againstBombardingRotary : Boolean): Tables.AAFire.Result? {
+                fun executeAA(aaValue : Int?, againstBombardingRotary : Boolean, dice : Dice): Tables.AAFire.Result? {
                     if (aaValue == null) {
                         return null
                     }
 
-                    val dice = Dice()
                     val result = dice.roll()
                     return aaFire.getResult(result, aaValue, againstBombardingRotary)
                 }
 
                 fun executeAaAndSetResults(aaSettings: AASettings) {
-                    val aaResultFixed = executeAA(aaSettings.getAaAgainstFixed(), false)
+                    val dice = Dice()
+                    val aaResultFixed = executeAA(aaSettings.getAaAgainstFixed(), false, dice)
                     val aaResultRotary = mutableListOf<Tables.AAFire.Result>()
                     for (aaAgainstRotary in aaSettings.getAaAgainstRotary()) {
                         val bombardingRotary = unitSelectionType == UnitSelectionTypes.BOMBARDMENT
-                        val resultAgainstRotary = executeAA(aaAgainstRotary, bombardingRotary)
+                        val resultAgainstRotary = executeAA(aaAgainstRotary, bombardingRotary, dice)
                             ?: throw Exception("AA against rotary shouldn't be null")
                         aaResultRotary.add(resultAgainstRotary)
                     }
