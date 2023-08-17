@@ -4,8 +4,8 @@ import android.app.AlertDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.*
+import android.util.Log
 import com.example.battlecalculator.Helpers.General.showInfoDialog
 
 class CombatResolutionActivity : AppCompatActivity() {
@@ -13,6 +13,8 @@ class CombatResolutionActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_combat_resolution)
+
+        try {
 
         val gameState = getGameState(intent)
 
@@ -266,6 +268,15 @@ class CombatResolutionActivity : AppCompatActivity() {
 
             stage.proceed()
             updateTextBody(stage)
+
+        }
+
+    } catch (e: Exception) {
+
+        val msg = e.toString()
+        showInfoDialog(this, msg, "Understood",null, {})
+
+        Log.d("ERROR", msg)
 
         }
 
