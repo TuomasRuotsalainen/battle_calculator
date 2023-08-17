@@ -67,6 +67,12 @@ class UnitSelectionActivityInput : AppCompatActivity() {
             matches = oob.searchUnits(searchTerm, currentAlliance)
             // Code here executes after text has changed
 
+            if (unitSelectionType == UnitSelectionTypes.ATTACKER) {
+                matches = matches.filter { match ->
+                    // Replace 'fieldName' with the actual field name within each match
+                    !match.name.contains("support")
+                }
+            }
             if (matches.isNotEmpty()) {
                 if (selectedUnits.size > 0) {
                     val mergedList = (selectedUnits + matches).distinct()
@@ -106,7 +112,7 @@ class UnitSelectionActivityInput : AppCompatActivity() {
             finish()
         }
 
-        // TODO enable generic support unit
+        // TODO enable cadres for generic support units
 
         commitButton.setOnClickListener {
 
@@ -162,6 +168,7 @@ class UnitSelectionActivityInput : AppCompatActivity() {
 
         for (unit in units) {
             val imageFileName = Images.getImageFileName(unit.name)
+            Log.d("IMAGE FILE NAME", imageFileName)
             val unitImage = getUnitImage(imageFileName)
             val unitImageLayout = FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.WRAP_CONTENT,

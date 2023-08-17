@@ -197,6 +197,29 @@ class OrderOfBattle {
                                                 "cadre": 3
                                             },
                                     ]
+                                },
+                                {
+                                    "name": "Generic support",
+                                    "level_4" : [
+                                        {
+                                            "name": "generic_support_nato_1",
+                                            "type": "MECHANIZED",
+                                            "strength": "1-1",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "generic_support_nato_2",
+                                            "type": "MECHANIZED",
+                                            "strength": "1-1",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "generic_support_nato_3",
+                                            "type": "MECHANIZED",
+                                            "strength": "1-1",
+                                            "cadre": 3
+                                        },
+                                    ]
                                 }
                             ]
                         },
@@ -404,6 +427,29 @@ class OrderOfBattle {
                                             "strength": "2-1",
                                             "cadre": 5
                                         }
+                                    ]
+                                },
+                                {
+                                    "name": "Generic support",
+                                    "level_4" : [
+                                        {
+                                            "name": "generic_support_pact_1",
+                                            "type": "MECHANIZED",
+                                            "strength": "1-1",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "generic_support_pact_2",
+                                            "type": "MECHANIZED",
+                                            "strength": "1-1",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "generic_support_pact_3",
+                                            "type": "MECHANIZED",
+                                            "strength": "1-1",
+                                            "cadre": 3
+                                        },
                                     ]
                                 }
                             ]
