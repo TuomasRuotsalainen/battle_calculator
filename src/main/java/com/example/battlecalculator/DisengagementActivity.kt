@@ -22,6 +22,8 @@ class DisengagementActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_disengagement)
 
+        try {
+
         val resultOptions = HashMap<DisengagemenResult, Pair<Boolean, Int>>()
         resultOptions[DisengagemenResult.F1] = Pair(false, 1)
         resultOptions[DisengagemenResult.S1] = Pair(true, 1)
@@ -369,6 +371,16 @@ class DisengagementActivity : AppCompatActivity() {
                 }
             })
         }
+
+        } catch (e: Exception) {
+
+            val msg = e.toString()
+            showInfoDialog(this, msg, "Understood",null, {})
+
+            Log.d("ERROR", msg)
+
+        }
+
     }
 
 }
