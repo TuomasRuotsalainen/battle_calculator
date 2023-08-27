@@ -6,7 +6,7 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_2"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -27,7 +27,7 @@
         </activity>
         <activity
             android:name=".PostureAndAttackTypeActivity"
-            android:exported="true">
+            android:exported="false">
 
             <meta-data
                 android:name="android.app.lib_name"
@@ -35,7 +35,7 @@
         </activity>
         <activity
             android:name=".RetreatBeforeCombatActivity"
-            android:exported="true">
+            android:exported="false">
 
             <meta-data
                 android:name="android.app.lib_name"
@@ -43,7 +43,7 @@
         </activity>
         <activity
             android:name=".TargetTerrainSelectionActivity"
-            android:exported="true">
+            android:exported="false">
 
             <meta-data
                 android:name="android.app.lib_name"
@@ -51,7 +51,7 @@
         </activity>
         <activity
             android:name=".UnitSelectionActivity"
-            android:exported="true">
+            android:exported="false">
 
             <meta-data
                 android:name="android.app.lib_name"
@@ -59,7 +59,7 @@
         </activity>
         <activity
             android:name=".FixedCombatModifierSelectionActivity"
-            android:exported="true">
+            android:exported="false">
 
             <meta-data
                 android:name="android.app.lib_name"
@@ -67,7 +67,7 @@
         </activity>
         <activity
             android:name=".CombatSupportActivity"
-            android:exported="true">
+            android:exported="false">
 
             <meta-data
                 android:name="android.app.lib_name"
@@ -75,7 +75,7 @@
         </activity>
         <activity
             android:name=".AAFireActivity"
-            android:exported="true">
+            android:exported="false">
 
             <meta-data
                 android:name="android.app.lib_name"
@@ -83,7 +83,7 @@
         </activity>
         <activity
             android:name=".CombatResolutionActivity"
-            android:exported="true">
+            android:exported="false">
 
             <meta-data
                 android:name="android.app.lib_name"
@@ -91,7 +91,7 @@
         </activity>
         <activity
             android:name=".EWInputActivity"
-            android:exported="true">
+            android:exported="false">
 
             <meta-data
                 android:name="android.app.lib_name"
@@ -99,7 +99,7 @@
         </activity>
         <activity
             android:name=".DisengagementActivity"
-            android:exported="true">
+            android:exported="false">
 
             <meta-data
                 android:name="android.app.lib_name"
@@ -107,7 +107,7 @@
         </activity>
         <activity
             android:name=".SupportUnitRetreatActivity"
-            android:exported="true">
+            android:exported="false">
 
             <meta-data
                 android:name="android.app.lib_name"
@@ -115,7 +115,7 @@
         </activity>
         <activity
             android:name=".UnitSelectionActivityInput"
-            android:exported="true">
+            android:exported="false">
 
             <meta-data
                 android:name="android.app.lib_name"
@@ -123,7 +123,7 @@
         </activity>
         <activity
             android:name=".BombardmentSelectionActivity"
-            android:exported="true">
+            android:exported="false">
 
             <meta-data
                 android:name="android.app.lib_name"

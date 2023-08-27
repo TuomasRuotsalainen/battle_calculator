@@ -47,6 +47,10 @@ class GameState(stateString : String) {
         AU, DU, HEX, ACT, FIXED, ADJ_AT, ADJ_DEF, COM_SUP, CON, SUP_CNT, DET_LVL, DET_MOD
     }
 
+    private enum class TurnPhases {
+
+    }
+
     private val dataMap = getDataMap(stateString)
     val oob = OrderOfBattle()
 
@@ -168,6 +172,10 @@ class GameState(stateString : String) {
     }*/
 
     fun areSappersHit(result : Tables.GroundCombatResult) : Boolean {
+        if (!this.activeFixedModifiers.contains(FixedModifierEnum.DEFENDER_USES_SAPPERS) && !this.activeFixedModifiers.contains(FixedModifierEnum.ATTACKER_USES_SAPPERS)) {
+            return false
+        }
+
         if (result.attackerSapperEliminated) {
             if (activeAlliance == Alliances.PACT) {
                 return true

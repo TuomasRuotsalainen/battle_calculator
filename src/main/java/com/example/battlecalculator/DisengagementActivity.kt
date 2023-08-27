@@ -16,6 +16,8 @@ enum class DisengagementModifiers {
     LOW_SUPPORT, HIGH_SUPPORT
 }
 
+// TODO explain advance after combat for attacker if disengagement and retreat are succesfull
+
 class DisengagementActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

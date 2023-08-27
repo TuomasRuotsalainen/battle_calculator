@@ -10,6 +10,8 @@ import com.example.battlecalculator.Helpers.General.showInfoDialog
 
 class CombatResolutionActivity : AppCompatActivity() {
 
+    // TODO Calculate and apply final combat modifiers still crash the app occasionally
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_combat_resolution)
@@ -63,11 +65,40 @@ class CombatResolutionActivity : AppCompatActivity() {
             }
         }
 
-        val attackerEWPoints = gameState.combatSupport!!.getAttackerCombatSupport()!!.getEWPoints()
-        val attackerEWModifier = gameState.combatSupport!!.getAttackerCombatSupport()!!.getEWRollModifier()
+        var errorMessage = ""
 
-        val defenderEWPoints = gameState.combatSupport!!.getDefenderCombatSupport()!!.getEWPoints()
-        val defenderEWModifier = gameState.combatSupport!!.getDefenderCombatSupport()!!.getEWRollModifier()
+        val attackerSupport = gameState.combatSupport!!.getAttackerCombatSupport()!!
+        val defenderSupport = gameState.combatSupport!!.getDefenderCombatSupport()!!
+
+        var attackerEWPoints = 0
+        var attackerEWModifier = 0
+
+        var defenderEWPoints = 0
+        var defenderEWModifier = 0
+
+        if (attackerSupport.getEWPoints() == null) {
+            errorMessage = "Attacker ew points is null"
+        } else if (attackerSupport.getEWRollModifier() == null) {
+            errorMessage = "Attacker ew roll modifier is null"
+        } else if (defenderSupport.getEWPoints() == null) {
+            errorMessage = "Defender ew points is null"
+        } else if (defenderSupport.getEWRollModifier() == null) {
+            errorMessage = "Defender ew roll modifier is null"
+        }
+
+        if (errorMessage != "") {
+            showInfoDialog(this,
+                "$errorMessage. Combat result calculation will be incorrect.", "Understood",null, {
+
+            })
+        } else {
+            attackerEWPoints = attackerSupport.getEWPoints()!!
+            attackerEWModifier = attackerSupport.getEWRollModifier()!!
+
+            defenderEWPoints = defenderSupport.getEWPoints()!!
+            defenderEWModifier = defenderSupport.getEWRollModifier()!!
+        }
+
 
         val ewTable = Tables.EW()
 
@@ -98,8 +129,8 @@ class CombatResolutionActivity : AppCompatActivity() {
             stage.noEwNeeded()
             applyButton.text = stage2Apply
         } else {
-            attackerEwResult = ewTable.getResultForModifiedRoll(attackerRoll.get() + attackerEWModifier!!, attackerEWPoints!!)
-            defenderEwResult = ewTable.getResultForModifiedRoll(defenderRoll.get() + defenderEWModifier!!, defenderEWPoints!!)
+            attackerEwResult = ewTable.getResultForModifiedRoll(attackerRoll.get() + attackerEWModifier!!, attackerEWPoints)
+            defenderEwResult = ewTable.getResultForModifiedRoll(defenderRoll.get() + defenderEWModifier!!, defenderEWPoints)
         }
 
 
@@ -271,7 +302,7 @@ class CombatResolutionActivity : AppCompatActivity() {
 
         }
 
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
 
         val msg = e.toString()
         showInfoDialog(this, msg, "Understood",null, {})
