@@ -224,6 +224,265 @@ class OrderOfBattle {
                             ]
                         }
                     ]
+                },
+                {
+                    "name": "LANDJUT",
+                    "level_2": [
+                        {
+                            "name": "Jutland",
+                            "level_3": [
+                                {
+                                    "name": "1st Brigade",
+                                    "level_4": [
+                                            {
+                                            "name": "1ju_1flr",
+                                            "type": "MECHANIZED",
+                                            "strength": "3-4",
+                                            "cadre": 2
+                                        },
+                                        {
+                                            "name": "1ju_1kjr",
+                                            "type": "MECHANIZED",
+                                            "strength": "2-4",
+                                            "cadre": 2
+                                        },
+                                        {
+                                            "name": "1ju_3jd",
+                                            "type": "ARMOR",
+                                            "strength": "3-2",
+                                            "cadre": 2
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "2nd Brigade",
+                                    "level_4": [
+                                            {
+                                                "name": "2ju_2qlr",
+                                                "type": "MECHANIZED",
+                                                "strength": "3-4",
+                                                "cadre": 2
+                                            },
+                                            {
+                                                "name": "2ju_2jd",
+                                                "type": "ARMOR",
+                                                "strength": "3-2",
+                                                "cadre": 2
+                                            },
+                                            {
+                                                "name": "2ju_1qlr",
+                                                "type": "MECHANIZED",
+                                                "strength": "2-4",
+                                                "cadre": 2
+                                            }
+                                    ]
+                                },
+                                {
+                                    "name": "3rd Brigade",
+                                    "level_4": [
+                                            {
+                                                "name": "3ju_2sr",
+                                                "type": "MECHANIZED",
+                                                "strength": "3-4",
+                                                "cadre": 2
+                                            },
+                                            {
+                                                "name": "3ju_1sr",
+                                                "type": "MECHANIZED",
+                                                "strength": "2-4",
+                                                "cadre": 2
+                                            },
+                                            {
+                                                "name": "3ju_1jd",
+                                                "type": "ARMOR",
+                                                "strength": "3-2",
+                                                "cadre": 2
+                                            }
+                                    ]
+                                },
+                            ],
+                            "level_4": [
+                                    {
+                                        "name": "ju_5jd",
+                                        "type": "RECON",
+                                        "strength": "2-3",
+                                        "cadre": 2
+                                    },
+                                    {
+                                        "name": "lj_5msk",
+                                        "type": "INFANTRY",
+                                        "strength": "0-2",
+                                        "cadre": 4
+                                    },
+                                    {
+                                        "name": "lj_10vbk",
+                                        "type": "INFANTRY",
+                                        "strength": "0-1",
+                                        "cadre": 3
+                                    },
+                                    {
+                                        "name": "51hs_512",
+                                        "type": "MECHANIZED",
+                                        "strength": "1-3",
+                                        "cadre": 4
+                                    },
+                                    {
+                                        "name": "51hs_511",
+                                        "type": "MOTORIZED",
+                                        "strength": "1-3",
+                                        "cadre": 4
+                                    },
+                                    {
+                                        "name": "51hs_514",
+                                        "type": "ARMOR",
+                                        "strength": "3-2",
+                                        "cadre": 4
+                                    },
+                                    {
+                                        "name": "51hs_513",
+                                        "type": "ARMOR",
+                                        "strength": "3-2",
+                                        "cadre": 4
+                                    },
+                                    {
+                                        "name": "71hs_713",
+                                        "type": "MOTORIZED",
+                                        "strength": "1-2",
+                                        "cadre": 3
+                                    },
+                                    {
+                                        "name": "61hs_613",
+                                        "type": "ARMOR",
+                                        "strength": "3-2",
+                                        "cadre": 4
+                                    },
+                                    {
+                                        "name": "61hs_612",
+                                        "type": "MOTORIZED",
+                                        "strength": "1-3",
+                                        "cadre": 4
+                                    },
+                                    {
+                                        "name": "61hs_611",
+                                        "type": "MOTORIZED",
+                                        "strength": "1-3",
+                                        "cadre": 4
+                                    }
+                            ]
+                        },
+                        {
+                            "name": "6th PzGren Division",
+                            "level_3": [
+                                {
+                                    "name": "16th PzGren Brigade",
+                                    "level_4": [
+                                            {
+                                                "name": "16_164",
+                                                "type": "ARMOR",
+                                                "strength": "5-4",
+                                                "cadre": 5
+                                            },
+                                            {
+                                                "name": "16_161",
+                                                "type": "MECHANIZED",
+                                                "strength": "4-5",
+                                                "cadre": 4
+                                            },
+                                            {
+                                                "name": "16_162",
+                                                "type": "MECHANIZED",
+                                                "strength": "3-6",
+                                                "cadre": 5
+                                            },
+                                            {
+                                                "name": "16_163",
+                                                "type": "MECHANIZED",
+                                                "strength": "3-6",
+                                                "cadre": 5
+                                            }
+                                    ]
+                                },
+                                {
+                                    "name": "17th PzGren Brigade",
+                                    "level_4": [
+                                            {
+                                                "name": "17_174",
+                                                "type": "ARMOR",
+                                                "strength": "5-4",
+                                                "cadre": 5
+                                            },
+                                            {
+                                                "name": "17_173",
+                                                "type": "MECHANIZED",
+                                                "strength": "3-6",
+                                                "cadre": 5
+                                            },
+                                            {
+                                                "name": "17_172",
+                                                "type": "MECHANIZED",
+                                                "strength": "3-6",
+                                                "cadre": 5
+                                            },
+                                            {
+                                                "name": "17_171",
+                                                "type": "MECHANIZED",
+                                                "strength": "4-5",
+                                                "cadre": 4
+                                            }
+                                    ]
+                                },
+                                {
+                                    "name": "18th PzGren Brigade",
+                                    "level_4": [
+                                            {
+                                                "name": "18_183",
+                                                "type": "ARMOR",
+                                                "strength": "5-4",
+                                                "cadre": 5
+                                            },
+                                            {
+                                                "name": "18_181",
+                                                "type": "ARMOR",
+                                                "strength": "4-4",
+                                                "cadre": 4
+                                            },
+                                            {
+                                                "name": "18_182",
+                                                "type": "MECHANIZED",
+                                                "strength": "3-6",
+                                                "cadre": 5
+                                            },
+                                            {
+                                                "name": "18_184",
+                                                "type": "ARMOR",
+                                                "strength": "5-4",
+                                                "cadre": 5
+                                            }
+                                    ]
+                                }
+                            ],
+                            "level_4": [
+                                        {
+                                            "name": "6pg_66",
+                                            "type": "MECHANIZED",
+                                            "strength": "1-2",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "6pg_6",
+                                            "type": "RECON",
+                                            "strength": "3-5",
+                                            "cadre": 5
+                                        },
+                                        {
+                                            "name": "6pg_67",
+                                            "type": "MECHANIZED",
+                                            "strength": "1-2",
+                                            "cadre": 4
+                                        }
+                            ]
+                        }
+                    ]
                 }
             ]
         },
