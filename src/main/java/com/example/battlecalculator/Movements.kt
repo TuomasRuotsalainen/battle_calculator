@@ -3,6 +3,151 @@ package com.example.battlecalculator
 class Movement() {
 
     private val obstacleTable = ObstacleTable()
+    private val terrainTypeTable = TerrainTypeTable()
+
+    class TerrainTypeTable() {
+        private val terrainType = initTerrainType()
+
+        /*fun getRow(terrainEnum: TerrainEnum) {
+            return terrainType[terrainEnum]
+        }*/
+
+        private fun initTerrainType() : HashMap<TerrainEnum, HashMap<MovementTypeEnum, HashMap<MovementModeEnum, Int>>?> {
+            val table = HashMap<TerrainEnum, HashMap<MovementTypeEnum, HashMap<MovementModeEnum, Int>>?>()
+
+            val plainRow = hashMapOf(
+                MovementTypeEnum.MECHANIZED to hashMapOf(
+                    MovementModeEnum.COLUM to 2,
+                    MovementModeEnum.TACTICAL to 2,
+                    MovementModeEnum.DEPLOYED to 3
+                ),
+                MovementTypeEnum.MOTORIZED to hashMapOf(
+                    MovementModeEnum.COLUM to 1,
+                    MovementModeEnum.TACTICAL to 2,
+                    MovementModeEnum.DEPLOYED to 3
+                ),
+                MovementTypeEnum.FOOT to hashMapOf(
+                    MovementModeEnum.COLUM to 3,
+                    MovementModeEnum.TACTICAL to 3,
+                    MovementModeEnum.DEPLOYED to 3
+                )
+            )
+
+            val townRow = hashMapOf(
+                MovementTypeEnum.MECHANIZED to hashMapOf(
+                    MovementModeEnum.COLUM to 2,
+                    MovementModeEnum.TACTICAL to 2,
+                    MovementModeEnum.DEPLOYED to 3
+                ),
+                MovementTypeEnum.MOTORIZED to hashMapOf(
+                    MovementModeEnum.COLUM to 1,
+                    MovementModeEnum.TACTICAL to 2,
+                    MovementModeEnum.DEPLOYED to 3
+                ),
+                MovementTypeEnum.FOOT to hashMapOf(
+                    MovementModeEnum.COLUM to 3,
+                    MovementModeEnum.TACTICAL to 3,
+                    MovementModeEnum.DEPLOYED to 3
+                )
+            )
+
+            val cityRow = hashMapOf(
+                MovementTypeEnum.MECHANIZED to hashMapOf(
+                    MovementModeEnum.COLUM to 2,
+                    MovementModeEnum.TACTICAL to 3,
+                    MovementModeEnum.DEPLOYED to 4
+                ),
+                MovementTypeEnum.MOTORIZED to hashMapOf(
+                    MovementModeEnum.COLUM to 1,
+                    MovementModeEnum.TACTICAL to 3,
+                    MovementModeEnum.DEPLOYED to 4
+                ),
+                MovementTypeEnum.FOOT to hashMapOf(
+                    MovementModeEnum.COLUM to 4,
+                    MovementModeEnum.TACTICAL to 4,
+                    MovementModeEnum.DEPLOYED to 4
+                )
+            )
+
+            table[TerrainEnum.PLAIN] = plainRow
+            table[TerrainEnum.TOWN] = townRow
+            table[TerrainEnum.CITY] = cityRow
+
+            return table
+
+        }
+    }
+
+    class TerrainFeatureTable() {
+        private val terrainFeature = initTerrainFeature()
+
+        private fun initTerrainFeature() : HashMap<TerrainEnum, HashMap<MovementTypeEnum, HashMap<MovementModeEnum, Int>>?> {
+            val table = HashMap<TerrainEnum, HashMap<MovementTypeEnum, HashMap<MovementModeEnum, Int>>?>()
+
+            val forestRow = hashMapOf(
+                MovementTypeEnum.MECHANIZED to hashMapOf(
+                    MovementModeEnum.COLUM to 2,
+                    MovementModeEnum.TACTICAL to 2,
+                    MovementModeEnum.DEPLOYED to 3
+                ),
+                MovementTypeEnum.MOTORIZED to hashMapOf(
+                    MovementModeEnum.COLUM to 4,
+                    MovementModeEnum.TACTICAL to 4,
+                    MovementModeEnum.DEPLOYED to 6
+                ),
+                MovementTypeEnum.FOOT to hashMapOf(
+                    MovementModeEnum.COLUM to 1,
+                    MovementModeEnum.TACTICAL to 1,
+                    MovementModeEnum.DEPLOYED to 2
+                )
+            )
+
+            val floodRow = hashMapOf(
+                MovementTypeEnum.MECHANIZED to hashMapOf(
+                    MovementModeEnum.COLUM to 2,
+                    MovementModeEnum.TACTICAL to 4,
+                    MovementModeEnum.DEPLOYED to 6
+                ),
+                MovementTypeEnum.MOTORIZED to hashMapOf(
+                    MovementModeEnum.COLUM to 4,
+                    MovementModeEnum.TACTICAL to 6,
+                    MovementModeEnum.DEPLOYED to 8
+                ),
+                MovementTypeEnum.FOOT to hashMapOf(
+                    MovementModeEnum.COLUM to 2,
+                    MovementModeEnum.TACTICAL to 3,
+                    MovementModeEnum.DEPLOYED to 4
+                )
+            )
+
+            table[TerrainEnum.FOREST] = forestRow
+            table[TerrainEnum.SWAMP] = floodRow
+
+            return table
+
+        }
+    }
+
+    private fun getTerrainTypeCost(terrainEnums: List<TerrainEnum>, best: Boolean) {
+        for (terrainEnum in terrainEnums) {
+            //terrainTypeTable[terrainEnum]
+        }
+    }
+
+    private fun getWorstTerrainType(terrainEnums: List<TerrainEnum>) {
+
+    }
+
+    fun getMovementPointCost(movementTypeEnum: MovementTypeEnum, movementModeEnum: MovementModeEnum, terrainEnums: List<TerrainEnum>) {
+
+        when (movementModeEnum) {
+            MovementModeEnum.COLUM -> 0
+            MovementModeEnum.TACTICAL -> 0
+            MovementModeEnum.DEPLOYED -> 0
+            MovementModeEnum.FIXED -> throw Exception("Units in fixed movement mode can't move")
+        }
+
+    }
 
     class ObstacleTable() {
         // Here we init the row for hasty crossings. When the whole table is implemented, move this away from this class

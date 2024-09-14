@@ -39,17 +39,17 @@ class OrderOfBattle {
     private val oobJSON = """
     [
         {
-            "alliance_name" : "NATO",
-            "level_1" : [
+            "alliance_name": "NATO",
+            "level_1": [
                 {
-                    "name" : "NL I",
-                    "level_2" : [
+                    "name": "NL I",
+                    "level_2": [
                         {
-                            "name" : "3rd Panzer Division",
-                            "level_3" : [
+                            "name": "3rd Panzer Division",
+                            "level_3": [
                                 {
-                                    "name" : "7th PzGren Brigade",
-                                    "level_4" : [
+                                    "name": "7th PzGren Brigade",
+                                    "level_4": [
                                         {
                                             "name": "3pz_7_74",
                                             "type": "ARMOR",
@@ -77,8 +77,8 @@ class OrderOfBattle {
                                     ]
                                 },
                                 {
-                                    "name" : "8th PzGren Brigade",
-                                    "level_4" : [
+                                    "name": "8th PzGren Brigade",
+                                    "level_4": [
                                         {
                                             "name": "3pz_8_83",
                                             "type": "ARMOR",
@@ -106,8 +106,8 @@ class OrderOfBattle {
                                     ]
                                 },
                                 {
-                                    "name" : "9th PzGren Brigade",
-                                    "level_4" : [
+                                    "name": "9th PzGren Brigade",
+                                    "level_4": [
                                         {
                                             "name": "3pz_9_94",
                                             "type": "ARMOR",
@@ -129,7 +129,7 @@ class OrderOfBattle {
                                     ]
                                 }
                             ],
-                            "level_4" : [
+                            "level_4": [
                                 {
                                     "name": "3pz_3",
                                     "type": "RECON",
@@ -151,56 +151,56 @@ class OrderOfBattle {
                             ]
                         },
                         {
-                            "name" : "4 PtsInf",
-                            "level_3" : [
+                            "name": "4 PtsInf",
+                            "level_3": [
                                 {
-                                    "name" : "4 Pantser",
-                                    "level_4" : [
-                                            {
-                                                "name": "nl1_4ptsinf_4pz_43pz",
-                                                "type": "ARMOR",
-                                                "strength": "6-5",
-                                                "cadre": 4
-                                            }
+                                    "name": "4 Pantser",
+                                    "level_4": [
+                                        {
+                                            "name": "nl1_4ptsinf_4pz_43pz",
+                                            "type": "ARMOR",
+                                            "strength": "6-5",
+                                            "cadre": 4
+                                        }
                                     ]
                                 },
                                 {
-                                    "name" : "41 PtsInf",
-                                    "level_4" : [
-                                            {
-                                                "name": "nl1_4ptsinf_41pz_42pi",
-                                                "type": "MECHANIZED",
-                                                "strength": "6-5",
-                                                "cadre": 4
-                                            },
-                                            {
-                                                "name": "nl1_4ptsinf_41pz_41pz",
-                                                "type": "ARMOR",
-                                                "strength": "6-5",
-                                                "cadre": 4
-                                            }
+                                    "name": "41 PtsInf",
+                                    "level_4": [
+                                        {
+                                            "name": "nl1_4ptsinf_41pz_42pi",
+                                            "type": "MECHANIZED",
+                                            "strength": "6-5",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "nl1_4ptsinf_41pz_41pz",
+                                            "type": "ARMOR",
+                                            "strength": "6-5",
+                                            "cadre": 4
+                                        }
                                     ]
                                 },
                                 {
-                                    "name" : "NL1 Attached",
-                                    "level_4" : [
-                                            {
-                                                "name": "nl1_103r",
-                                                "type": "RECON",
-                                                "strength": "3-5",
-                                                "cadre": 5
-                                            },
-                                            {
-                                                "name": "nl1_25vbp",
-                                                "type": "INFANTRY",
-                                                "strength": "0-1",
-                                                "cadre": 3
-                                            },
+                                    "name": "NL1 Attached",
+                                    "level_4": [
+                                        {
+                                            "name": "nl1_103r",
+                                            "type": "RECON",
+                                            "strength": "3-5",
+                                            "cadre": 5
+                                        },
+                                        {
+                                            "name": "nl1_25vbp",
+                                            "type": "INFANTRY",
+                                            "strength": "0-1",
+                                            "cadre": 3
+                                        }
                                     ]
                                 },
                                 {
                                     "name": "Generic support",
-                                    "level_4" : [
+                                    "level_4": [
                                         {
                                             "name": "generic_support_nato_1",
                                             "type": "MECHANIZED",
@@ -218,109 +218,109 @@ class OrderOfBattle {
                                             "type": "MECHANIZED",
                                             "strength": "1-1",
                                             "cadre": 3
-                                        },
+                                        }
                                     ]
                                 }
                             ]
-                        },
+                        }
                     ]
                 }
             ]
         },
         {
-            "alliance_name" : "PACT",
-            "level_1" : [
-            {
-                    "name" : "Northern",
-                    "level_2" : [
+            "alliance_name": "PACT",
+            "level_1": [
+                {
+                    "name": "Northern",
+                    "level_2": [
                         {
-                            "name" : "2nd Guards Tank",
-                            "level_3" : [
+                            "name": "2nd Guards Tank",
+                            "level_3": [
                                 {
-                                    "name" : "94th Guards Motor Rifle Division",
-                                    "level_4" : [
-                                            {
-                                                "name": "94gm_74g",
-                                                "type": "ARMOR",
-                                                "strength": "7-6",
-                                                "cadre": 4
-                                            },
-                                            {
-                                                "name": "94gm_204g",
-                                                "type": "MECHANIZED",
-                                                "strength": "6-8",
-                                                "cadre": 4
-                                            },
-                                                {
-                                                "name": "94gm_286g",
-                                                "type": "MECHANIZED",
-                                                "strength": "5-7",
-                                                "cadre": 4
-                                            },
-                                            {
-                                                "name": "94gm_12g",
-                                                "type": "RECON",
-                                                "strength": "2-2",
-                                                "cadre": 4
-                                            },
-                                            {
-                                                "name": "94gm_288g",
-                                                "type": "MECHANIZED",
-                                                "strength": "5-7",
-                                                "cadre": 4
-                                            },
-                                            {
-                                                "name": "94gm_28",
-                                                "type": "ARMOR",
-                                                "strength": "2-2",
-                                                "cadre": 4
-                                            }
+                                    "name": "94th Guards Motor Rifle Division",
+                                    "level_4": [
+                                        {
+                                            "name": "94gm_74g",
+                                            "type": "ARMOR",
+                                            "strength": "7-6",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "94gm_204g",
+                                            "type": "MECHANIZED",
+                                            "strength": "6-8",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "94gm_286g",
+                                            "type": "MECHANIZED",
+                                            "strength": "5-7",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "94gm_12g",
+                                            "type": "RECON",
+                                            "strength": "2-2",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "94gm_288g",
+                                            "type": "MECHANIZED",
+                                            "strength": "5-7",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "94gm_28",
+                                            "type": "ARMOR",
+                                            "strength": "2-2",
+                                            "cadre": 4
+                                        }
                                     ]
                                 },
                                 {
-                                    "name" : "207th Motor Rifle Division",
-                                    "level_4" : [
-                                            {
-                                                "name": "207m_33",
-                                                "type": "MECHANIZED",
-                                                "strength": "5-7",
-                                                "cadre": 4
-                                            },
-                                            {
-                                                "name": "207m_41",
-                                                "type": "MECHANIZED",
-                                                "strength": "6-8",
-                                                "cadre": 4
-                                            },
-                                            {
-                                                "name": "207m_16g",
-                                                "type": "ARMOR",
-                                                "strength": "7-6",
-                                                "cadre": 4
-                                            },
-                                            {
-                                                "name": "207m_32",
-                                                "type": "ARMOR",
-                                                "strength": "2-2",
-                                                "cadre": 4
-                                            },
-                                            {
-                                                "name": "207m_400",
-                                                "type": "MECHANIZED",
-                                                "strength": "6-8",
-                                                "cadre": 4
-                                            },
-                                            {
-                                                "name": "207m_6",
-                                                "type": "RECON",
-                                                "strength": "2-2",
-                                                "cadre": 4
-                                            }
+                                    "name": "207th Motor Rifle Division",
+                                    "level_4": [
+                                        {
+                                            "name": "207m_33",
+                                            "type": "MECHANIZED",
+                                            "strength": "5-7",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "207m_41",
+                                            "type": "MECHANIZED",
+                                            "strength": "6-8",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "207m_16g",
+                                            "type": "ARMOR",
+                                            "strength": "7-6",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "207m_32",
+                                            "type": "ARMOR",
+                                            "strength": "2-2",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "207m_400",
+                                            "type": "MECHANIZED",
+                                            "strength": "6-8",
+                                            "cadre": 4
+                                        },
+                                        {
+                                            "name": "207m_6",
+                                            "type": "RECON",
+                                            "strength": "2-2",
+                                            "cadre": 4
+                                        }
                                     ]
                                 },
                                 {
-                                    "name" : "21st Motor Rifle Division",
-                                    "level_4" : [
+                                    "name": "21st Motor Rifle Division",
+                                    "level_4": [
                                         {
                                             "name": "21m_18",
                                             "type": "ARMOR",
@@ -361,7 +361,7 @@ class OrderOfBattle {
                                 },
                                 {
                                     "name": "16th Guards Tank Division",
-                                    "level_4" : [
+                                    "level_4": [
                                         {
                                             "name": "16gt_17g",
                                             "type": "RECON",
@@ -396,7 +396,7 @@ class OrderOfBattle {
                                 },
                                 {
                                     "name": "2GTA attached",
-                                    "level_4" : [
+                                    "level_4": [
                                         {
                                             "name": "2gta_138",
                                             "type": "ARMOR",
@@ -431,7 +431,7 @@ class OrderOfBattle {
                                 },
                                 {
                                     "name": "Generic support",
-                                    "level_4" : [
+                                    "level_4": [
                                         {
                                             "name": "generic_support_pact_1",
                                             "type": "MECHANIZED",
@@ -449,9 +449,195 @@ class OrderOfBattle {
                                             "type": "MECHANIZED",
                                             "strength": "1-1",
                                             "cadre": 3
-                                        },
+                                        }
                                     ]
                                 }
+                            ]
+                        },
+                        {
+                            "name": "5th Army",
+                            "level_3": [
+                                {
+                                    "name": "1st Motor Rifle Division",
+                                    "level_4": [
+                                        {
+                                            "name": "1m_1r",
+                                            "type": "RECON",
+                                            "strength": "1-2",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "1m_1pz",
+                                            "type": "ARMOR",
+                                            "strength": "6-3",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "1m_2m",
+                                            "type": "RECON",
+                                            "strength": "4-7",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "1m_3m",
+                                            "type": "MECHANIZED",
+                                            "strength": "5-7",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "1m_1m",
+                                            "type": "RECON",
+                                            "strength": "4-7",
+                                            "cadre": 3
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "8th Motor Rifle Division",
+                                    "level_4": [
+                                        {
+                                            "name": "8m_8pz",
+                                            "type": "ARMOR",
+                                            "strength": "5-3",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "8m_8r",
+                                            "type": "RECON",
+                                            "strength": "1-2",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "8m_28m",
+                                            "type": "MECHANIZED",
+                                            "strength": "4-7",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "8m_29m",
+                                            "type": "MECHANIZED",
+                                            "strength": "5-7",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "8m_27m",
+                                            "type": "MECHANIZED",
+                                            "strength": "4-7",
+                                            "cadre": 3
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "9th Panzer Rifle Division",
+                                    "level_4": [
+                                        {
+                                            "name": "9pz_22pz",
+                                            "type": "ARMOR",
+                                            "strength": "7-4",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "9pz_23pz",
+                                            "type": "ARMOR",
+                                            "strength": "6-4",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "9pz_21pz",
+                                            "type": "ARMOR",
+                                            "strength": "7-5",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "9pz_9r",
+                                            "type": "RECON",
+                                            "strength": "1-2",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "9pz_9m",
+                                            "type": "MECHANIZED",
+                                            "strength": "5-8",
+                                            "cadre": 3
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "1st Army",
+                            "level_3": [
+                                {
+                                    "name": "12th Mechanized Infantry Division",
+                                    "level_4": [
+                                        {
+                                            "name": "12m_25t",
+                                            "type": "ARMOR",
+                                            "strength": "5-3",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "12m_5m",
+                                            "type": "MECHANIZED",
+                                            "strength": "5-7",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "12m_41m",
+                                            "type": "MECHANIZED",
+                                            "strength": "4-7",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "12m_9m",
+                                            "type": "MECHANIZED",
+                                            "strength": "4-7",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "12m_16r",
+                                            "type": "RECON",
+                                            "strength": "1-2",
+                                            "cadre": 3
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "16th Tank Division",
+                                    "level_4": [
+                                        {
+                                            "name": "16t_55m",
+                                            "type": "MECHANIZED",
+                                            "strength": "5-7",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "16t_1t",
+                                            "type": "ARMOR",
+                                            "strength": "5-3",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "16t_58t",
+                                            "type": "ARMOR",
+                                            "strength": "5-3",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "16t_14t",
+                                            "type": "ARMOR",
+                                            "strength": "5-3",
+                                            "cadre": 3
+                                        },
+                                        {
+                                            "name": "16t_17r",
+                                            "type": "RECON",
+                                            "strength": "1-2",
+                                            "cadre": 3
+                                        }
+                                    ]
+                                },
+                                
                             ]
                         }
                     ]

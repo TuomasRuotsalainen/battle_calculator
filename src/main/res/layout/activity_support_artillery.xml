@@ -108,7 +108,7 @@
         android:id="@+id/attrition_rule"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="All shooting units must increase their attrition \nby one immediately\nMissile artillery can shoot twice \n(Double strength, double attrition)"
+        android:text="All shooting units must increase their attrition \nby one immediately\nRocket artillery can shoot twice \n(Double strength, double attrition)\nNote: only units of same parent HQ can be combat supported"
 
         app:layout_constraintTop_toBottomOf="@+id/artiller_info"
         app:layout_constraintBottom_toTopOf="@+id/artillery_strength"
