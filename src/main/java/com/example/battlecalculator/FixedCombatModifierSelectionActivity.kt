@@ -106,8 +106,14 @@ class FixedCombatModifierSelectionActivity : AppCompatActivity() {
             updateText()
         }
 
+        val explainButton = findViewById<Button>(R.id.explain_mod)
+        explainButton.setOnClickListener() {
+            val currentDifferential = calculator.calculateCurrentCombatDifferential(gameState)
+            Helpers.showInfoDialog(this, currentDifferential.second, "Understood", null, {})
+        }
 
-        val applyButton = findViewById<Button>(R.id.fixed_apply)
+
+        val applyButton = findViewById<Button>(R.id.fixed_apply_btn)
 
         val intent = Intent(this, CombatSupportActivity::class.java)
         applyButton.setOnClickListener{

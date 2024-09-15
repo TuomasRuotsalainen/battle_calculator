@@ -197,7 +197,7 @@ class BombardmentSelectionActivity : AppCompatActivity() {
             )
         }
 
-        // TODO make also combat/support unit boxes activate this
+
         // Detection Level Checkboxes
         val detectionLevelCheckboxes = listOf(adjacentBox, box4Hex, boxNone)
         detectionLevelCheckboxes.forEach { checkbox ->
@@ -262,14 +262,45 @@ class BombardmentSelectionActivity : AppCompatActivity() {
             }
         }
 
+        fun handleSupportAndCombatUnit(checkBox : CheckBox) {
+            when (checkBox.id) {
+                R.id.target_attributes_combat -> {
+                    if (adjacentBox.isChecked) {
+                        gameState.detectionLevel = DetectionLevel.COMBAT_UNIT_ADJACENT
+                    } else if (box4Hex.isChecked) {
+                        gameState.detectionLevel = DetectionLevel.COMBAT_UNIT_WITHIN_4
+                    } else if (boxNone.isChecked) {
+                        gameState.detectionLevel = DetectionLevel.COMBAT_UNIT_OTHER
+                    } else {
+                        throw Exception("No target attirbutes were selected when handleSupportAndCombatUnit")
+                    }
+                }
+                R.id.target_attributes_support -> {
+                    if (adjacentBox.isChecked) {
+                        gameState.detectionLevel = DetectionLevel.SUPPORT_UNIT_ADJACENT
+                    } else if (box4Hex.isChecked) {
+                        gameState.detectionLevel = DetectionLevel.SUPPORT_UNIT_WITHIN_4
+                    } else if (boxNone.isChecked) {
+                        gameState.detectionLevel = DetectionLevel.SUPPORT_UNIT_OTHER
+                    } else {
+                        throw Exception("No target attirbutes were selected when handleSupportAndCombatUnit")
+                    }
+                }
+                else -> throw Exception("This target attribute wasn't expected")
+            }
+        }
+
         boxCombatUnit.setOnClickListener {
             boxSupportUnit.isChecked = !boxCombatUnit.isChecked
             combatUnitSelected = boxCombatUnit.isChecked
             if (boxCombatUnit.isChecked) {
                 gameState.attackingUnit!!.attackType = AttackTypeEnum.PREPARED
+                handleSupportAndCombatUnit(boxCombatUnit)
             } else {
                 gameState.attackingUnit!!.attackType = AttackTypeEnum.HASTY
+                handleSupportAndCombatUnit(boxSupportUnit)
             }
+
             updateExplanation()
         }
 
@@ -278,8 +309,10 @@ class BombardmentSelectionActivity : AppCompatActivity() {
             combatUnitSelected = boxCombatUnit.isChecked
             if (boxCombatUnit.isChecked) {
                 gameState.attackingUnit!!.attackType = AttackTypeEnum.PREPARED
+                handleSupportAndCombatUnit(boxCombatUnit)
             } else {
                 gameState.attackingUnit!!.attackType = AttackTypeEnum.HASTY
+                handleSupportAndCombatUnit(boxSupportUnit)
             }
             updateExplanation()
         }

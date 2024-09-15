@@ -428,7 +428,7 @@ class GameState(stateString : String) {
         return if (adjacentDefenderCount == null) {
             "null"
         } else {
-            adjacentAttackerCount.toString()
+            adjacentDefenderCount.toString()
         }
     }
 

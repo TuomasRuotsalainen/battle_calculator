@@ -43,8 +43,8 @@ class EWInputActivity : AppCompatActivity() {
 
         val pactUsesEWAgainstNato = -1
         val natoUsesEwAgainstPact = 1
-        val enemyUnitInCityModifier = -1
-        val enemyUnitInTownModifier = -2
+        val enemyUnitInCityModifier = -2
+        val enemyUnitInTownModifier = -3
         val hqAttritionModifier = -1
 
         val attackerInCityCheckBox = findViewById<CheckBox>(R.id.attacker_in_city)

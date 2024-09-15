@@ -41,14 +41,33 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/defenderOptionsLayout" />
 
-    <Button
+    <LinearLayout
         android:id="@+id/fixed_apply"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Done"
+        android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/textView4"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="vertical"
+        >
+
+    <Button
+        android:id="@+id/explain_mod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Explain modifiers"
+
+        />
+    <Button
+        android:id="@+id/fixed_apply_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Done"
+         />
+
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/attackerOptionsLayout"

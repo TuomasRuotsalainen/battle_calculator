@@ -978,6 +978,11 @@ class Tables {
             }
 
             if (result == -1) {
+                if (modifiedDieRoll >= 10) {
+                    return modifiedRollsDetection4.lastIndex
+                } else if (modifiedDieRoll <= 1) {
+                    return 0
+                }
                 throw Exception("Couldn't find bombardment row index for modifiedDieRoll $modifiedDieRoll and detectionLevel $detectionLevel")
             }
 

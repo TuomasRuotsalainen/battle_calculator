@@ -110,7 +110,7 @@ class Calculator() {
 
         explanation += "Attacker posture: $attackerPostureModifier, ${defenderPosture.second}\n"
 
-        val totalCombatDifferential = defenderCombatStrength - attackerCombatStrength
+        val totalCombatDifferential = attackerCombatStrength - defenderCombatStrength
         val combatDifferentialAfterPostures =
             totalCombatDifferential + attackerPostureModifier + defenderPosture.first
 
